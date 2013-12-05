@@ -36,6 +36,7 @@
 #include "UserCode/L1TriggerDPG/interface/L1AnalysisRecoTrackDataFormat.h"
 #include "UserCode/L1TriggerDPG/interface/L1AnalysisL1MenuDataFormat.h"
 #include "UserCode/L1TriggerUpgrade/interface/L1AnalysisL1ExtraUpgradeDataFormat.h"
+#include "UserCode/L1TriggerUpgrade/interface/L1AnalysisL1TrackDataFormat.h"
 #include "UserCode/L1TriggerDPG/interface/L1AnalysisSimulationDataFormat.h"
 #include "UserCode/L1TriggerDPG/interface/L1AnalysisGeneratorDataFormat.h"
 #include "UserCode/L1TriggerDPG/interface/L1AnalysisCaloTPDataFormat.h"
@@ -49,24 +50,24 @@ Long64_t L1UpgradeNtuple::GetEntries()
 
 L1UpgradeNtuple::L1UpgradeNtuple()
 	: fChain(NULL), ftreeEmu(NULL), ftreemuon(NULL), ftreereco(NULL), ftreeExtra(NULL), ftreeMenu(NULL),
-	  ftreeEmuExtra(NULL), ftreeUpgrade(NULL), event_(NULL), gct_(NULL), gmt_(NULL), gt_(NULL),
+	  ftreeEmuExtra(NULL), ftreeUpgrade(NULL), ftreeTrack(NULL), event_(NULL), gct_(NULL), gmt_(NULL), gt_(NULL),
 	  rct_(NULL), dttf_(NULL), csctf_(NULL), calo_(NULL), eventEmu_(NULL), gctEmu_(NULL), gmtEmu_(NULL),
 	  gtEmu_(NULL), rctEmu_(NULL), dttfEmu_(NULL), csctfEmu_(NULL), caloEmu_(NULL), recoMet_(NULL),
 	  recoMuon_(NULL), recoJet_(NULL), recoBasicCluster_(NULL), recoSuperCluster_(NULL), recoVertex_(NULL),
-	  recoTrack_(NULL), l1extra_(NULL), l1emuextra_(NULL), l1menu_(NULL), l1upgrade_(NULL), sim_(NULL), gen_(NULL)
+	  recoTrack_(NULL), l1extra_(NULL), l1emuextra_(NULL), l1menu_(NULL), l1upgrade_(NULL), l1track_(NULL), sim_(NULL), gen_(NULL)
 {
-  dol1emu=true; doreco=true; domuonreco=true; dol1extra=true; dol1emuextra=true; dol1menu=true; dol1upgrade=true;
+  dol1emu=true; doreco=true; domuonreco=true; dol1extra=true; dol1emuextra=true; dol1menu=true; dol1upgrade=true; dol1track=true;
 }
 
 L1UpgradeNtuple::L1UpgradeNtuple(const std::string & fname)
 	: fChain(NULL), ftreeEmu(NULL), ftreemuon(NULL), ftreereco(NULL), ftreeExtra(NULL), ftreeMenu(NULL),
-	  ftreeEmuExtra(NULL), ftreeUpgrade(NULL), event_(NULL), gct_(NULL), gmt_(NULL), gt_(NULL),
+	  ftreeEmuExtra(NULL), ftreeUpgrade(NULL), ftreeTrack(NULL), event_(NULL), gct_(NULL), gmt_(NULL), gt_(NULL),
 	  rct_(NULL), dttf_(NULL), csctf_(NULL), calo_(NULL), eventEmu_(NULL), gctEmu_(NULL), gmtEmu_(NULL),
 	  gtEmu_(NULL), rctEmu_(NULL), dttfEmu_(NULL), csctfEmu_(NULL), caloEmu_(NULL), recoMet_(NULL),
 	  recoMuon_(NULL), recoJet_(NULL), recoBasicCluster_(NULL), recoSuperCluster_(NULL), recoVertex_(NULL),
-	  recoTrack_(NULL), l1extra_(NULL), l1emuextra_(NULL), l1menu_(NULL), l1upgrade_(NULL), sim_(NULL), gen_(NULL)
+	  recoTrack_(NULL), l1extra_(NULL), l1emuextra_(NULL), l1menu_(NULL), l1upgrade_(NULL), l1track_(NULL), sim_(NULL), gen_(NULL)
 {
-  dol1emu=true; doreco=true; domuonreco=true; dol1extra=true;  dol1emuextra=true; dol1menu=true; dol1upgrade=true;
+  dol1emu=true; doreco=true; domuonreco=true; dol1extra=true;  dol1emuextra=true; dol1menu=true; dol1upgrade=true; dol1track=true;
   Open(fname);
 }
 
@@ -134,6 +135,7 @@ bool L1UpgradeNtuple::CheckFirstFile()
   TTree * mytreeEmuExtra = (TTree*) rf->Get("l1EmulatorExtraTree/L1ExtraTree");
   TTree * mytreeMenu  = (TTree*) rf->Get("l1MenuTreeProducer/L1MenuTree");
   TTree * mytreeUpgrade = (TTree*) rf->Get("l1ExtraUpgradeTreeProducer/L1ExtraUpgradeTree");
+  TTree * mytreeTrack = (TTree*) rf->Get("l1TrackTreeProducer/L1TrackTree");
 
   if (!myChain) {
     std::cout<<"L1Tree not found .... "<<std::endl;
@@ -200,6 +202,14 @@ else
     std::cout << "L1UpgradeProducer/L1ExtraTree is found ..."<<std::endl;
   }
 
+  if (!mytreeTrack) {
+    std::cout<<"L1TrackProducer/L1TrackTree not found, it will be skipped..."<<std::endl;
+    dol1track=false;
+  }
+  else{
+    std::cout << "L1TrackProducer/L1TrackTree is found ..."<<std::endl;
+  }
+
   return true;
 }
 
@@ -214,6 +224,7 @@ bool L1UpgradeNtuple::OpenWithoutInit()
   ftreeEmuExtra = new TChain("l1EmulatorExtraTree/L1ExtraTree");
   ftreeMenu  = new TChain("l1MenuTreeProducer/L1MenuTree");
   ftreeUpgrade = new TChain("l1ExtraUpgradeTreeProducer/L1ExtraUpgradeTree");
+  ftreeTrack = new TChain("l1TrackTreeProducer/L1TrackTree");
 
   for (unsigned int i=0;i<listNtuples.size();i++)
   {
@@ -227,6 +238,7 @@ bool L1UpgradeNtuple::OpenWithoutInit()
     if (dol1emuextra) ftreeEmuExtra ->Add(listNtuples[i].c_str());
     if (dol1menu)   ftreeMenu  -> Add(listNtuples[i].c_str());
     if (dol1upgrade) ftreeUpgrade  -> Add(listNtuples[i].c_str());
+    if (dol1track) ftreeTrack  -> Add(listNtuples[i].c_str());
 
   }
 
@@ -237,6 +249,7 @@ bool L1UpgradeNtuple::OpenWithoutInit()
   if (dol1emuextra) fChain->AddFriend(ftreeEmuExtra);
   if (dol1menu)   fChain->AddFriend(ftreeMenu);
   if (dol1upgrade) fChain->AddFriend(ftreeUpgrade);
+  if (dol1track) fChain->AddFriend(ftreeTrack);
 
   return true;
 }
@@ -260,6 +273,7 @@ L1UpgradeNtuple::~L1UpgradeNtuple()
   delete ftreeEmuExtra;
   delete ftreeMenu;
   delete ftreeUpgrade;
+  delete ftreeTrack;
   delete event_;
   delete gct_;
   delete gmt_;
@@ -289,6 +303,7 @@ L1UpgradeNtuple::~L1UpgradeNtuple()
   delete l1emuextra_;
   delete l1menu_;
   delete l1upgrade_;
+  delete l1track_;
 }
 
 
@@ -438,6 +453,14 @@ void L1UpgradeNtuple::Init()
      ftreeUpgrade->SetBranchAddress("L1ExtraUpgrade",&l1upgrade_);
      fChain->AddFriend(ftreeUpgrade);
      std::cout << "L1ExtraUpgradeTree: "<< ftreeUpgrade->GetEntries() << std::endl;
+     }
+   if (dol1track)
+     {
+     std::cout<<"Setting branch addresses for L1Track... "<<std::endl;
+     l1track_ = new L1Analysis::L1AnalysisL1TrackDataFormat();
+     ftreeTrack->SetBranchAddress("L1Track",&l1track_);
+     fChain->AddFriend(ftreeTrack);
+     std::cout << "L1TrackTree: "<< ftreeTrack->GetEntries() << std::endl;
      }
 
 }

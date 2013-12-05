@@ -12,6 +12,9 @@
  *
  * I'll just have to make a special effort to keep it up to date with the version in UserCode/L1TriggerUpgrade.
  *
+ * 05/Dec/2013 Mark Grimes - Added some functionality to store L1 tracks. I've just blindly copied what
+ * is done for the ExtraUpgrade entries for the L1Track equivalents.
+ *
  * @author Copied over into this file by Mark Grimes, but original code probably by Brian Winer.
  * @date Copied here 06/Jun/2013
  */
@@ -56,6 +59,7 @@ namespace L1Analysis
 	class L1AnalysisL1ExtraUpgradeDataFormat;
 	class L1AnalysisSimulationDataFormat;
 	class L1AnalysisGeneratorDataFormat;
+	class L1AnalysisL1TrackDataFormat;
 }
 
 
@@ -70,6 +74,7 @@ public:
 	TChain *ftreeMenu;
 	TChain *ftreeEmuExtra;
 	TChain *ftreeUpgrade;
+	TChain *ftreeTrack;
 	Int_t fCurrent; //!current Tree number in a TChain
 
 	bool dol1emu;
@@ -79,6 +84,7 @@ public:
 	bool dol1emuextra;
 	bool dol1menu;
 	bool dol1upgrade;
+	bool dol1track;
 
 // L1Tree (Standard)
 	L1Analysis::L1AnalysisEventDataFormat *event_;
@@ -118,6 +124,7 @@ public:
 
 // L1ExtraUpgrade Tree
 	L1Analysis::L1AnalysisL1ExtraUpgradeDataFormat *l1upgrade_;
+	L1Analysis::L1AnalysisL1TrackDataFormat *l1track_;
 
 // Monte Carlo Information
 	L1Analysis::L1AnalysisSimulationDataFormat *sim_;
