@@ -13,6 +13,7 @@
 #include "L1UpgradeNtuple.h"
 #include "UserCode/L1TriggerUpgrade/interface/L1AnalysisDataFormat.h"
 #include "UserCode/L1TriggerUpgrade/interface/L1AnalysisL1ExtraUpgradeDataFormat.h"
+#include "UserCode/L1TriggerUpgrade/interface/L1AnalysisL1TrackDataFormat.h"
 #include "UserCode/L1TriggerDPG/interface/L1AnalysisEventDataFormat.h"
 #include "UserCode/L1TriggerDPG/interface/L1AnalysisGTDataFormat.h"
 #include "UserCode/L1TriggerDPG/interface/L1AnalysisGMTDataFormat.h"
@@ -173,7 +174,14 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 	analysisDataFormat.LS=inputNtuple.event_->lumi;
 	analysisDataFormat.Event=inputNtuple.event_->event;
 
-	/* =======================================================================================================
+	/*
+	 * Information below is from Brian's original comments from his version of the code. I've currently only implemented the
+	 * "case 22" option. If there is a tree in the ntuple for the L1 track information then that will be used regardless of
+	 * the setting of the "selectDataInput" parameter. Code for that is after the switch statement.
+	 *
+	 * Brian's documentation:
+	 *
+	 /  =======================================================================================================
 	 /    Select the input source information
 	 / ---------------------------------------------------------------------------------------------------------
 	 /    case  0: Use Original L1ExtraTree that came with the event
@@ -362,6 +370,15 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 			throw std::runtime_error( "---Not a valid input source FULL STOP! " );
 
 		break;
+	}
+
+	//
+	// This part copies over any information about L1 tracks that there might be
+	//
+	if( inputNtuple.dol1track )
+	{
+		// Take a straight copy of all the data (trackData() returns a reference)
+		currentEvent.trackData()=(*inputNtuple.l1track_);
 	}
 
 	return;
