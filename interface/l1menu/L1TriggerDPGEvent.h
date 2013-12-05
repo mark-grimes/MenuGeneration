@@ -8,6 +8,7 @@
 namespace L1Analysis
 {
 	class L1AnalysisDataFormat;
+	class L1AnalysisL1TrackDataFormat;
 }
 
 
@@ -39,6 +40,10 @@ namespace l1menu
 		virtual const L1Analysis::L1AnalysisDataFormat& rawEvent() const;
 		virtual bool* physicsBits(); ///< @brief A 128 element array of the physics bits
 		virtual const bool* physicsBits() const; ///< @brief Const access to the 128 element array of the physics bits.
+
+		/** @brief Information about the L1 tracks. Note that this could be empty if there is no track information available for the event. */
+		virtual L1Analysis::L1AnalysisL1TrackDataFormat& trackData();
+		virtual const L1Analysis::L1AnalysisL1TrackDataFormat& trackData() const;
 
 		virtual void setWeight( float weight );
 

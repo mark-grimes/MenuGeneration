@@ -2,6 +2,7 @@
 
 #include "l1menu/ITrigger.h"
 #include "UserCode/L1TriggerUpgrade/interface/L1AnalysisDataFormat.h"
+#include "UserCode/L1TriggerUpgrade/interface/L1AnalysisL1TrackDataFormat.h"
 
 namespace l1menu
 {
@@ -10,6 +11,7 @@ namespace l1menu
 	public:
 		L1TriggerDPGEventPrivateMembers( const l1menu::ISample* pParentSample ) : pParentSample_(pParentSample) {}
 		L1Analysis::L1AnalysisDataFormat rawEvent;
+		L1Analysis::L1AnalysisL1TrackDataFormat trackData;
 		bool physicsBits[128];
 		float weight;
 		const l1menu::ISample* pParentSample_;
@@ -67,6 +69,16 @@ bool* l1menu::L1TriggerDPGEvent::physicsBits()
 const bool* l1menu::L1TriggerDPGEvent::physicsBits() const
 {
 	return pImple_->physicsBits;
+}
+
+L1Analysis::L1AnalysisL1TrackDataFormat& l1menu::L1TriggerDPGEvent::trackData()
+{
+	return pImple_->trackData;
+}
+
+const L1Analysis::L1AnalysisL1TrackDataFormat& l1menu::L1TriggerDPGEvent::trackData() const
+{
+	return pImple_->trackData;
 }
 
 void l1menu::L1TriggerDPGEvent::setWeight( float weight )
