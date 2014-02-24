@@ -13,6 +13,7 @@ namespace l1menu
 {
 	class ITriggerRate;
 	class ITriggerDescription;
+	class ITriggerDescriptionWithErrors;
 }
 
 
@@ -40,6 +41,7 @@ namespace l1menu
 			l1menu::tools::XMLElement convertToXML( const l1menu::IMenuRate& object, l1menu::tools::XMLElement& parent );
 			l1menu::tools::XMLElement convertToXML( const l1menu::ITriggerRate& object, l1menu::tools::XMLElement& parent );
 			l1menu::tools::XMLElement convertToXML( const l1menu::ITriggerDescription& object, l1menu::tools::XMLElement& parent );
+			l1menu::tools::XMLElement convertToXML( const l1menu::ITriggerDescriptionWithErrors& object, l1menu::tools::XMLElement& parent );
 			l1menu::tools::XMLFile outputFile_;
 			std::ostream* pOutputStream_;
 			std::string filenameForOutput_;
