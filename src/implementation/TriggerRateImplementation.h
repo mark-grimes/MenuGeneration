@@ -2,9 +2,12 @@
 #define l1menu_implementation_TriggerRateImplementation_h
 
 #include "l1menu/ITriggerRate.h"
+
 #include <vector>
 #include <memory>
 #include <map>
+
+#include "TriggerDescriptionWithErrorsFromXML.h"
 
 //
 // Forward declarations
@@ -15,6 +18,7 @@ namespace l1menu
 	namespace implementation
 	{
 		class MenuRateImplementation;
+		class TriggerDescriptionWithErrorsFromXML;
 	}
 }
 
@@ -31,7 +35,7 @@ namespace l1menu
 		class TriggerRateImplementation : public l1menu::ITriggerRate
 		{
 		public:
-			TriggerRateImplementation( const l1menu::ITrigger& trigger, float fraction, float fractionError, float rate, float rateError, float pureFraction, float pureFractionError, float pureRate, float pureRateError );
+			TriggerRateImplementation( const l1menu::implementation::TriggerDescriptionWithErrorsFromXML& trigger, float fraction, float fractionError, float rate, float rateError, float pureFraction, float pureFractionError, float pureRate, float pureRateError );
 			TriggerRateImplementation( TriggerRateImplementation&& otherTriggerRate ) noexcept; ///< Move constructor. One not implicitly generated because I have a custom destructor.
 			TriggerRateImplementation& operator=( TriggerRateImplementation&& otherTriggerRate ) noexcept; ///< Move assignment. One not implicitly generated because I have a custom destructor.
 			virtual ~TriggerRateImplementation();
@@ -39,12 +43,10 @@ namespace l1menu
 			// Method to set parameter errors.
 			void setParameterErrors( const std::string& parameterName, float errorLow, float errorHigh );
 
-
+			//
 			// Methods required by the l1menu::ITriggerRate interface
-			virtual const l1menu::ITriggerDescription& trigger() const;
-			virtual bool parameterErrorsAreAvailable( const std::string& parameterName ) const;
-			virtual const float& parameterErrorLow( const std::string& parameterName ) const;
-			virtual const float& parameterErrorHigh( const std::string& parameterName ) const;
+			//
+			virtual const l1menu::ITriggerDescriptionWithErrors& trigger() const;
 			virtual float fraction() const;
 			virtual float fractionError() const;
 			virtual float rate() const;
@@ -53,8 +55,9 @@ namespace l1menu
 			virtual float pureFractionError() const;
 			virtual float pureRate() const;
 			virtual float pureRateError() const;
+
 		protected:
-			std::unique_ptr<l1menu::ITrigger> pTrigger_;
+			l1menu::implementation::TriggerDescriptionWithErrorsFromXML triggerDescription_;
 			std::map<std::string,float> parameterErrorsHigh_;
 			std::map<std::string,float> parameterErrorsLow_;
 			float fraction_;

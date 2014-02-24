@@ -8,17 +8,18 @@
 #include "l1menu/tools/XMLElement.h"
 #include "l1menu/tools/fileIO.h"
 
-l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( const l1menu::ITrigger& trigger, float fraction, float fractionError, float rate, float rateError, float pureFraction, float pureFractionError, float pureRate, float pureRateError )
-	: fraction_(fraction), fractionError_(fractionError),
+l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( const l1menu::implementation::TriggerDescriptionWithErrorsFromXML& trigger, float fraction, float fractionError, float rate, float rateError, float pureFraction, float pureFractionError, float pureRate, float pureRateError )
+	: triggerDescription_(trigger),
+	  fraction_(fraction), fractionError_(fractionError),
 	  rate_(rate), rateError_(rateError),
 	  pureFraction_(pureFraction), pureFractionError_(pureFractionError),
 	  pureRate_(pureRate), pureRateError_(pureRateError)
 {
-	pTrigger_=std::move( l1menu::TriggerTable::instance().copyTrigger(trigger) );
+	// No operation besides the initialiser list
 }
 
 l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( TriggerRateImplementation&& otherTriggerRate ) noexcept
-	: pTrigger_( std::move(otherTriggerRate.pTrigger_) ),
+	: triggerDescription_( std::move(otherTriggerRate.triggerDescription_) ),
 	  parameterErrorsHigh_( std::move(otherTriggerRate.parameterErrorsHigh_) ),
 	  parameterErrorsLow_( std::move(otherTriggerRate.parameterErrorsLow_) ),
 	  fraction_(otherTriggerRate.fraction_),
@@ -35,7 +36,7 @@ l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( Tr
 
 l1menu::implementation::TriggerRateImplementation& l1menu::implementation::TriggerRateImplementation::operator=( TriggerRateImplementation&& otherTriggerRate ) noexcept
 {
-	pTrigger_=std::move( otherTriggerRate.pTrigger_ );
+	triggerDescription_=std::move( otherTriggerRate.triggerDescription_ );
 	parameterErrorsHigh_=std::move(otherTriggerRate.parameterErrorsHigh_);
 	parameterErrorsLow_=std::move(otherTriggerRate.parameterErrorsLow_);
 	fraction_=otherTriggerRate.fraction_;
@@ -56,38 +57,16 @@ l1menu::implementation::TriggerRateImplementation::~TriggerRateImplementation()
 
 void l1menu::implementation::TriggerRateImplementation::setParameterErrors( const std::string& parameterName, float errorLow, float errorHigh )
 {
-	// Get the parmeter from the trigger just so that I can make sure the name is valid.
+	// Get the parameter from the trigger just so that I can make sure the name is valid.
 	// This call will throw an exception if it's not.
-	pTrigger_->parameter( parameterName );
+	triggerDescription_.parameter( parameterName );
 	parameterErrorsLow_[parameterName]=errorLow;
 	parameterErrorsHigh_[parameterName]=errorHigh;
 }
 
-const l1menu::ITriggerDescription& l1menu::implementation::TriggerRateImplementation::trigger() const
+const l1menu::ITriggerDescriptionWithErrors& l1menu::implementation::TriggerRateImplementation::trigger() const
 {
-	return *pTrigger_;
-}
-
-bool l1menu::implementation::TriggerRateImplementation::parameterErrorsAreAvailable( const std::string& parameterName ) const
-{
-	// I only need to check one of the maps. If it's in one it has to also be in the other.
-	const auto& iFindResult=parameterErrorsLow_.find(parameterName);
-	if( iFindResult==parameterErrorsLow_.end() ) return false;
-	return true;
-}
-
-const float& l1menu::implementation::TriggerRateImplementation::parameterErrorLow( const std::string& parameterName ) const
-{
-	const auto& iFindResult=parameterErrorsLow_.find(parameterName);
-	if( iFindResult==parameterErrorsLow_.end() ) throw std::runtime_error( "TriggerRateImplementation::parameterErrorLow - No error set for parameter "+parameterName);
-	return iFindResult->second;
-}
-
-const float& l1menu::implementation::TriggerRateImplementation::parameterErrorHigh( const std::string& parameterName ) const
-{
-	const auto& iFindResult=parameterErrorsHigh_.find(parameterName);
-	if( iFindResult==parameterErrorsHigh_.end() ) throw std::runtime_error( "TriggerRateImplementation::parameterErrorHigh - No error set for parameter "+parameterName);
-	return iFindResult->second;
+	return triggerDescription_;
 }
 
 float l1menu::implementation::TriggerRateImplementation::fraction() const
