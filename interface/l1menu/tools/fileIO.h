@@ -116,13 +116,6 @@ namespace l1menu
 		l1menu::tools::XMLElement convertToXML( const l1menu::ITriggerDescription& object, l1menu::tools::XMLElement& parent );
 		l1menu::tools::XMLElement convertToXML( const l1menu::IMenuRate& object, l1menu::tools::XMLElement& parent );
 
-		/** @brief Examines the XMLElement provided and uses the information to create a trigger.
-		 *
-		 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
-		 * @date 16/Oct/2013
-		 */
-		std::unique_ptr<l1menu::ITrigger> convertFromXML( const l1menu::tools::XMLElement& xmlDescription );
-
 	} // end of the tools namespace
 } // end of the l1menu namespace
 #endif
