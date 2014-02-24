@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include "l1menu/TriggerTable.h"
 #include "l1menu/ITrigger.h"
+#include "l1menu/ITriggerDescriptionWithErrors.h"
 #include "l1menu/TriggerRatePlot.h"
 #include "l1menu/MenuRatePlots.h"
 #include "l1menu/IMenuRate.h"
@@ -150,7 +151,7 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MuonScaling::scale( const l
 
 	for( const auto& pUnscaledTriggerRate : unscaledMenuRate.triggerRates() )
 	{
-		const l1menu::ITriggerDescription& trigger=pUnscaledTriggerRate->trigger();
+		const l1menu::ITriggerDescriptionWithErrors& trigger=pUnscaledTriggerRate->trigger();
 
 		//
 		// First I'll get a copy of the trigger whether it's a muon trigger or not. If it is a muon
@@ -167,9 +168,9 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MuonScaling::scale( const l
 		std::map< std::string, std::pair<float,float> > parameterErrors;
 		for( const auto& parameterName : trigger.parameterNames() )
 		{
-			if( pUnscaledTriggerRate->parameterErrorsAreAvailable(parameterName) )
+			if( trigger.parameterErrorsAreAvailable(parameterName) )
 			{
-				parameterErrors[parameterName]=std::make_pair( pUnscaledTriggerRate->parameterErrorLow(parameterName), pUnscaledTriggerRate->parameterErrorHigh(parameterName) );
+				parameterErrors[parameterName]=std::make_pair( trigger.parameterErrorLow(parameterName), trigger.parameterErrorHigh(parameterName) );
 			}
 		}
 

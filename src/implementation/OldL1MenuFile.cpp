@@ -6,6 +6,7 @@
 #include <iostream>
 #include "l1menu/TriggerMenu.h"
 #include "l1menu/ITriggerDescription.h"
+#include "l1menu/ITriggerDescriptionWithErrors.h"
 #include "l1menu/tools/miscellaneous.h"
 #include "./MenuRateImplementation.h"
 
@@ -137,10 +138,10 @@ void l1menu::implementation::OldL1MenuFile::add( const l1menu::IMenuRate& menuRa
 		// Print the threshold errors it they're available
 		for( size_t thresholdNumber=0; thresholdNumber<4; ++thresholdNumber )
 		{
-			if( thresholdNames.size()>thresholdNumber && pRate->parameterErrorsAreAvailable(thresholdNames[thresholdNumber]) )
+			if( thresholdNames.size()>thresholdNumber && trigger.parameterErrorsAreAvailable(thresholdNames[thresholdNumber]) )
 			{
-				(*pOutputStream_) << delimeter_ << std::setw(9) << pRate->parameterErrorLow(thresholdNames[thresholdNumber])
-						<< delimeter_ << std::setw(9) << pRate->parameterErrorHigh(thresholdNames[thresholdNumber]);
+				(*pOutputStream_) << delimeter_ << std::setw(9) << trigger.parameterErrorLow(thresholdNames[thresholdNumber])
+						<< delimeter_ << std::setw(9) << trigger.parameterErrorHigh(thresholdNames[thresholdNumber]);
 			}
 			else (*pOutputStream_) << delimeter_ << std::setw(9) << " " << delimeter_ << std::setw(9) << " ";
 		}

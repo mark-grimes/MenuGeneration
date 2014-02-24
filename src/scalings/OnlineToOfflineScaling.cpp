@@ -9,6 +9,7 @@
 #include "l1menu/MenuRatePlots.h"
 #include "l1menu/IMenuRate.h"
 #include "l1menu/ITrigger.h"
+#include "l1menu/ITriggerDescriptionWithErrors.h"
 #include "l1menu/tools/stringManipulation.h"
 #include "l1menu/tools/miscellaneous.h"
 #include "../implementation/MenuRateImplementation.h"
@@ -148,7 +149,7 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::OnlineToOfflineScaling::sca
 
 	for( const auto& pUnscaledTriggerRate : unscaledMenuRate.triggerRates() )
 	{
-		const l1menu::ITriggerDescription& trigger=pUnscaledTriggerRate->trigger();
+		const l1menu::ITriggerDescriptionWithErrors& trigger=pUnscaledTriggerRate->trigger();
 
 		//
 		// First I'll get a copy of the trigger whether it's a muon trigger or not. If it is a muon
@@ -178,11 +179,11 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::OnlineToOfflineScaling::sca
 				pScaledTrigger->parameter( thresholdNames[index] )=scaledThreshold;
 				// Look to see if unscaled TriggerRate has any errors on the thresholds.
 				// If it does, scale those too.
-				if( pUnscaledTriggerRate->parameterErrorsAreAvailable( thresholdNames[index] ) )
+				if( trigger.parameterErrorsAreAvailable( thresholdNames[index] ) )
 				{
 					// I need to get the absolute values of these errors, not the difference to the threshold
-					float unscaledLowEdge=unscaledThreshold-pUnscaledTriggerRate->parameterErrorLow( thresholdNames[index] );
-					float unscaledHighEdge=unscaledThreshold+pUnscaledTriggerRate->parameterErrorHigh( thresholdNames[index] );
+					float unscaledLowEdge=unscaledThreshold-trigger.parameterErrorLow( thresholdNames[index] );
+					float unscaledHighEdge=unscaledThreshold+trigger.parameterErrorHigh( thresholdNames[index] );
 					// Then scale, and also convert back to the difference to the scaled threshold
 					float scaledErrorLow=scaledThreshold-(unscaledLowEdge*slope+offset);
 					float scaledErrorHigh=(unscaledHighEdge*slope+offset)-scaledThreshold;

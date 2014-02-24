@@ -7,7 +7,7 @@
 #include "l1menu/IL1MenuFile.h"
 #include "l1menu/IMenuRate.h"
 #include "l1menu/ITriggerRate.h"
-#include "l1menu/ITriggerDescription.h"
+#include "l1menu/ITriggerDescriptionWithErrors.h"
 #include "l1menu/tools/CommandLineParser.h"
 #include "l1menu/tools/miscellaneous.h"
 
@@ -102,12 +102,10 @@ int main( int argc, char* argv[] )
 
 				std::string mainThresholdName=l1menu::tools::getThresholdNames( pTriggerRate->trigger() ).front();
 				pGraph->SetPoint( pGraph->GetN(), totalRate, pTriggerRate->trigger().parameter(mainThresholdName)  );
-				if( pTriggerRate->parameterErrorsAreAvailable(mainThresholdName) )
+				if( pTriggerRate->trigger().parameterErrorsAreAvailable(mainThresholdName) )
 				{
-					std::cout << "Setting " << pTriggerRate->trigger().name() << " errors on " << mainThresholdName<< " to +"
-							<< pTriggerRate->parameterErrorHigh(mainThresholdName) << " -" << pTriggerRate->parameterErrorLow(mainThresholdName) << std::endl;
-					pGraph->SetPointEYhigh( pGraph->GetN()-1, pTriggerRate->parameterErrorHigh(mainThresholdName) );
-					pGraph->SetPointEYlow( pGraph->GetN()-1, pTriggerRate->parameterErrorLow(mainThresholdName) );
+					pGraph->SetPointEYhigh( pGraph->GetN()-1, pTriggerRate->trigger().parameterErrorHigh(mainThresholdName) );
+					pGraph->SetPointEYlow( pGraph->GetN()-1, pTriggerRate->trigger().parameterErrorLow(mainThresholdName) );
 				}
 			}
 
