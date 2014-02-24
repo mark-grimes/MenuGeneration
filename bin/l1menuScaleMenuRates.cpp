@@ -98,7 +98,7 @@ int main( int argc, char* argv[] )
 			scalingsToApply.push_back( std::unique_ptr<l1menu::IScaling>( new l1menu::scalings::OnlineToOfflineScaling(commandLineParser.optionArguments("offlinescaling").back()) ) );
 		}
 
-		if( scalingsToApply.empty() ) std::cout << "No scalings have been requested on the command line. Is this really what you want?"
+		if( scalingsToApply.empty() ) std::cerr << "No scalings have been requested on the command line. Is this really what you want?"
 				<< " You can do this to convert menu rates between the different file formats." << std::endl;
 		menuRates=commandLineParser.nonOptionArguments();
 	} // end of try block
@@ -117,13 +117,13 @@ int main( int argc, char* argv[] )
 		//
 		if( !unscaledRatesFilename.empty() )
 		{
-			std::cout << "Scaling " << unscaledRatesFilename << " with..." << std::endl;
+			std::cerr << "Scaling " << unscaledRatesFilename << " with..." << std::endl;
 			std::unique_ptr<TFile> pRatePlotsRootFile( TFile::Open( unscaledRatesFilename.c_str() ) );
 			std::unique_ptr<l1menu::MenuRatePlots> pRatePlots( new l1menu::MenuRatePlots( pRatePlotsRootFile.get() ) );
 
 			for( const auto& pScaling : scalingsToApply )
 			{
-				std::cout << "   " << pScaling->briefDescription() << std::endl;
+				std::cerr << "   " << pScaling->briefDescription() << std::endl;
 				// Replace the current menu with the newly scaled one, and repeat until all scaling has been done.
 				pRatePlots=pScaling->scale( *pRatePlots );
 			}
@@ -132,7 +132,7 @@ int main( int argc, char* argv[] )
 			pRatePlots->setDirectory( pOutputScaledRatePlotsFile.get() );
 			pRatePlots->relinquishOwnershipOfPlots();
 			pOutputScaledRatePlotsFile->Write();
-			std::cout << "Scaled rate plots written to file " << "scaledRatePlots.root" << std::endl;
+			std::cerr << "Scaled rate plots written to file " << "scaledRatePlots.root" << std::endl;
 		}
 
 
@@ -142,17 +142,17 @@ int main( int argc, char* argv[] )
 		{
 			try
 			{
-				std::cout << "Loading menu rates from file " << menuRateFilename << std::endl;
+				std::cerr << "Loading menu rates from file " << menuRateFilename << std::endl;
 				std::unique_ptr<l1menu::IL1MenuFile> pInputFile=l1menu::IL1MenuFile::getInputFile( l1menu::IL1MenuFile::FileFormat::XML, menuRateFilename );
 				std::vector< std::unique_ptr<l1menu::IMenuRate> > menuRates=pInputFile->getRates();
 
 
 				for( auto& pMenuRate : menuRates )
 				{
-					std::cout << "Scaling rate from file " << menuRateFilename << " with..." << std::endl;
+					std::cerr << "Scaling rate from file " << menuRateFilename << " with..." << std::endl;
 					for( const auto& pScaling : scalingsToApply )
 					{
-						std::cout << "   " << pScaling->briefDescription() << std::endl;
+						std::cerr << "   " << pScaling->briefDescription() << std::endl;
 						// Replace the current menu with the newly scaled one, and repeat until all scaling has been done.
 						pMenuRate=pScaling->scale( *pMenuRate );
 					}
