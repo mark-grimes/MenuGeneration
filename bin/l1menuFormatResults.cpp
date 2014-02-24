@@ -102,6 +102,13 @@ int main( int argc, char* argv[] )
 
 				std::string mainThresholdName=l1menu::tools::getThresholdNames( pTriggerRate->trigger() ).front();
 				pGraph->SetPoint( pGraph->GetN(), totalRate, pTriggerRate->trigger().parameter(mainThresholdName)  );
+				if( pTriggerRate->parameterErrorsAreAvailable(mainThresholdName) )
+				{
+					std::cout << "Setting " << pTriggerRate->trigger().name() << " errors on " << mainThresholdName<< " to +"
+							<< pTriggerRate->parameterErrorHigh(mainThresholdName) << " -" << pTriggerRate->parameterErrorLow(mainThresholdName) << std::endl;
+					pGraph->SetPointEYhigh( pGraph->GetN()-1, pTriggerRate->parameterErrorHigh(mainThresholdName) );
+					pGraph->SetPointEYlow( pGraph->GetN()-1, pTriggerRate->parameterErrorLow(mainThresholdName) );
+				}
 			}
 
 		}
