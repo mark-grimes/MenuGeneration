@@ -20,7 +20,7 @@ namespace l1menu
 	 * uniquely describe a specific trigger.
 	 *
 	 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
-	 * @date 14/Oct/2014
+	 * @date 14/Oct/2013
 	 */
 	class ITriggerDescription
 	{
