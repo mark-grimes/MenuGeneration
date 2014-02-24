@@ -174,7 +174,7 @@ int main( int argc, char* argv[] )
 			}
 			catch( std::exception& error )
 			{
-				std::cerr << "An exception occured while trying to fit for " << totalRate << "kHz: " << error.what() << "\n";
+				std::cerr << "An exception occurred while trying to fit for " << totalRate << "kHz: " << error.what() << "\n";
 				std::cout << "--------------------    Start of fit log    --------------------" << "\n"
 						<< pMenuFitter->debugLog() << "\n"
 						<< "--------------------     End of fit log     --------------------" << "\n";
