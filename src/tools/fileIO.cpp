@@ -436,30 +436,3 @@ l1menu::tools::XMLElement l1menu::tools::convertToXML( const l1menu::IMenuRate& 
 
 	return thisElement;
 }
-
-std::unique_ptr<l1menu::ITrigger> l1menu::tools::convertFromXML( const l1menu::tools::XMLElement& xmlDescription )
-{
-	if( xmlDescription.name()!="Trigger" ) throw std::runtime_error( "Cannot create trigger from XML because the element provided is not named 'Trigger'" );
-
-	std::vector<l1menu::tools::XMLElement> parameterElements=xmlDescription.getChildren("name");
-	if( parameterElements.size()!=1 ) throw std::runtime_error( "Cannot create trigger from XML because the element doesn't have one and only one subelement called 'name'" );
-	std::string triggerName=parameterElements.front().getValue();
-
-	parameterElements=xmlDescription.getChildren("version");
-	if( parameterElements.size()!=1 ) throw std::runtime_error( "Cannot create trigger from XML because the element doesn't have one and only one subelement called 'version'" );
-	size_t version=parameterElements.front().getIntValue();
-
-	std::unique_ptr<l1menu::ITrigger> pNewTrigger=l1menu::TriggerTable::instance().getTrigger( triggerName, version );
-	if( pNewTrigger==nullptr ) throw std::runtime_error( "Cannot create trigger from XML because the trigger \""+triggerName+"\" with version "+std::to_string(version)+" is not registered in the TriggerTable. Is your code up to date?" );
-
-	// Now loop over all of the parameters and set them
-	parameterElements=xmlDescription.getChildren("parameter");
-	for( const auto& parameterElement : parameterElements )
-	{
-		std::string parameterName=parameterElement.getAttribute("name");
-		float parameterValue=parameterElement.getFloatValue();
-		pNewTrigger->parameter(parameterName)=parameterValue;
-	}
-
-	return pNewTrigger;
-}

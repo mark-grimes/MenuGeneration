@@ -129,7 +129,7 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MCDataScaling::scale( const
 	// If this instance was constructed without the unscaled rate plots then I can't scale the
 	// IMenuRates, so I  have to throw an exception.
 	if( pImple->pUnscaledRatePlots_==nullptr ) throw std::runtime_error( "MCDataScaling was asked to scale an IMenuRate, but the" \
-			"unscaled IMenuRate was not provided in the constructor. You need to provided the unscaled IMenuRate." );
+			" unscaled IMenuRate was not provided in the constructor. You need to provided the unscaled IMenuRate." );
 
 	// Create a new MenuRateImplementation. I need to access the extra setters that aren't in IMenuRate so
 	// I'll keep hold of a raw pointer and operate on that.
@@ -185,6 +185,20 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MCDataScaling::scale( const
 		// as the unscaled threshold.
 		float scaledThreshold=scaledTriggerRatePlot.findThreshold( pUnscaledTriggerRate->rate() );
 
+		// I also need to find out what the error on this threshold is
+		std::map< std::string, std::pair<float,float> > thresholdErrors; // indexed on threshold name, pair.first is error low, second is error high
+		std::pair<float,float> primaryThresholdErrors;
+		try
+		{
+			primaryThresholdErrors=scaledTriggerRatePlot.findThresholdError( scaledThreshold );
+			thresholdErrors[scaledTriggerRatePlot.versusParameter()]=primaryThresholdErrors;
+		}
+		catch( std::runtime_error& exception )
+		{
+			/* Debugging why this wouldn't work */
+			std::cerr << "Exception when trying to get " << scaledTriggerRatePlot.versusParameter() << " errors at " << scaledThreshold <<std::endl;
+		}
+
 		// Get a copy of the trigger
 		std::unique_ptr<l1menu::ITrigger> pScaledTrigger=l1menu::TriggerTable::instance().copyTrigger( trigger );
 		// Then modify it's thresholds to match the scaling
@@ -192,6 +206,10 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MCDataScaling::scale( const
 		for( const auto& nameScalingPair : scaledTriggerRatePlot.otherScaledParameters() )
 		{
 			pScaledTrigger->parameter( nameScalingPair.first )=nameScalingPair.second*scaledThreshold;
+			if( !thresholdErrors.empty() )
+			{
+				thresholdErrors[nameScalingPair.first]=std::make_pair( nameScalingPair.second*primaryThresholdErrors.first, nameScalingPair.second*primaryThresholdErrors.second );
+			}
 		}
 
 		l1menu::implementation::TriggerRateImplementation scaledTriggerRate( *pScaledTrigger,
@@ -199,6 +217,12 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MCDataScaling::scale( const
 				pUnscaledTriggerRate->rate(), pUnscaledTriggerRate->rateError(),
 				pUnscaledTriggerRate->pureFraction(), pUnscaledTriggerRate->pureFractionError(),
 				pUnscaledTriggerRate->pureRate(), pUnscaledTriggerRate->pureRateError() );
+		// Now that I've created the TriggerRate object I can set the threshold errors that I've calculated
+		for( const auto& nameErrorsPair : thresholdErrors )
+		{
+			scaledTriggerRate.setParameterErrors( nameErrorsPair.first, nameErrorsPair.second.first, nameErrorsPair.second.second );
+		}
+		// And add it to the MenuRate
 		pMenuRate->addTriggerRate( std::move(scaledTriggerRate) );
 	}
 

@@ -109,6 +109,16 @@ namespace l1menu
 		 */
 		float findThreshold( float targetRate ) const;
 
+		/** @brief Returns the high and low error by looking at what other thresholds give the same rate with the rate error.
+		 *
+		 * The returned value is a std::pair of floats with "first" as the low error and "second" as the high error.
+		 * The low threshold error is found by finding the lowest threshold where the rate minus the rate error is still less
+		 * than the rate for the given threshold. The error returned is then the difference to this threshold.
+		 *
+		 * The high threshold error is the equivalent but higher.
+		 */
+		std::pair<float,float> findThresholdError( float threshold ) const;
+
 		/** @brief Returns the internal pointer to the root histogram. Ownership is retained by TriggerRatePlot. */
 		TH1* getPlot();
 		const TH1* getPlot() const;
