@@ -6,7 +6,7 @@ L1 trigger menu generation project
 To include in a CMSSW build (assuming you have initialised it for git somehow):
 
     cd $CMSSW_BASE/src
-    git submodule add git@github.com:kknb1056/MenuGeneration.git L1Trigger/MenuGeneration
+    git clone git@github.com:cms-l1trigger-menustudies/MenuGeneration.git L1Trigger/MenuGeneration
     
 This will put the package in L1Trigger/MenuGeneration. You will need to have git setup for github, follow the instructions from the cms-sw page if you haven't done so already.
 
@@ -29,7 +29,7 @@ There is some documentation in doc/menuGenerationDocumentation.doc which doxygen
     cmsenv
     # This next command gives an error for me but still seems to work
     git cms-addpkg Documentation/ReferenceManualScripts
-    git submodule add git@github.com:kknb1056/MenuGeneration.git L1Trigger/MenuGeneration
+    git clone git@github.com:cms-l1trigger-menustudies/MenuGeneration.git L1Trigger/MenuGeneration
     cvs co UserCode/L1TriggerDPG
     cvs co UserCode/L1TriggerUpgrade
     cvs co -d L1Trigger/UCT2015 UserCode/dasu/L1Trigger/UCT2015
