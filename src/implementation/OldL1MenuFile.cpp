@@ -6,6 +6,7 @@
 #include <iostream>
 #include "l1menu/TriggerMenu.h"
 #include "l1menu/ITriggerDescription.h"
+#include "l1menu/ITriggerDescriptionWithErrors.h"
 #include "l1menu/tools/miscellaneous.h"
 #include "./MenuRateImplementation.h"
 
@@ -133,6 +134,17 @@ void l1menu::implementation::OldL1MenuFile::add( const l1menu::IMenuRate& menuRa
 		(*pOutputStream_) << delimeter_ << std::setw(15) << pRate->rateError();
 		(*pOutputStream_) << delimeter_ << std::setw(11) << pRate->pureRate();
 		(*pOutputStream_) << delimeter_ << std::setw(11) << pRate->pureRateError();
+
+		// Print the threshold errors it they're available
+		for( size_t thresholdNumber=0; thresholdNumber<4; ++thresholdNumber )
+		{
+			if( thresholdNames.size()>thresholdNumber && trigger.parameterErrorsAreAvailable(thresholdNames[thresholdNumber]) )
+			{
+				(*pOutputStream_) << delimeter_ << std::setw(9) << trigger.parameterErrorLow(thresholdNames[thresholdNumber])
+						<< delimeter_ << std::setw(9) << trigger.parameterErrorHigh(thresholdNames[thresholdNumber]);
+			}
+			else (*pOutputStream_) << delimeter_ << std::setw(9) << " " << delimeter_ << std::setw(9) << " ";
+		}
 
 		totalNoOverlaps+=pRate->rate();
 		totalPure+=pRate->pureRate();

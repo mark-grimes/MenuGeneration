@@ -2,13 +2,14 @@
 #define l1menu_ITriggerRate_h
 
 #include <vector>
+#include <string>
 
 //
 // Forward declarations
 //
 namespace l1menu
 {
-	class ITriggerDescription;
+	class ITriggerDescriptionWithErrors;
 	namespace tools
 	{
 		class XMLElement;
@@ -27,11 +28,8 @@ namespace l1menu
 	public:
 		virtual ~ITriggerRate() {}
 
-		/** @brief The trigger that gives the rate, which can be queried for thresholds etcetera
-		 * N.B. This trigger is a copy of whatever was used to calculate the rate. Changing one will
-		 * have no affect on the other.
-		 */
-		virtual const l1menu::ITriggerDescription& trigger() const = 0;
+		/** @brief The trigger that gives the rate, which can be queried for thresholds etcetera */
+		virtual const l1menu::ITriggerDescriptionWithErrors& trigger() const = 0;
 
 		/** @brief The fraction of events that this trigger passed, so before applying any scaling. */
 		virtual float fraction() const = 0;

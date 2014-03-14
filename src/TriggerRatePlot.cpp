@@ -429,6 +429,43 @@ float l1menu::TriggerRatePlot::findThreshold( float targetRate ) const
 	}
 }
 
+std::pair<float,float> l1menu::TriggerRatePlot::findThresholdError( float threshold ) const
+{
+	int binNumber=pHistogram_->FindFixBin(threshold);
+	// If the bin is the under or overflow bin then there's not much I can do.
+	if( binNumber==0 || binNumber==pHistogram_->GetNbinsX()+1 )
+		throw std::runtime_error("TriggerRatePlot::findThresholdError was called with a threshold not on the histogram "\
+				"(threshold="+std::to_string(threshold)+" title="+pHistogram_->GetTitle()+")" );
+
+	float rate=pHistogram_->GetBinContent(binNumber);
+
+	int lowestMatchingBin=binNumber;
+	while( lowestMatchingBin>1 )
+	{
+		// The online documentation says TH1 has GetBinErrorLow but it's giving me
+		// compiler errors. Must be a different version of Root.
+		if( pHistogram_->GetBinContent(lowestMatchingBin-1)-pHistogram_->GetBinError(lowestMatchingBin-1)>rate ) break;
+		--lowestMatchingBin;
+	}
+	// Not sure what to do if I get the underflow bin. I'll just return
+	// the lower edge of the histogram for now - i.e. the lower edge of
+	// bin number one. The condition on the while loop makes sure I'll
+	// get bin number one if the break is never hit.
+
+	int highestMatchingBin=binNumber;
+	while( highestMatchingBin<pHistogram_->GetNbinsX()+1 )
+	{
+		// Same thing for GetBinErrorUp - gives me compilation errors
+		if( pHistogram_->GetBinContent(highestMatchingBin)+pHistogram_->GetBinError(highestMatchingBin)<rate ) break;
+		++highestMatchingBin;
+	}
+	// Again, don't know what to do if I get the overflow bin. I'll just
+	// return the high edge of the histogram, i.e. the low edge of the
+	// overflow bin. The condition of the while loop should make sure I
+	// get the overflow bin if the break is never hit.
+
+	return std::make_pair( threshold-pHistogram_->GetBinLowEdge(lowestMatchingBin), pHistogram_->GetBinLowEdge(highestMatchingBin)-threshold );
+}
 
 TH1* l1menu::TriggerRatePlot::getPlot()
 {

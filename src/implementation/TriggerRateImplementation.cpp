@@ -1,23 +1,27 @@
 #include "TriggerRateImplementation.h"
 
 #include <cmath>
+#include <stdexcept>
 #include "MenuRateImplementation.h"
 #include "l1menu/TriggerTable.h"
 #include "l1menu/ITrigger.h"
 #include "l1menu/tools/XMLElement.h"
 #include "l1menu/tools/fileIO.h"
 
-l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( const l1menu::ITrigger& trigger, float fraction, float fractionError, float rate, float rateError, float pureFraction, float pureFractionError, float pureRate, float pureRateError )
-	: fraction_(fraction), fractionError_(fractionError),
+l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( const l1menu::implementation::TriggerDescriptionWithErrorsFromXML& trigger, float fraction, float fractionError, float rate, float rateError, float pureFraction, float pureFractionError, float pureRate, float pureRateError )
+	: triggerDescription_(trigger),
+	  fraction_(fraction), fractionError_(fractionError),
 	  rate_(rate), rateError_(rateError),
 	  pureFraction_(pureFraction), pureFractionError_(pureFractionError),
 	  pureRate_(pureRate), pureRateError_(pureRateError)
 {
-	pTrigger_=std::move( l1menu::TriggerTable::instance().copyTrigger(trigger) );
+	// No operation besides the initialiser list
 }
 
 l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( TriggerRateImplementation&& otherTriggerRate ) noexcept
-	: pTrigger_( std::move(otherTriggerRate.pTrigger_) ),
+	: triggerDescription_( std::move(otherTriggerRate.triggerDescription_) ),
+	  parameterErrorsHigh_( std::move(otherTriggerRate.parameterErrorsHigh_) ),
+	  parameterErrorsLow_( std::move(otherTriggerRate.parameterErrorsLow_) ),
 	  fraction_(otherTriggerRate.fraction_),
 	  fractionError_(otherTriggerRate.fractionError_),
 	  rate_(otherTriggerRate.rate_),
@@ -32,7 +36,9 @@ l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( Tr
 
 l1menu::implementation::TriggerRateImplementation& l1menu::implementation::TriggerRateImplementation::operator=( TriggerRateImplementation&& otherTriggerRate ) noexcept
 {
-	pTrigger_=std::move( otherTriggerRate.pTrigger_ );
+	triggerDescription_=std::move( otherTriggerRate.triggerDescription_ );
+	parameterErrorsHigh_=std::move(otherTriggerRate.parameterErrorsHigh_);
+	parameterErrorsLow_=std::move(otherTriggerRate.parameterErrorsLow_);
 	fraction_=otherTriggerRate.fraction_;
 	fractionError_=otherTriggerRate.fractionError_;
 	rate_=otherTriggerRate.rate_;
@@ -49,9 +55,18 @@ l1menu::implementation::TriggerRateImplementation::~TriggerRateImplementation()
 	// No operation
 }
 
-const l1menu::ITriggerDescription& l1menu::implementation::TriggerRateImplementation::trigger() const
+void l1menu::implementation::TriggerRateImplementation::setParameterErrors( const std::string& parameterName, float errorLow, float errorHigh )
 {
-	return *pTrigger_;
+	// Get the parameter from the trigger just so that I can make sure the name is valid.
+	// This call will throw an exception if it's not.
+	triggerDescription_.parameter( parameterName );
+	parameterErrorsLow_[parameterName]=errorLow;
+	parameterErrorsHigh_[parameterName]=errorHigh;
+}
+
+const l1menu::ITriggerDescriptionWithErrors& l1menu::implementation::TriggerRateImplementation::trigger() const
+{
+	return triggerDescription_;
 }
 
 float l1menu::implementation::TriggerRateImplementation::fraction() const

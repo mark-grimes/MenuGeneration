@@ -7,6 +7,7 @@
 namespace l1menu
 {
 	class ISample;
+	class TriggerRatePlot;
 }
 
 /** @brief A cppunit TestFixture to test TriggerRatePlot objects.
@@ -18,6 +19,7 @@ class TriggerRatePlotUnitTestSuite : public CPPUNIT_NS::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TriggerRatePlotUnitTestSuite);
 	CPPUNIT_TEST(testConstructingFromTH1);
+	CPPUNIT_TEST(testFindThresholdError);
 	CPPUNIT_TEST_SUITE_END();
 
 protected:
@@ -26,12 +28,14 @@ protected:
 	std::unique_ptr<l1menu::TriggerMenu> pTriggerMenu_;
 	std::string inputSampleFilename_;
 	std::string inputMenuFilename_;
+	std::unique_ptr<l1menu::TriggerRatePlot> pTestTriggerRatePlot_;
 public:
 	TriggerRatePlotUnitTestSuite();
 	void setUp();
 
 protected:
 	void testConstructingFromTH1();
+	void testFindThresholdError();
 };
 
 
@@ -49,6 +53,8 @@ protected:
 #include "l1menu/tools/miscellaneous.h"
 #include "l1menu/tools/fileIO.h"
 #include "TestParameters.h"
+#include <TFile.h>
+#include <TH1.h>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TriggerRatePlotUnitTestSuite);
 
@@ -72,6 +78,31 @@ void TriggerRatePlotUnitTestSuite::setUp()
 	if( pVerboseOutput_!=nullptr ) *pVerboseOutput_ << "Loading menu from file " << inputMenuFilename_ << std::endl;
 	CPPUNIT_ASSERT_NO_THROW( pTriggerMenu_=l1menu::tools::loadMenu( inputMenuFilename_ ) );
 	CPPUNIT_ASSERT_MESSAGE( "TriggerMenu supplied needs at least one trigger for the tests", pTriggerMenu_->numberOfTriggers()>=1 );
+
+	//
+	// Create a trigger rate plot for testing
+	//
+	const l1menu::TriggerTable& triggerTable=l1menu::TriggerTable::instance();
+
+	l1menu::ITrigger& trigger=pTriggerMenu_->getTrigger(1);
+	std::vector<std::string> thresholdNames=l1menu::tools::getThresholdNames( trigger );
+	CPPUNIT_ASSERT( !thresholdNames.empty() );
+	std::string& mainThreshold=thresholdNames.front();
+
+	unsigned int numberOfBins=100;
+	float lowerEdge=0;
+	float upperEdge=100;
+	try
+	{
+		numberOfBins=triggerTable.getSuggestedNumberOfBins( trigger.name(), mainThreshold );
+		lowerEdge=triggerTable.getSuggestedLowerEdge( trigger.name(), mainThreshold );
+		upperEdge=triggerTable.getSuggestedUpperEdge( trigger.name(), mainThreshold );
+	}
+	catch( std::exception& error) { /* Do nothing. If no binning suggestions have been set for this trigger use the defaults I set above. */ }
+
+	pTestTriggerRatePlot_.reset( new l1menu::TriggerRatePlot( trigger, "testRatePlot", numberOfBins, lowerEdge, upperEdge, mainThreshold, thresholdNames ) );
+	if( pVerboseOutput_!=nullptr ) *pVerboseOutput_ << "Adding test sample to rate plot. This could take a while." << std::endl;
+	pTestTriggerRatePlot_->addSample( *pSample_ );
 }
 
 void TriggerRatePlotUnitTestSuite::testConstructingFromTH1()
@@ -146,4 +177,19 @@ void TriggerRatePlotUnitTestSuite::testConstructingFromTH1()
 			CPPUNIT_ASSERT_DOUBLES_EQUAL( expectedTrigger.parameter(parameterName), actualTrigger.parameter(parameterName), std::pow(10,-7) );
 		}
 	}
+}
+
+void TriggerRatePlotUnitTestSuite::testFindThresholdError()
+{
+	//
+	// Not much I can test here except that it runs. To test anything else I need
+	// to know what the answers should be. Maybe later I'll create a histogram
+	// with purely fake data so that I can determine the results.
+	//
+	std::pair<float,float> thresholdErrors;
+	CPPUNIT_ASSERT_NO_THROW( thresholdErrors=pTestTriggerRatePlot_->findThresholdError( 50 ) );
+	// Although I can make sure it throws an exception if you get
+	// the underflow and overflow bins.
+	CPPUNIT_ASSERT_THROW( thresholdErrors=pTestTriggerRatePlot_->findThresholdError( -1 ), std::runtime_error );
+	CPPUNIT_ASSERT_THROW( thresholdErrors=pTestTriggerRatePlot_->findThresholdError( 99999999 ), std::runtime_error );
 }

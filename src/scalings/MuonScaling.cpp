@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include "l1menu/TriggerTable.h"
 #include "l1menu/ITrigger.h"
+#include "l1menu/ITriggerDescriptionWithErrors.h"
 #include "l1menu/TriggerRatePlot.h"
 #include "l1menu/MenuRatePlots.h"
 #include "l1menu/IMenuRate.h"
@@ -150,7 +151,7 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MuonScaling::scale( const l
 
 	for( const auto& pUnscaledTriggerRate : unscaledMenuRate.triggerRates() )
 	{
-		const l1menu::ITriggerDescription& trigger=pUnscaledTriggerRate->trigger();
+		const l1menu::ITriggerDescriptionWithErrors& trigger=pUnscaledTriggerRate->trigger();
 
 		//
 		// First I'll get a copy of the trigger whether it's a muon trigger or not. If it is a muon
@@ -158,6 +159,20 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MuonScaling::scale( const l
 		// just leave it as it is.
 		//
 		std::unique_ptr<l1menu::ITrigger> pScaledTrigger=l1menu::TriggerTable::instance().copyTrigger( trigger );
+
+		//
+		// I'll take a copy of all the available parameter errors from the unscaled TriggerRate.
+		// Some of these might be overwritten in a minute if they're for muons. I'll later
+		// write these into the scaled TriggerRate
+		//
+		std::map< std::string, std::pair<float,float> > parameterErrors;
+		for( const auto& parameterName : trigger.parameterNames() )
+		{
+			if( trigger.parameterErrorsAreAvailable(parameterName) )
+			{
+				parameterErrors[parameterName]=std::make_pair( trigger.parameterErrorLow(parameterName), trigger.parameterErrorHigh(parameterName) );
+			}
+		}
 
 		// Brian's original comment: "Scaling for Muon System Upgrades  (Problem: Can't easily scale
 		// the EG_Mu trigger because x-axis is EG Et not muon Pt...need to fix)"
@@ -180,12 +195,18 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MuonScaling::scale( const l
 			// Now that I have the scaled plot, I can read off what threshold gives the same rate
 			// as the unscaled threshold.
 			float scaledThreshold=pScaledTriggerRatePlot->findThreshold( pUnscaledTriggerRate->rate() );
+			// Also add the threshold errors.
+			std::pair<float,float> primaryThresholdErrors=pScaledTriggerRatePlot->findThresholdError( scaledThreshold );
+			parameterErrors[pScaledTriggerRatePlot->versusParameter()]=primaryThresholdErrors;
+
 			// Then modify the thresholds on the trigger
 			pScaledTrigger->parameter( pScaledTriggerRatePlot->versusParameter() )=scaledThreshold;
 			for( const auto& nameScalingPair : pScaledTriggerRatePlot->otherScaledParameters() )
 			{
 				pScaledTrigger->parameter( nameScalingPair.first )=nameScalingPair.second*scaledThreshold;
+				parameterErrors[nameScalingPair.first]=std::make_pair( nameScalingPair.second*primaryThresholdErrors.first, nameScalingPair.second*primaryThresholdErrors.second );
 			}
+
 		}
 
 		// Now I can add the TriggerRate to the MenuRate. It it was a muon trigger the thresholds will have been
@@ -196,6 +217,11 @@ std::unique_ptr<l1menu::IMenuRate> l1menu::scalings::MuonScaling::scale( const l
 				pUnscaledTriggerRate->rate(), pUnscaledTriggerRate->rateError(),
 				pUnscaledTriggerRate->pureFraction(), pUnscaledTriggerRate->pureFractionError(),
 				pUnscaledTriggerRate->pureRate(), pUnscaledTriggerRate->pureRateError() );
+		// Now that I've created the TriggerRate object I can set the threshold errors that I've calculated
+		for( const auto& nameErrorsPair : parameterErrors )
+		{
+			scaledTriggerRate.setParameterErrors( nameErrorsPair.first, nameErrorsPair.second.first, nameErrorsPair.second.second );
+		}
 		pMenuRate->addTriggerRate( std::move(scaledTriggerRate) );
 
 	} // end of loop over unscaled TriggerRates

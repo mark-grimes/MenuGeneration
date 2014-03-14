@@ -161,3 +161,26 @@ l1menu::tools::XMLElement l1menu::implementation::XMLL1MenuFile::convertToXML( c
 
 	return thisElement;
 }
+
+l1menu::tools::XMLElement l1menu::implementation::XMLL1MenuFile::convertToXML( const l1menu::ITriggerDescriptionWithErrors& object, l1menu::tools::XMLElement& parent )
+{
+	// Use the method for the trigger description without errors for most of
+	// the hard work, then add the errors afterwards.
+	l1menu::tools::XMLElement thisElement=convertToXML( static_cast<const l1menu::ITriggerDescription&>(object), parent );
+
+	//
+	// Loop over all of the parameter elements just created, and if there
+	// are errors available add those as attributes.
+	//
+	for( auto& childElement : thisElement.getChildren("parameter") )
+	{
+		std::string parameterName=childElement.getAttribute("name");
+		if( object.parameterErrorsAreAvailable(parameterName) )
+		{
+			childElement.setAttribute( "errorHigh", object.parameterErrorHigh(parameterName) );
+			childElement.setAttribute( "errorLow", object.parameterErrorLow(parameterName) );
+		}
+	}
+
+	return thisElement;
+}

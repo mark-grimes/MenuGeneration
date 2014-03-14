@@ -13,6 +13,7 @@
 #include "l1menu/ISample.h"
 #include "l1menu/IEvent.h"
 #include "TriggerRateImplementation.h"
+#include "TriggerDescriptionWithErrorsFromXML.h"
 #include "l1menu/tools/XMLFile.h"
 #include "l1menu/tools/XMLElement.h"
 #include "l1menu/tools/fileIO.h"
@@ -122,7 +123,7 @@ l1menu::implementation::MenuRateImplementation::MenuRateImplementation( const l1
 	{
 		std::vector<l1menu::tools::XMLElement> triggerElements=triggerRateElement.getChildren("Trigger");
 		if( triggerElements.size()!=1 ) throw std::runtime_error( "Failed to create IMenuRate from XML because one of the TriggerRate elements did not have one and only one 'Trigger' child." );
-		std::unique_ptr<l1menu::ITrigger> pTrigger=l1menu::tools::convertFromXML( triggerElements.front() );
+		l1menu::implementation::TriggerDescriptionWithErrorsFromXML triggerDescription( triggerElements.front() );
 
 		triggerElements=triggerRateElement.getChildren("fraction");
 		if( triggerElements.size()!=1 ) throw std::runtime_error( "Failed to create IMenuRate from XML because one of the TriggerRate elements did not have one and only one 'fraction' child." );
@@ -156,7 +157,7 @@ l1menu::implementation::MenuRateImplementation::MenuRateImplementation( const l1
 		if( triggerElements.size()!=1 ) throw std::runtime_error( "Failed to create IMenuRate from XML because one of the TriggerRate elements did not have one and only one 'pureRateError' child." );
 		float pureRateError=triggerElements.front().getFloatValue();
 
-		triggerRates_.push_back( std::move(TriggerRateImplementation(*pTrigger,fraction,fractionError,rate,rateError,pureFraction,pureFractionError,pureRate,pureRateError) ) );
+		triggerRates_.push_back( std::move(TriggerRateImplementation(triggerDescription,fraction,fractionError,rate,rateError,pureFraction,pureFractionError,pureRate,pureRateError) ) );
 	}
 }
 
