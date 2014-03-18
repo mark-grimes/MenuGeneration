@@ -296,6 +296,7 @@ void l1menu::ReducedSample::addSample( const l1menu::FullSample& originalSample 
 
 	for( size_t eventNumber=0; eventNumber<originalSample.numberOfEvents(); ++eventNumber )
 	{
+		if(eventNumber%100==0)  std::cout<<"Event Number..." << eventNumber << "\r" << std::flush; 
 		// Split the events up into groups in arbitrary numbers. This is to get around
 		// a protobuf aversion to long messages.
 		if( pCurrentRun->event_size() >= pImple_->EVENTS_PER_RUN )
