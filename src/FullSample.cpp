@@ -356,7 +356,290 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 				analysisDataFormat.Nmu++;
 			}
 
+/*
+     Fill the infomation Associated with L1 Tracking
+*/     
+
+
+
+			// NOTES:  Stage 1 has EG Relaxed and EG Isolated.  The isolated EG are a subset of the Relaxed.
+			//         so sort through the relaxed list and flag those that also appear in the isolated list.
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkEG; i++ )
+			{
+
+				analysisDataFormat.BxTkel.push_back( 0 );
+				analysisDataFormat.zVtxTkel.push_back( 0. );
+				analysisDataFormat.tIsoTkel.push_back( 0. );
+				analysisDataFormat.EtTkel.push_back( inputNtuple.l1upgrade_->tkEGEt.at( i ) );
+				analysisDataFormat.PhiTkel.push_back( phiINjetCoord( inputNtuple.l1upgrade_->tkEGPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
+				analysisDataFormat.EtaTkel.push_back( etaINjetCoord( inputNtuple.l1upgrade_->tkEGEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
+
+				// Check whether this EG is located in the isolation list
+				bool isolated=false;
+				bool fnd=false;
+				unsigned int isoTkEG=0;
+				while( !fnd && isoTkEG < inputNtuple.l1upgrade_->nTkIsoEG )
+				{
+					if( inputNtuple.l1upgrade_->tkIsoEGPhi.at( isoTkEG )==inputNtuple.l1upgrade_->tkEGPhi.at( i )
+					 && inputNtuple.l1upgrade_->tkIsoEGEta.at( isoTkEG )==inputNtuple.l1upgrade_->tkEGEta.at( i ) )
+					{
+						isolated=true;
+						fnd=true;
+					}
+					isoTkEG++;
+				}
+
+				analysisDataFormat.IsoTkel.push_back( isolated );
+				analysisDataFormat.NTkele++;
+			}
+                        
+
+//  NOTE: Track Taus not yet implemented PLACEHOLDER
+/*
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkTau; i++ )
+			{
+
+				 analysisDataFormat.BxTktau.push_back( 0 );
+				 analysisDataFormat.zVtxTktau.push_back( 0. );
+				 analysisDataFormat.tIsoTktau.push_back( 0. );
+				 analysisDataFormat.EtTktau.push_back( inputNtuple.l1upgrade_->tkTauEt.at( i ) );
+				 analysisDataFormat.PhiTktau.push_back( phiINjetCoord( inputNtuple.l1upgrade_->tkTauPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
+				 analysisDataFormat.EtaTktau.push_back( etaINjetCoord( inputNtuple.l1upgrade_->tkTauEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
+
+				 bool isolated=false;
+				 bool fnd=false;
+				 unsigned int isoTkTau=0;
+				 while( !fnd && isoTkTau < inputNtuple.l1upgrade_->nTkIsoTau )
+				 {
+					 if( inputNtuple.l1upgrade_->tkIsoTauPhi.at( isoTkTau )==inputNtuple.l1upgrade_->tkTauPhi.at( i )
+					  && inputNtuple.l1upgrade_->tkIsoTauEta.at( isoTkTau )==inputNtuple.l1upgrade_->tkTauEta.at( i ) )
+					 {
+						 isolated=true;
+						 fnd=true;
+					 }
+					 isoTkTau++;
+				 }
+				 analysisDataFormat.IsoTktau.push_back( isolated );
+
+				 analysisDataFormat.NTktau++;
+			}
+
+*/
+
+			//  L1 Track Jets
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkJets; i++ )
+			{
+
+			       analysisDataFormat.BxTkjet.push_back( 0 );
+			       analysisDataFormat.EtTkjet.push_back( inputNtuple.l1upgrade_->tkJetEt.at( i ) );
+			       analysisDataFormat.PhiTkjet.push_back(  phiINjetCoord( inputNtuple.l1upgrade_->tkJetPhi.at( i ) ) );
+			       analysisDataFormat.EtaTkjet.push_back(  etaINjetCoord( inputNtuple.l1upgrade_->tkJetEta.at( i ) ) ); 
+			       analysisDataFormat.NTkjet++;
+
+			}
+
+
+			// Get the muon information  L1 Track Muons
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkMuons; i++ )
+			{
+
+				analysisDataFormat.BxTkmu.push_back( 0 );
+				analysisDataFormat.zVtxTkmu.push_back( 0. );
+				analysisDataFormat.tIsoTkmu.push_back( 0. );
+				analysisDataFormat.PtTkmu.push_back( inputNtuple.l1upgrade_->tkMuonEt.at( i ) );
+				analysisDataFormat.PhiTkmu.push_back( inputNtuple.l1upgrade_->tkMuonPhi.at( i ) );
+				analysisDataFormat.EtaTkmu.push_back( inputNtuple.l1upgrade_->tkMuonEta.at( i ) );
+				analysisDataFormat.QualTkmu.push_back( 4 );  // NEED TO FIX!
+				analysisDataFormat.IsoTkmu.push_back( false );
+				analysisDataFormat.NTkmu++;
+			}
+
+
+
+			// Fill energy sums  (Are overflow flags accessible in l1extra?)
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkMet; i++ )
+			{
+			      //for now only take the first version
+		              if(i==0) {
+				analysisDataFormat.TkETT    =inputNtuple.l1upgrade_->tkEt.at( i );
+				analysisDataFormat.TkETM    =inputNtuple.l1upgrade_->tkMet.at( i );
+				analysisDataFormat.TkETMPhi =inputNtuple.l1upgrade_->tkMetPhi.at( i );
+			      }
+			}
+
+
+
 		break;
+
+		case 23:  //Select from L1ExtraUpgradeTree (Stage 2)  NO Tracking Information
+
+			// NOTES:  Stage 1 has EG Relaxed and EG Isolated.  The isolated EG are a subset of the Relaxed.
+			//         so sort through the relaxed list and flag those that also appear in the isolated list.
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nEG; i++ )
+			{
+
+				analysisDataFormat.Bxel.push_back( inputNtuple.l1upgrade_->egBx.at( i ) );
+				analysisDataFormat.Etel.push_back( inputNtuple.l1upgrade_->egEt.at( i ) );
+				analysisDataFormat.Phiel.push_back( phiINjetCoord( inputNtuple.l1upgrade_->egPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
+				analysisDataFormat.Etael.push_back( etaINjetCoord( inputNtuple.l1upgrade_->egEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
+
+				// Check whether this EG is located in the isolation list
+				bool isolated=false;
+				bool fnd=false;
+				unsigned int isoEG=0;
+				while( !fnd && isoEG < inputNtuple.l1upgrade_->nIsoEG )
+				{
+					if( inputNtuple.l1upgrade_->isoEGPhi.at( isoEG )==inputNtuple.l1upgrade_->egPhi.at( i )
+							&& inputNtuple.l1upgrade_->isoEGEta.at( isoEG )==inputNtuple.l1upgrade_->egEta.at( i ) )
+					{
+						isolated=true;
+						fnd=true;
+					}
+					isoEG++;
+				}
+				analysisDataFormat.Isoel.push_back( isolated );
+				analysisDataFormat.Nele++;
+			}
+
+			// Note:  Taus are in the jet list.  Decide what to do with them. For now
+			//  leave them the there as jets (not even flagged..)
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nJets; i++ )
+			{
+
+				// For each jet look for a possible duplicate if so remove it.
+				bool duplicate=false;
+				for( unsigned int j=0; j<i; j++ )
+				{
+					if( inputNtuple.l1upgrade_->jetBx.at( i )==inputNtuple.l1upgrade_->jetBx.at( j )
+							&& inputNtuple.l1upgrade_->jetEt.at( i )==inputNtuple.l1upgrade_->jetEt.at( j )
+							&& inputNtuple.l1upgrade_->jetEta.at( i )==inputNtuple.l1upgrade_->jetEta.at( j )
+							&& inputNtuple.l1upgrade_->jetPhi.at( i )==inputNtuple.l1upgrade_->jetPhi.at( j ) )
+					{
+						duplicate=true;
+						//printf("Duplicate jet found and removed \n");
+					}
+				}
+
+				if( !duplicate )
+				{
+					analysisDataFormat.Bxjet.push_back( inputNtuple.l1upgrade_->jetBx.at( i ) );
+					analysisDataFormat.Etjet.push_back( inputNtuple.l1upgrade_->jetEt.at( i ) );
+					analysisDataFormat.Phijet.push_back( phiINjetCoord( inputNtuple.l1upgrade_->jetPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
+					analysisDataFormat.Etajet.push_back( etaINjetCoord( inputNtuple.l1upgrade_->jetEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
+					analysisDataFormat.Taujet.push_back( false );
+					analysisDataFormat.isoTaujet.push_back( false );
+					//analysisDataFormat.Fwdjet.push_back(false); //COMMENT OUT IF JET ETA FIX
+
+					//if(fabs(inputNtuple.l1upgrade_->jetEta.at(i))>=3.0) printf("Et %f  Eta  %f  iEta  %f Phi %f  iPhi  %f \n",analysisDataFormat.Etjet.at(analysisDataFormat.Njet),inputNtuple.l1upgrade_->jetEta.at(i),analysisDataFormat.Etajet.at(analysisDataFormat.Njet),inputNtuple.l1upgrade_->jetPhi.at(i),analysisDataFormat.Phijet.at(analysisDataFormat.Njet));
+					//  Eta Jet Fix.  Some Jets with eta>3 has appeared in central jet list.  Move them by hand
+					//  This is a problem in Stage 2 Jet code.
+					(fabs( inputNtuple.l1upgrade_->jetEta.at( i ) )>=3.0) ? analysisDataFormat.Fwdjet.push_back( true ) : analysisDataFormat.Fwdjet.push_back( false );
+
+					analysisDataFormat.Njet++;
+				}
+			}
+
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nFwdJets; i++ )
+			{
+
+				analysisDataFormat.Bxjet.push_back( inputNtuple.l1upgrade_->fwdJetBx.at( i ) );
+				analysisDataFormat.Etjet.push_back( inputNtuple.l1upgrade_->fwdJetEt.at( i ) );
+				analysisDataFormat.Phijet.push_back( phiINjetCoord( inputNtuple.l1upgrade_->fwdJetPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
+				analysisDataFormat.Etajet.push_back( etaINjetCoord( inputNtuple.l1upgrade_->fwdJetEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
+				analysisDataFormat.Taujet.push_back( false );
+				analysisDataFormat.isoTaujet.push_back( false );
+				analysisDataFormat.Fwdjet.push_back( true );
+
+				analysisDataFormat.Njet++;
+			}
+
+			// NOTES:  Stage 1 has Tau Relaxed and TauIsolated.  The isolated Tau are a subset of the Relaxed.
+			//         so sort through the relaxed list and flag those that also appear in the isolated list.
+
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTau; i++ )
+			{
+
+				// remove duplicates
+				bool duplicate=false;
+				for( unsigned int j=0; j<i; j++ )
+				{
+					if( inputNtuple.l1upgrade_->tauBx.at( i )==inputNtuple.l1upgrade_->tauBx.at( j )
+							&& inputNtuple.l1upgrade_->tauEt.at( i )==inputNtuple.l1upgrade_->tauEt.at( j )
+							&& inputNtuple.l1upgrade_->tauEta.at( i )==inputNtuple.l1upgrade_->tauEta.at( j )
+							&& inputNtuple.l1upgrade_->tauPhi.at( i )==inputNtuple.l1upgrade_->tauPhi.at( j ) )
+					{
+						duplicate=true;
+						//printf("Duplicate jet found and removed \n");
+					}
+				}
+
+				if( !duplicate )
+				{
+					analysisDataFormat.Bxjet.push_back( inputNtuple.l1upgrade_->tauBx.at( i ) );
+					analysisDataFormat.Etjet.push_back( inputNtuple.l1upgrade_->tauEt.at( i ) );
+					analysisDataFormat.Phijet.push_back( phiINjetCoord( inputNtuple.l1upgrade_->tauPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
+					analysisDataFormat.Etajet.push_back( etaINjetCoord( inputNtuple.l1upgrade_->tauEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
+					analysisDataFormat.Taujet.push_back( true );
+					analysisDataFormat.Fwdjet.push_back( false );
+
+					bool isolated=false;
+					bool fnd=false;
+					unsigned int isoTau=0;
+					while( !fnd && isoTau < inputNtuple.l1upgrade_->nIsoTau )
+					{
+						if( inputNtuple.l1upgrade_->isoTauPhi.at( isoTau )==inputNtuple.l1upgrade_->tauPhi.at( i )
+								&& inputNtuple.l1upgrade_->isoTauEta.at( isoTau )==inputNtuple.l1upgrade_->tauEta.at( i ) )
+						{
+							isolated=true;
+							fnd=true;
+						}
+						isoTau++;
+					}
+					analysisDataFormat.isoTaujet.push_back( isolated );
+
+					analysisDataFormat.Njet++;
+				} // duplicate check
+			}
+
+			// Fill energy sums  (Are overflow flags accessible in l1extra?)
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nMet; i++ )
+			{
+				//if(inputNtuple.l1upgrade_->metBx.at(i)==0) {
+				analysisDataFormat.ETT=inputNtuple.l1upgrade_->et.at( i );
+				analysisDataFormat.ETM=inputNtuple.l1upgrade_->met.at( i );
+				analysisDataFormat.PhiETM=inputNtuple.l1upgrade_->metPhi.at( i );
+			}
+			analysisDataFormat.OvETT=0; //not available in l1extra
+			analysisDataFormat.OvETM=0; //not available in l1extra
+
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nMht; i++ )
+			{
+				if( inputNtuple.l1upgrade_->mhtBx.at( i )==0 )
+				{
+					analysisDataFormat.HTT=calculateHTT( analysisDataFormat ); //inputNtuple.l1upgrade_->ht.at(i) ;
+					analysisDataFormat.HTM=calculateHTM( analysisDataFormat ); //inputNtuple.l1upgrade_->mht.at(i) ;
+					analysisDataFormat.PhiHTM=0.; //inputNtuple.l1upgrade_->mhtPhi.at(i) ;
+				}
+			}
+			analysisDataFormat.OvHTM=0; //not available in l1extra
+			analysisDataFormat.OvHTT=0; //not available in l1extra
+
+			// Get the muon information  from reEmul GMT
+			for( int i=0; i<inputNtuple.gmtEmu_->N; i++ )
+			{
+
+				analysisDataFormat.Bxmu.push_back( inputNtuple.gmtEmu_->CandBx[i] );
+				analysisDataFormat.Ptmu.push_back( inputNtuple.gmtEmu_->Pt[i] );
+				analysisDataFormat.Phimu.push_back( inputNtuple.gmtEmu_->Phi[i] );
+				analysisDataFormat.Etamu.push_back( inputNtuple.gmtEmu_->Eta[i] );
+				analysisDataFormat.Qualmu.push_back( inputNtuple.gmtEmu_->Qual[i] );
+				analysisDataFormat.Isomu.push_back( false );
+				analysisDataFormat.Nmu++;
+			}
+
+
+		break;
+
 
 		default:
 			throw std::runtime_error( "---Not a valid input source FULL STOP! " );
