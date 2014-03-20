@@ -367,9 +367,9 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkEG; i++ )
 			{
 
-				analysisDataFormat.BxTkel.push_back( 0 );
-				analysisDataFormat.zVtxTkel.push_back( 0. );
-				analysisDataFormat.tIsoTkel.push_back( 0. );
+				analysisDataFormat.BxTkel.push_back( inputNtuple.l1upgrade_->tkEGBx.at(i) );    
+				analysisDataFormat.zVtxTkel.push_back( 0. ); //inputNtuple.l1upgrade_->tkEGzVtx.at(i));
+				analysisDataFormat.tIsoTkel.push_back( inputNtuple.l1upgrade_->tkEGIso.at(i) );   //track isolation 
 				analysisDataFormat.EtTkel.push_back( inputNtuple.l1upgrade_->tkEGEt.at( i ) );
 				analysisDataFormat.PhiTkel.push_back( phiINjetCoord( inputNtuple.l1upgrade_->tkEGPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
 				analysisDataFormat.EtaTkel.push_back( etaINjetCoord( inputNtuple.l1upgrade_->tkEGEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
@@ -395,19 +395,18 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
                         
 
 //  NOTE: Track Taus not yet implemented PLACEHOLDER
-/*
 			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkTau; i++ )
 			{
 
-				 analysisDataFormat.BxTktau.push_back( 0 );
-				 analysisDataFormat.zVtxTktau.push_back( 0. );
-				 analysisDataFormat.tIsoTktau.push_back( 0. );
+				 analysisDataFormat.BxTktau.push_back( inputNtuple.l1upgrade_->tkTauBx.at(i) );    //inputNtuple.l1upgrade_->tkTauBx.at(i));
+				 analysisDataFormat.zVtxTktau.push_back( 0. ); //inputNtuple.l1upgrade_->tkTauzVtx.at(i));  ???
+				 analysisDataFormat.tIsoTktau.push_back( 0. ); //inputNtuple.l1upgrade_->tkTauIso.at(i));   ???
 				 analysisDataFormat.EtTktau.push_back( inputNtuple.l1upgrade_->tkTauEt.at( i ) );
 				 analysisDataFormat.PhiTktau.push_back( phiINjetCoord( inputNtuple.l1upgrade_->tkTauPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
 				 analysisDataFormat.EtaTktau.push_back( etaINjetCoord( inputNtuple.l1upgrade_->tkTauEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
 
 				 bool isolated=false;
-				 bool fnd=false;
+/*				 bool fnd=false;
 				 unsigned int isoTkTau=0;
 				 while( !fnd && isoTkTau < inputNtuple.l1upgrade_->nTkIsoTau )
 				 {
@@ -419,18 +418,19 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 					 }
 					 isoTkTau++;
 				 }
+*/
 				 analysisDataFormat.IsoTktau.push_back( isolated );
 
 				 analysisDataFormat.NTktau++;
 			}
 
-*/
+
 
 			//  L1 Track Jets
 			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkJets; i++ )
 			{
 
-			       analysisDataFormat.BxTkjet.push_back( 0 );
+			       analysisDataFormat.BxTkjet.push_back( inputNtuple.l1upgrade_->tkJetBx.at(i) ); 
 			       analysisDataFormat.EtTkjet.push_back( inputNtuple.l1upgrade_->tkJetEt.at( i ) );
 			       analysisDataFormat.PhiTkjet.push_back(  phiINjetCoord( inputNtuple.l1upgrade_->tkJetPhi.at( i ) ) );
 			       analysisDataFormat.EtaTkjet.push_back(  etaINjetCoord( inputNtuple.l1upgrade_->tkJetEta.at( i ) ) ); 
@@ -443,14 +443,14 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkMuons; i++ )
 			{
 
-				analysisDataFormat.BxTkmu.push_back( 0 );
-				analysisDataFormat.zVtxTkmu.push_back( 0. );
-				analysisDataFormat.tIsoTkmu.push_back( 0. );
+				analysisDataFormat.BxTkmu.push_back( inputNtuple.l1upgrade_->tkMuonBx.at(i) );   
+				analysisDataFormat.zVtxTkmu.push_back( 0. ); //inputNtuple.l1upgrade_->tkMuonzVtx.at(i));
+				analysisDataFormat.tIsoTkmu.push_back( 0. );  // Need variable for track isolation 
 				analysisDataFormat.PtTkmu.push_back( inputNtuple.l1upgrade_->tkMuonEt.at( i ) );
 				analysisDataFormat.PhiTkmu.push_back( inputNtuple.l1upgrade_->tkMuonPhi.at( i ) );
 				analysisDataFormat.EtaTkmu.push_back( inputNtuple.l1upgrade_->tkMuonEta.at( i ) );
-				analysisDataFormat.QualTkmu.push_back( 4 );  // NEED TO FIX!
-				analysisDataFormat.IsoTkmu.push_back( false );
+				analysisDataFormat.QualTkmu.push_back( 4 );   //inputNtuple.l1upgrade_->tkMuonQuality.at(i));
+				analysisDataFormat.IsoTkmu.push_back( false ); //inputNtuple.l1upgrade_->tkMuonIso.at(i));
 				analysisDataFormat.NTkmu++;
 			}
 
@@ -464,6 +464,17 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 				analysisDataFormat.TkETT    =inputNtuple.l1upgrade_->tkEt.at( i );
 				analysisDataFormat.TkETM    =inputNtuple.l1upgrade_->tkMet.at( i );
 				analysisDataFormat.TkETMPhi =inputNtuple.l1upgrade_->tkMetPhi.at( i );
+			      }
+			}
+
+			// Fill energy sums  (Are overflow flags accessible in l1extra?)
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkMht; i++ )
+			{
+			      //for now only take the first version
+		              if(i==0) {
+				analysisDataFormat.TkHTT    =inputNtuple.l1upgrade_->tkHt.at( i );
+				analysisDataFormat.TkHTM    =inputNtuple.l1upgrade_->tkMht.at( i );
+				analysisDataFormat.TkHTMPhi =inputNtuple.l1upgrade_->tkMhtPhi.at( i );
 			      }
 			}
 
