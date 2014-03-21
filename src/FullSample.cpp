@@ -368,8 +368,8 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 			{
 
 				analysisDataFormat.BxTkel.push_back( inputNtuple.l1upgrade_->tkEGBx.at(i) );    
-				analysisDataFormat.zVtxTkel.push_back( 0. ); //inputNtuple.l1upgrade_->tkEGzVtx.at(i));
-				analysisDataFormat.tIsoTkel.push_back( inputNtuple.l1upgrade_->tkEGIso.at(i) );   //track isolation 
+				analysisDataFormat.zVtxTkel.push_back( inputNtuple.l1upgrade_->tkEGzVtx.at(i) ); 
+				analysisDataFormat.tIsoTkel.push_back( inputNtuple.l1upgrade_->tkEGTrkIso.at(i) );   //track isolation 
 				analysisDataFormat.EtTkel.push_back( inputNtuple.l1upgrade_->tkEGEt.at( i ) );
 				analysisDataFormat.PhiTkel.push_back( phiINjetCoord( inputNtuple.l1upgrade_->tkEGPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
 				analysisDataFormat.EtaTkel.push_back( etaINjetCoord( inputNtuple.l1upgrade_->tkEGEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
@@ -398,9 +398,9 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkTau; i++ )
 			{
 
-				 analysisDataFormat.BxTktau.push_back( inputNtuple.l1upgrade_->tkTauBx.at(i) );    //inputNtuple.l1upgrade_->tkTauBx.at(i));
-				 analysisDataFormat.zVtxTktau.push_back( 0. ); //inputNtuple.l1upgrade_->tkTauzVtx.at(i));  ???
-				 analysisDataFormat.tIsoTktau.push_back( 0. ); //inputNtuple.l1upgrade_->tkTauIso.at(i));   ???
+				 analysisDataFormat.BxTktau.push_back( inputNtuple.l1upgrade_->tkTauBx.at(i) );    
+				 analysisDataFormat.zVtxTktau.push_back( inputNtuple.l1upgrade_->tkTauzVtx.at(i) ); 
+				 analysisDataFormat.tIsoTktau.push_back( inputNtuple.l1upgrade_->tkTauTrkIso.at(i) ); 
 				 analysisDataFormat.EtTktau.push_back( inputNtuple.l1upgrade_->tkTauEt.at( i ) );
 				 analysisDataFormat.PhiTktau.push_back( phiINjetCoord( inputNtuple.l1upgrade_->tkTauPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
 				 analysisDataFormat.EtaTktau.push_back( etaINjetCoord( inputNtuple.l1upgrade_->tkTauEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
@@ -432,6 +432,7 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 
 			       analysisDataFormat.BxTkjet.push_back( inputNtuple.l1upgrade_->tkJetBx.at(i) ); 
 			       analysisDataFormat.EtTkjet.push_back( inputNtuple.l1upgrade_->tkJetEt.at( i ) );
+			       analysisDataFormat.zVtxTkjet.push_back( inputNtuple.l1upgrade_->tkJetzVtx.at( i ) );
 			       analysisDataFormat.PhiTkjet.push_back(  phiINjetCoord( inputNtuple.l1upgrade_->tkJetPhi.at( i ) ) );
 			       analysisDataFormat.EtaTkjet.push_back(  etaINjetCoord( inputNtuple.l1upgrade_->tkJetEta.at( i ) ) ); 
 			       analysisDataFormat.NTkjet++;
@@ -444,13 +445,13 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 			{
 
 				analysisDataFormat.BxTkmu.push_back( inputNtuple.l1upgrade_->tkMuonBx.at(i) );   
-				analysisDataFormat.zVtxTkmu.push_back( 0. ); //inputNtuple.l1upgrade_->tkMuonzVtx.at(i));
-				analysisDataFormat.tIsoTkmu.push_back( 0. );  // Need variable for track isolation 
+				analysisDataFormat.zVtxTkmu.push_back( inputNtuple.l1upgrade_->tkMuonzVtx.at(i) ); 
+				analysisDataFormat.tIsoTkmu.push_back( inputNtuple.l1upgrade_->tkMuonTrkIso.at(i) );  
 				analysisDataFormat.PtTkmu.push_back( inputNtuple.l1upgrade_->tkMuonEt.at( i ) );
 				analysisDataFormat.PhiTkmu.push_back( inputNtuple.l1upgrade_->tkMuonPhi.at( i ) );
 				analysisDataFormat.EtaTkmu.push_back( inputNtuple.l1upgrade_->tkMuonEta.at( i ) );
-				analysisDataFormat.QualTkmu.push_back( 4 );   //inputNtuple.l1upgrade_->tkMuonQuality.at(i));
-				analysisDataFormat.IsoTkmu.push_back( false ); //inputNtuple.l1upgrade_->tkMuonIso.at(i));
+				analysisDataFormat.QualTkmu.push_back( 3 );   //inputNtuple.l1upgrade_->tkMuonQuality.at(i));
+				analysisDataFormat.IsoTkmu.push_back( false ); //inputNtuple.l1upgrade_->tkMuonIso.at(i));  //Calo Isolation
 				analysisDataFormat.NTkmu++;
 			}
 
