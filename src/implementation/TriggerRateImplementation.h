@@ -58,8 +58,6 @@ namespace l1menu
 
 		protected:
 			l1menu::implementation::TriggerDescriptionWithErrorsFromXML triggerDescription_;
-			std::map<std::string,float> parameterErrorsHigh_;
-			std::map<std::string,float> parameterErrorsLow_;
 			float fraction_;
 			float fractionError_;
 			float rate_;

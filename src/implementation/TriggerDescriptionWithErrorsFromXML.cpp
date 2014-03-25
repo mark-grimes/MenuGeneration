@@ -110,3 +110,12 @@ const float& l1menu::implementation::TriggerDescriptionWithErrorsFromXML::parame
 	if( iFindResult==parameterErrorsHigh_.end() ) throw std::runtime_error( "No error set for parameter "+parameterName);
 	else return iFindResult->second;
 }
+
+void l1menu::implementation::TriggerDescriptionWithErrorsFromXML::setParameterErrors( const std::string& parameterName, float errorLow, float errorHigh )
+{
+	const auto& iFindResult=parameters_.find( parameterName );
+	if( iFindResult==parameters_.end() ) throw std::runtime_error( "No parameter named "+parameterName);
+
+	parameterErrorsLow_[parameterName]=errorLow;
+	parameterErrorsHigh_[parameterName]=errorHigh;
+}
