@@ -20,7 +20,7 @@
 #include <cppunit/TestResult.h>
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
-#include "TestParameters.h"
+#include "unitTestSuites/TestParameters.h"
 #include "l1menu/tools/CommandLineParser.h"
 
 
