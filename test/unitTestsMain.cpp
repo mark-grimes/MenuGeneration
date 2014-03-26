@@ -169,10 +169,11 @@ bool handleCommandLine( int argc, char* argv[] )
 	else
 	{
 		std::string filename="";
-		char* pEnvironmentVariable=std::getenv("HOME");
+		char* pEnvironmentVariable=std::getenv("CMSSW_BASE");
 		if( pEnvironmentVariable!=nullptr ) filename=pEnvironmentVariable+std::string("/");
-		filename+="MenuGenerationFiles/Fallback_NeutrinoGun_PU100.proto";
-		std::cerr << "Input sample filename not specified on the command line, so using the default of " << filename << std::endl;
+		filename+="src/L1Trigger/MenuGeneration/test/unitTestData/Fallback_NeutrinoGun_PU140-v22.proto";
+		std::cerr << "Input sample filename not specified on the command line, so using the default of:" << "\n"
+				<< "   " << filename << std::endl;
 		MutableTestParameters<std::string>::setParameter( "TEST_SAMPLE_FILENAME", filename );
 	}
 
@@ -182,8 +183,9 @@ bool handleCommandLine( int argc, char* argv[] )
 		std::string filename="";
 		char* pEnvironmentVariable=std::getenv("CMSSW_BASE");
 		if( pEnvironmentVariable!=nullptr ) filename=pEnvironmentVariable+std::string("/");
-		filename+="src/UserCode/L1TriggerUpgrade/marksStuff/L1Menu_v17m20_std.txt";
-		std::cerr << "Input menu filename not specified on the command line, so using the default of " << filename << std::endl;
+		filename+="src/L1Trigger/MenuGeneration/test/unitTestData/L1Menu_v22m20_std.txt";
+		std::cerr << "Input menu filename not specified on the command line, so using the default of:" << "\n"
+				<< "   " << filename << std::endl;
 		MutableTestParameters<std::string>::setParameter( "TEST_MENU_FILENAME", filename );
 	}
 
