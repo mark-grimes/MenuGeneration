@@ -52,7 +52,10 @@ void printUsage( const std::string& executableName, std::ostream& output=std::co
 			<< "\t" << "\t" << "prints this help message" << "\n"
 			<< "\n"
 			<< "\t" << executableName << " --list" << "\n"
-			<< "\t" << "\t" << "prints a list of all the available unit tests"
+			<< "\t" << "\t" << "prints a list of all the available unit tests" << "\n"
+			<< "\n"
+			<< "\t" << executableName << " --test <test name 1> [--test <test name 2>  ...]" << "\n"
+			<< "\t" << "\t" << "runs only the specified unit tests. Valid names can be found with the \"--list\" option."
 			<< "\n"
 			<< std::endl;
 }
