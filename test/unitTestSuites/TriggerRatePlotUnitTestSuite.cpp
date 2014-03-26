@@ -191,7 +191,6 @@ void TriggerRatePlotUnitTestSuite::testLowThresholdPlateau()
 		// less than that. The plot should return zero. There have been some
 		// cases where it returns minus infinity.
 		const float maximumRate=triggerRatePlot.getPlot()->GetBinContent(1);
-		std::cout << "Testing trigger " << triggerRatePlot.getTrigger().name() << std::endl;
 		CPPUNIT_ASSERT_EQUAL_MESSAGE( std::string("Plot that fails has the title ")+triggerRatePlot.getPlot()->GetTitle(), 0.0f, triggerRatePlot.findThreshold( maximumRate*2 ) );
 	}
 }
