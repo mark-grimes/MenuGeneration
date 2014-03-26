@@ -20,8 +20,6 @@ l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( co
 
 l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( TriggerRateImplementation&& otherTriggerRate ) noexcept
 	: triggerDescription_( std::move(otherTriggerRate.triggerDescription_) ),
-	  parameterErrorsHigh_( std::move(otherTriggerRate.parameterErrorsHigh_) ),
-	  parameterErrorsLow_( std::move(otherTriggerRate.parameterErrorsLow_) ),
 	  fraction_(otherTriggerRate.fraction_),
 	  fractionError_(otherTriggerRate.fractionError_),
 	  rate_(otherTriggerRate.rate_),
@@ -37,8 +35,6 @@ l1menu::implementation::TriggerRateImplementation::TriggerRateImplementation( Tr
 l1menu::implementation::TriggerRateImplementation& l1menu::implementation::TriggerRateImplementation::operator=( TriggerRateImplementation&& otherTriggerRate ) noexcept
 {
 	triggerDescription_=std::move( otherTriggerRate.triggerDescription_ );
-	parameterErrorsHigh_=std::move(otherTriggerRate.parameterErrorsHigh_);
-	parameterErrorsLow_=std::move(otherTriggerRate.parameterErrorsLow_);
 	fraction_=otherTriggerRate.fraction_;
 	fractionError_=otherTriggerRate.fractionError_;
 	rate_=otherTriggerRate.rate_;
@@ -57,11 +53,7 @@ l1menu::implementation::TriggerRateImplementation::~TriggerRateImplementation()
 
 void l1menu::implementation::TriggerRateImplementation::setParameterErrors( const std::string& parameterName, float errorLow, float errorHigh )
 {
-	// Get the parameter from the trigger just so that I can make sure the name is valid.
-	// This call will throw an exception if it's not.
-	triggerDescription_.parameter( parameterName );
-	parameterErrorsLow_[parameterName]=errorLow;
-	parameterErrorsHigh_[parameterName]=errorHigh;
+	triggerDescription_.setParameterErrors( parameterName, errorLow, errorHigh );
 }
 
 const l1menu::ITriggerDescriptionWithErrors& l1menu::implementation::TriggerRateImplementation::trigger() const

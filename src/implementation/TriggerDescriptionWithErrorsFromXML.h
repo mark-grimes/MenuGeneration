@@ -46,6 +46,11 @@ namespace l1menu
 			virtual bool parameterErrorsAreAvailable( const std::string& parameterName ) const;
 			virtual const float& parameterErrorLow( const std::string& parameterName ) const;
 			virtual const float& parameterErrorHigh( const std::string& parameterName ) const;
+
+			//
+			// Extra methods for this implementation
+			//
+			void setParameterErrors( const std::string& parameterName, float errorLow, float errorHigh );
 		protected:
 			std::string name_;
 			unsigned int version_;
