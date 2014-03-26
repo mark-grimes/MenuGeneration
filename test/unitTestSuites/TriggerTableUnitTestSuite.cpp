@@ -11,7 +11,7 @@ class TriggerTableUnitTestSuite : public CPPUNIT_NS::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TriggerTableUnitTestSuite);
 	CPPUNIT_TEST(testGettingAndSettingAllTriggerParameters);
-	CPPUNIT_TEST(dumpTriggerTable);
+	//CPPUNIT_TEST(dumpTriggerTable); // Commented this out because it's pointless and messy
 	CPPUNIT_TEST_SUITE_END();
 
 protected:
