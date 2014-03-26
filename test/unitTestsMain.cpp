@@ -137,12 +137,6 @@ bool handleCommandLine( int argc, char* argv[] )
 
 	if( commandLineParser.optionHasBeenSet( "list" ) )
 	{
-		// Note that there is a call to TestFactoryRegistry::getRegistry().makeTest() in printAvailableTests()
-		// that constructs the tests, and the constructors need some parameters set in the TestParameters singleton.
-		// I don't care what the value of these are, just that they're set. I'm about to return false which will
-		// make the program quit, so the values are never used.
-		MutableTestParameters<std::string>::setParameter( "TEST_SAMPLE_FILENAME", "blah blah blah" );
-		MutableTestParameters<std::string>::setParameter( "TEST_MENU_FILENAME", "blah blah blah" );
 		printAvailableTests();
 		return false;
 	}
@@ -187,6 +181,21 @@ bool handleCommandLine( int argc, char* argv[] )
 		std::cerr << "Input menu filename not specified on the command line, so using the default of:" << "\n"
 				<< "   " << filename << std::endl;
 		MutableTestParameters<std::string>::setParameter( "TEST_MENU_FILENAME", filename );
+	}
+
+	if( commandLineParser.nonOptionArguments().size()>2 ) MutableTestParameters<std::string>::setParameter( "TEST_RATEPLOT_FILENAME", commandLineParser.nonOptionArguments()[2] );
+	else
+	{
+		std::string filename="";
+		char* pEnvironmentVariable=std::getenv("CMSSW_BASE");
+		if( pEnvironmentVariable!=nullptr ) filename=pEnvironmentVariable+std::string("/");
+		filename+="src/L1Trigger/MenuGeneration/test/unitTestData/output_rates_PU140_v23_trk.root";
+		std::cerr << "Input rate plot filename not specified on the command line, so using the default of:" << "\n"
+				<< "   " << filename << std::endl;
+		MutableTestParameters<std::string>::setParameter( "TEST_RATEPLOT_FILENAME", filename );
+
+		// Add a newline to separate the test results
+		std::cout << std::endl;
 	}
 
 	return true;
