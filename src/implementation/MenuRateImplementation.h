@@ -14,6 +14,7 @@ namespace l1menu
 	class ITriggerRate;
 	class TriggerMenu;
 	class ISample;
+	class MenuRatePlots;
 	namespace tools
 	{
 		class XMLElement;
@@ -35,6 +36,7 @@ namespace l1menu
 		public:
 			MenuRateImplementation();
 			MenuRateImplementation( const l1menu::TriggerMenu& menu, const l1menu::ISample& sample );
+			MenuRateImplementation( const l1menu::TriggerMenu& menu, const l1menu::ISample& sample, const l1menu::MenuRatePlots& menuRatePlots );
 			MenuRateImplementation( const l1menu::tools::XMLElement& xmlDescription );
 
 			// Methods to allow modification of the underlying data
@@ -57,6 +59,7 @@ namespace l1menu
 			float totalRateError_;
 			std::vector<TriggerRateImplementation> triggerRates_;
 		private:
+			void commonConstruction( const l1menu::TriggerMenu& menu, const l1menu::ISample& sample );
 			mutable std::vector<const l1menu::ITriggerRate*> baseClassPointers_; ///< Vector to return for calls to triggerRates()
 		};
 

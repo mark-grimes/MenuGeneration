@@ -138,7 +138,7 @@ std::shared_ptr<const l1menu::IMenuRate> l1menu::MenuFitter::fit( float totalRat
 	}
 
 	// Then work out what the total rate is
-	std::shared_ptr<const l1menu::IMenuRate> pMenuRate=pImple_->sample.rate( pImple_->menu );
+	std::shared_ptr<const l1menu::IMenuRate> pMenuRate=pImple_->sample.rate( pImple_->menu, menuRatePlots() );
 	l1menu::tools::dumpTriggerRates( pImple_->debugLog, *pMenuRate );
 
 	size_t iterationNumber=0;
@@ -170,7 +170,7 @@ std::shared_ptr<const l1menu::IMenuRate> l1menu::MenuFitter::fit( float totalRat
 
 		} // end of loop over triggers I'm allowed to change thresholds for
 
-		pMenuRate=pImple_->sample.rate( pImple_->menu );
+		pMenuRate=pImple_->sample.rate( pImple_->menu, menuRatePlots() );
 		l1menu::tools::dumpTriggerRates( pImple_->debugLog, *pMenuRate );
 	}
 
@@ -238,6 +238,13 @@ void l1menu::MenuFitter::loadMenuFromFile( const std::string& filename )
 		{
 			std::cout << "Some error occured while processing the line \"" << buffer << "\":" << exception.what() << std::endl;
 		}
+	}
+
+	// I want menu rate plots if they've not already been supplied
+	if( pImple_->pMenuRatePlots==nullptr )
+	{
+		pImple_->pMenuRatePlots.reset( new MenuRatePlots(pImple_->menu) );
+		pImple_->pMenuRatePlots->addSample(pImple_->sample);
 	}
 
 	// Now I've processed all the lines I should know the total requested rate and I can

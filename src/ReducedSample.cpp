@@ -535,3 +535,9 @@ std::shared_ptr<const l1menu::IMenuRate> l1menu::ReducedSample::rate( const l1me
 	// TODO make sure the TriggerMenu is valid for this sample
 	return std::shared_ptr<const l1menu::IMenuRate>( new l1menu::implementation::MenuRateImplementation( menu, *this ) );
 }
+
+std::shared_ptr<const l1menu::IMenuRate> l1menu::ReducedSample::rate( const l1menu::TriggerMenu& menu, const l1menu::MenuRatePlots& ratePlots ) const
+{
+	// TODO make sure the TriggerMenu is valid for this sample
+	return std::shared_ptr<const l1menu::IMenuRate>( new l1menu::implementation::MenuRateImplementation( menu, *this, ratePlots ) );
+}

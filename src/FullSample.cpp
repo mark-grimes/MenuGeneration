@@ -799,3 +799,8 @@ std::shared_ptr<const l1menu::IMenuRate> l1menu::FullSample::rate( const l1menu:
 {
 	return std::shared_ptr<const l1menu::IMenuRate>( new l1menu::implementation::MenuRateImplementation( menu, *this ) );
 }
+
+std::shared_ptr<const l1menu::IMenuRate> l1menu::FullSample::rate( const l1menu::TriggerMenu& menu, const l1menu::MenuRatePlots& ratePlots ) const
+{
+	return std::shared_ptr<const l1menu::IMenuRate>( new l1menu::implementation::MenuRateImplementation( menu, *this, ratePlots ) );
+}

@@ -12,6 +12,8 @@
 #include "l1menu/TriggerMenu.h"
 #include "l1menu/ISample.h"
 #include "l1menu/IEvent.h"
+#include "l1menu/TriggerRatePlot.h"
+#include "l1menu/MenuRatePlots.h"
 #include "TriggerRateImplementation.h"
 #include "TriggerDescriptionWithErrorsFromXML.h"
 #include "l1menu/tools/XMLFile.h"
@@ -19,7 +21,7 @@
 #include "l1menu/tools/fileIO.h"
 
 
-l1menu::implementation::MenuRateImplementation::MenuRateImplementation( const l1menu::TriggerMenu& menu, const l1menu::ISample& sample )
+void l1menu::implementation::MenuRateImplementation::commonConstruction( const l1menu::TriggerMenu& menu, const l1menu::ISample& sample )
 {
 
 	// The sum of event weights that pass each trigger
@@ -98,6 +100,50 @@ l1menu::implementation::MenuRateImplementation::MenuRateImplementation( const l1
 	totalFractionError_=std::sqrt(weightSquaredOfEventsPassingAnyTrigger)/weightOfAllEvents;
 	totalRate_=totalFraction_*scaling;
 	totalRateError_=totalFractionError_*scaling;
+}
+
+l1menu::implementation::MenuRateImplementation::MenuRateImplementation( const l1menu::TriggerMenu& menu, const l1menu::ISample& sample )
+{
+	commonConstruction( menu, sample );
+}
+
+l1menu::implementation::MenuRateImplementation::MenuRateImplementation( const l1menu::TriggerMenu& menu, const l1menu::ISample& sample, const l1menu::MenuRatePlots& menuRatePlots )
+{
+	commonConstruction( menu, sample );
+	// Loop over each of the trigger rates and try to set their threshold errors
+	// from the information in the rate plots.
+	for( auto& triggerRate : triggerRates_ )
+	{
+		// Search through the rate plots to find one which matches the trigger
+		// for this rate.
+		const l1menu::TriggerRatePlot* pRatePlot=nullptr;
+		for( auto& triggerRatePlot : menuRatePlots.triggerRatePlots() )
+		{
+			if( triggerRatePlot.triggerMatches( triggerRate.trigger() ) )
+			{
+				pRatePlot=&triggerRatePlot;
+				break;
+			}
+		}
+
+		if( pRatePlot!=nullptr )
+		{
+			try
+			{
+				std::string mainThresholdName=pRatePlot->versusParameter();
+				std::pair<float,float> primaryThresholdErrors=pRatePlot->findThresholdError( triggerRate.trigger().parameter(mainThresholdName) );
+				triggerRate.setParameterErrors( mainThresholdName, primaryThresholdErrors.first, primaryThresholdErrors.second );
+			}
+			catch( std::runtime_error& exception )
+			{
+				// If for some reason I couldn't get the treshold errors, then I can't set the
+				// errors. I.e., just do nothing.
+
+				// TODO - log this error somehow. Bad idea catching an exception and ignoring it, particularly
+				// such a general one.
+			}
+		}
+	}
 }
 
 l1menu::implementation::MenuRateImplementation::MenuRateImplementation( const l1menu::tools::XMLElement& xmlDescription )
