@@ -119,7 +119,7 @@ namespace l1menu
 		 * @author Mark Grimes (mark.grimes@bristol.ac.uk) although I can't really take credit for it.
 		 * @date 08/Jul/2013
 		 */
-		std::pair<float,float> simpleLinearFit( const std::vector< std::pair<float,float> >& dataPoints );
+		std::pair<double,double> simpleLinearFit( const std::vector< std::pair<double,double> >& dataPoints );
 	} // end of the tools namespace
 } // end of the l1menu namespace
 #endif

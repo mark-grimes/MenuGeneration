@@ -41,8 +41,8 @@ void ToolsUnitTestSuite::setUp()
 
 void ToolsUnitTestSuite::testLinearFitInputCheck()
 {
-	std::vector< std::pair<float,float> > coords;
-	std::pair<float,float> slopeInterceptPair;
+	std::vector< std::pair<double,double> > coords;
+	std::pair<double,double> slopeInterceptPair;
 
 	// Make sure it fails if no parameters are provided
 	CPPUNIT_ASSERT_THROW( slopeInterceptPair=l1menu::tools::simpleLinearFit( coords ), std::runtime_error );
@@ -54,16 +54,16 @@ void ToolsUnitTestSuite::testLinearFitInputCheck()
 
 void ToolsUnitTestSuite::testLinearFitResult()
 {
-	std::vector< std::pair<float,float> > coords;
-	float slope=1.34;
-	float intercept=0.15;
+	std::vector< std::pair<double,double> > coords;
+	double slope=1.34;
+	double intercept=0.15;
 	coords.push_back( std::make_pair( 3, 3*slope+intercept ) );
 	coords.push_back( std::make_pair( 2.45, 2.45*slope+intercept ) );
 	coords.push_back( std::make_pair( 23.23, 23.23*slope+intercept ) );
 	coords.push_back( std::make_pair( 0.145, 0.145*slope+intercept ) );
 	coords.push_back( std::make_pair( 0, 0*slope+intercept ) );
 	coords.push_back( std::make_pair( -23, -23*slope+intercept ) );
-	std::pair<float,float> slopeInterceptPair;
+	std::pair<double,double> slopeInterceptPair;
 	CPPUNIT_ASSERT_NO_THROW( slopeInterceptPair=l1menu::tools::simpleLinearFit( coords ) );
 
 	const double delta=0.000001;

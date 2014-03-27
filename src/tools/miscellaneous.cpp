@@ -265,14 +265,14 @@ void l1menu::tools::setBinningToL1Menu2015Values()
 	triggerTable.registerSuggestedBinning( "L1_SixJet",           "threshold1",     101,  -2,    402    );
 }
 
-std::pair<float,float> l1menu::tools::simpleLinearFit( const std::vector< std::pair<float,float> >& dataPoints )
+std::pair<double,double> l1menu::tools::simpleLinearFit( const std::vector< std::pair<double,double> >& dataPoints )
 {
 	if( dataPoints.size()<2 ) throw std::runtime_error( "l1menu::tools::simpleLinearFit(...) requires at least two points to work" );
 
-	float xyBar=0;
-	float xBar=0;
-	float yBar=0;
-	float xSquaredBar=0;
+	double xyBar=0;
+	double xBar=0;
+	double yBar=0;
+	double xSquaredBar=0;
 
 	for( const auto& coords : dataPoints )
 	{
@@ -286,8 +286,8 @@ std::pair<float,float> l1menu::tools::simpleLinearFit( const std::vector< std::p
 	yBar/=dataPoints.size();
 	xSquaredBar/=dataPoints.size();
 
-	float slope=(xyBar-xBar*yBar)/(xSquaredBar-xBar*xBar);
-	float intercept=yBar-slope*xBar;
+	double slope=(xyBar-xBar*yBar)/(xSquaredBar-xBar*xBar);
+	double intercept=yBar-slope*xBar;
 
 	return std::make_pair( slope, intercept );
 }
