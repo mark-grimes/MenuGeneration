@@ -7,6 +7,6 @@
 <bin name="L1MenuTest" file="L1MenuTest.cpp"/>
 <bin name="LoadReducedSampleFromFile" file="LoadReducedSampleFromFile.cpp"/>
 
-<bin name="L1Trigger_MenuGeneration_unitTests" file="unitTestsMain.cpp,*UnitTestSuite.cpp">
+<bin name="L1Trigger_MenuGeneration_unitTests" file="unitTestsMain.cpp,unitTestSuites/*UnitTestSuite.cpp">
 	<use name="cppunit"/>
 </bin>

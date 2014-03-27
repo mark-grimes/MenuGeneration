@@ -376,7 +376,7 @@ float l1menu::TriggerRatePlot::findThreshold( float targetRate ) const
 	binNumberForLinearFit.push_back( binNumber );
 	binNumberForLinearFit.push_back( binNumber+1 );
 
-	std::vector< std::pair<float,float> > dataPoints;
+	std::vector< std::pair<double,double> > dataPoints;
 	for( auto& number : binNumberForLinearFit )
 	{
 		// Make sure all of of the bin numbers are valid
@@ -386,12 +386,12 @@ float l1menu::TriggerRatePlot::findThreshold( float targetRate ) const
 	}
 
 	// Now do a simple linear fit on the data points
-	std::pair<float,float> slopeAndIntercept=l1menu::tools::simpleLinearFit( dataPoints );
-	float slope=slopeAndIntercept.first;
-	float intercept=slopeAndIntercept.second;
+	std::pair<double,double> slopeAndIntercept=l1menu::tools::simpleLinearFit( dataPoints );
+	double slope=slopeAndIntercept.first;
+	double intercept=slopeAndIntercept.second;
 
 
-	const float zeroEqualityWithTolerance=std::pow(10,-4);
+	const double zeroEqualityWithTolerance=std::pow(10,-4);
 	if( std::fabs(slope)<zeroEqualityWithTolerance ) // see if the slope==0 within a little tolerance
 	{
 		// Some of the triggers, e.g. muons, can only have the threshold set in discrete steps. So the rate plot
@@ -404,7 +404,7 @@ float l1menu::TriggerRatePlot::findThreshold( float targetRate ) const
 	}
 	else
 	{
-		float newThreshold=(targetRate-intercept)/slope;
+		double newThreshold=(targetRate-intercept)/slope;
 		// Apply some sanity checks. If the bin for this new threshold is more than an arbitrary
 		// number away from the two straddling the required threshold (i.e. binNumber-1 and binNumber)
 		// then redo the fit with just those two bins in it, so that the result is guaranteed to be between
@@ -419,8 +419,14 @@ float l1menu::TriggerRatePlot::findThreshold( float targetRate ) const
 			dataPoints.push_back( std::make_pair( pHistogram_->GetBinLowEdge(binNumber), pHistogram_->GetBinContent(binNumber) ) );
 			slopeAndIntercept=l1menu::tools::simpleLinearFit( dataPoints );
 			// Need to check that the slope isn't zero (to within a little tolerance)
-			if( std::fabs(slope)<zeroEqualityWithTolerance ) return pHistogram_->GetBinLowEdge(binNumber-1);
-			else return (targetRate-slopeAndIntercept.second)/slopeAndIntercept.first;
+			if( std::fabs(slopeAndIntercept.first)<zeroEqualityWithTolerance )
+			{
+				// I want to return the lower edge of the bin, but the binNumber has been forced to greater
+				// than 3, so I need to check I'm still on the first bin lower than the requested rate.
+				while( binNumber>1 && pHistogram_->GetBinContent(binNumber)<targetRate ) --binNumber;
+				newThreshold=pHistogram_->GetBinLowEdge(binNumber);
+			}
+			else newThreshold=(targetRate-slopeAndIntercept.second)/slopeAndIntercept.first;
 		}
 		if( newThreshold<0 ) return 0; // Apply some sanity checks
 		// Do I want to extrapolate out past where the histogram goes? Not sure. I won't for the time being.
