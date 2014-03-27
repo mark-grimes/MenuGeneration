@@ -419,8 +419,14 @@ float l1menu::TriggerRatePlot::findThreshold( float targetRate ) const
 			dataPoints.push_back( std::make_pair( pHistogram_->GetBinLowEdge(binNumber), pHistogram_->GetBinContent(binNumber) ) );
 			slopeAndIntercept=l1menu::tools::simpleLinearFit( dataPoints );
 			// Need to check that the slope isn't zero (to within a little tolerance)
-			if( std::fabs(slope)<zeroEqualityWithTolerance ) return pHistogram_->GetBinLowEdge(binNumber-1);
-			else return (targetRate-slopeAndIntercept.second)/slopeAndIntercept.first;
+			if( std::fabs(slopeAndIntercept.first)<zeroEqualityWithTolerance )
+			{
+				// I want to return the lower edge of the bin, but the binNumber has been forced to greater
+				// than 3, so I need to check I'm still on the first bin lower than the requested rate.
+				while( binNumber>1 && pHistogram_->GetBinContent(binNumber)<targetRate ) --binNumber;
+				newThreshold=pHistogram_->GetBinLowEdge(binNumber);
+			}
+			else newThreshold=(targetRate-slopeAndIntercept.second)/slopeAndIntercept.first;
 		}
 		if( newThreshold<0 ) return 0; // Apply some sanity checks
 		// Do I want to extrapolate out past where the histogram goes? Not sure. I won't for the time being.
