@@ -69,4 +69,13 @@ void ToolsUnitTestSuite::testLinearFitResult()
 	const double delta=0.000001;
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( slope, slopeInterceptPair.first, delta );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( intercept, slopeInterceptPair.second, delta );
+
+	coords.clear();
+	coords.push_back( std::make_pair( 0, 30966.3 ) );
+	coords.push_back( std::make_pair( 0.9, 30966.3 ) );
+	coords.push_back( std::make_pair( 1.8, 30966.3 ) );
+	coords.push_back( std::make_pair( 2.7, 30966.3 ) );
+	CPPUNIT_ASSERT_NO_THROW( slopeInterceptPair=l1menu::tools::simpleLinearFit( coords ) );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, slopeInterceptPair.first, delta );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 30966.3, slopeInterceptPair.second, delta );
 }
