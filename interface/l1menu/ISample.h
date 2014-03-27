@@ -13,6 +13,7 @@ namespace l1menu
 	class IEvent;
 	class ITrigger;
 	class ICachedTrigger;
+	class MenuRatePlots;
 }
 
 
@@ -39,6 +40,8 @@ namespace l1menu
 		virtual float sumOfWeights() const = 0;
 
 		virtual std::shared_ptr<const l1menu::IMenuRate> rate( const l1menu::TriggerMenu& menu ) const = 0;
+		/** @brief Overload that will use the MenuRatePlots supplied to calculate errors on the thresholds. */
+		virtual std::shared_ptr<const l1menu::IMenuRate> rate( const l1menu::TriggerMenu& menu, const l1menu::MenuRatePlots& ratePlots ) const = 0;
 	};
 
 } // end of namespace l1menu
