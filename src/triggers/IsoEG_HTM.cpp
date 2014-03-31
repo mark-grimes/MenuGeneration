@@ -72,18 +72,18 @@ namespace l1menu
 //
 // Version 1
 //
-l1menu::triggers::IsoEG_HTM_v0::IsoEG_HTM_v0()
+l1menu::triggers::IsoEG_HTM_v1::IsoEG_HTM_v1()
 	: CrossTrigger( new l1menu::triggers::SingleIsoEGEta_v0, new l1menu::triggers::HTM_v1 )
 {
 	// No operation besides passing the sub-triggers onto the base class
 }
 
-const std::string l1menu::triggers::IsoEG_HTM_v0::name() const
+const std::string l1menu::triggers::IsoEG_HTM_v1::name() const
 {
 	return "L1_SingleIsoEG_HTM";
 }
 
-unsigned int l1menu::triggers::IsoEG_HTM_v0::version() const
+unsigned int l1menu::triggers::IsoEG_HTM_v1::version() const
 {
 	return 0;
 }
