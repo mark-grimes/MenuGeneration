@@ -49,7 +49,7 @@ namespace l1menu
 //  Version 1
 //
 l1menu::triggers::HTM_v1::HTM_v1()
-	: regionCut_(4)
+	: regionCut_(4), ptCut_(0)
 {
 	// No operation besides the initialiser list
 }
@@ -72,12 +72,13 @@ bool l1menu::triggers::HTM_v1::apply( const l1menu::L1TriggerDPGEvent& event ) c
 		{
 			if( analysisDataFormat.Etajet.at( i )>=regionCut_ and analysisDataFormat.Etajet.at( i )<=(21-regionCut_) )
 			{
-
-				//  Get the phi angle  towers are 0-17 (this is probably not real mapping but OK for just magnitude of HTM
-				float phi=2*M_PI*(analysisDataFormat.Phijet.at( i )/18.);
-				htmValueX+=std::cos( phi )*analysisDataFormat.Etjet.at( i );
-				htmValueY+=std::sin( phi )*analysisDataFormat.Etjet.at( i );
-
+				if( analysisDataFormat.Etjet[i]>=ptCut_ )
+				{
+					//  Get the phi angle  towers are 0-17 (this is probably not real mapping but OK for just magnitude of HTM
+					float phi=2*M_PI*(analysisDataFormat.Phijet.at( i )/18.);
+					htmValueX+=std::cos( phi )*analysisDataFormat.Etjet.at( i );
+					htmValueY+=std::sin( phi )*analysisDataFormat.Etjet.at( i );
+				} // Jet is of minimum pT
 			} //in proper eta range
 		} //correct beam crossing
 	} //loop over cleaned jets
@@ -101,6 +102,7 @@ const std::vector<std::string> l1menu::triggers::HTM_v1::parameterNames() const
 	// First get the values from the base class, then add the extra entry
 	std::vector<std::string> returnValue=HTM::parameterNames();
 	returnValue.push_back("regionCut");
+	returnValue.push_back("ptCut");
 	return returnValue;
 }
 
@@ -108,6 +110,7 @@ float& l1menu::triggers::HTM_v1::parameter( const std::string& parameterName )
 {
 	// Check if it's the parameter I've added, otherwise defer to the base class
 	if( parameterName=="regionCut" ) return regionCut_;
+	if( parameterName=="ptCut" ) return ptCut_;
 	else return HTM::parameter(parameterName);
 }
 
@@ -115,6 +118,7 @@ const float& l1menu::triggers::HTM_v1::parameter( const std::string& parameterNa
 {
 	// Check if it's the parameter I've added, otherwise defer to the base class
 	if( parameterName=="regionCut" ) return regionCut_;
+	if( parameterName=="ptCut" ) return ptCut_;
 	else return HTM::parameter(parameterName);
 }
 

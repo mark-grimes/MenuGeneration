@@ -51,6 +51,7 @@ namespace l1menu
 		/** @brief HTT trigger where the jets are looped over here rather than in FullSample.
 		 *
 		 * Allows eta cuts to be applied here, rather than having a hard coded eta cut in FullSample.
+		 * Also added a minimum pT value if the jet is to be used to calculate the sum.
 		 *
 		 * @author Mark Grimes, but just copied Brian's code from FullSample.cpp
 		 * @date 28/Mar/2014
@@ -68,6 +69,7 @@ namespace l1menu
 			virtual const float& parameter( const std::string& parameterName ) const;
 		protected:
 			float regionCut_;
+			float ptCut_;
 		}; // end of version 1 class
 
 		/* The REGISTER_TRIGGER macro will make sure that the given trigger is registered in the
@@ -108,7 +110,7 @@ namespace l1menu
 //  Version 1
 //
 l1menu::triggers::HTT_v1::HTT_v1()
-	: regionCut_(4)
+	: regionCut_(4), ptCut_(0)
 {
 	// No operation besides the initialiser list
 }
@@ -130,7 +132,7 @@ bool l1menu::triggers::HTT_v1::apply( const l1menu::L1TriggerDPGEvent& event ) c
 		{
 			if( analysisDataFormat.Etajet.at( i )>=regionCut_ and analysisDataFormat.Etajet.at( i )<=(21-regionCut_) )
 			{
-				httValue+=analysisDataFormat.Etjet.at( i );
+				if( analysisDataFormat.Etjet[i]>=ptCut_ ) httValue+=analysisDataFormat.Etjet.at( i );
 			} //in proper eta range
 		} //correct beam crossing
 	} //loop over cleaned jets
@@ -154,6 +156,7 @@ const std::vector<std::string> l1menu::triggers::HTT_v1::parameterNames() const
 	// First get the values from the base class, then add the extra entries
 	std::vector<std::string> returnValue=HTT::parameterNames();
 	returnValue.push_back("regionCut");
+	returnValue.push_back("ptCut");
 	return returnValue;
 }
 
@@ -161,6 +164,7 @@ float& l1menu::triggers::HTT_v1::parameter( const std::string& parameterName )
 {
 	// Check if it's the parameter I've added, otherwise defer to the base class
 	if( parameterName=="regionCut" ) return regionCut_;
+	if( parameterName=="ptCut" ) return ptCut_;
 	else return HTT::parameter(parameterName);
 }
 
@@ -168,6 +172,7 @@ const float& l1menu::triggers::HTT_v1::parameter( const std::string& parameterNa
 {
 	// Check if it's the parameter I've added, otherwise defer to the base class
 	if( parameterName=="regionCut" ) return regionCut_;
+	if( parameterName=="ptCut" ) return ptCut_;
 	else return HTT::parameter(parameterName);
 }
 
