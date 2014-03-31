@@ -85,7 +85,7 @@ const std::string l1menu::triggers::Muer_HTM_v1::name() const
 
 unsigned int l1menu::triggers::Muer_HTM_v1::version() const
 {
-	return 0;
+	return 1;
 }
 
 //
