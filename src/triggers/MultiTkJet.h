@@ -40,8 +40,9 @@ namespace l1menu
 			float threshold2_;
 			float threshold3_;
 			float threshold4_;
-			float regionCut_;
+			float regionCut_;			
 			float numberOfJets_;
+			float zVtxCut_;
 		}; // end of the MultiTkJet base class
 
 		/** @brief First version of the MultiTkJet trigger.
@@ -56,6 +57,20 @@ namespace l1menu
 			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
 			virtual bool thresholdsAreCorrelated() const;
 		}; // end of version 0 class
+
+
+		/** @brief seconrd version of the MultiTkJet trigger uses z-vertex.
+		 *
+		 * @author probably Brian Winer
+		 * @date sometime
+		 */
+		class MultiTkJet_v1 : public MultiTkJet
+		{
+		public:
+			virtual unsigned int version() const;
+			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
+			virtual bool thresholdsAreCorrelated() const;
+		}; // end of version 1 class
 
 
 	} // end of namespace triggers

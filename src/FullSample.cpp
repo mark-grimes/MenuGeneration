@@ -122,7 +122,7 @@ double l1menu::FullSamplePrivateMembers::calculateHTT( const L1Analysis::L1Analy
 	{
 		if( event.Bxjet.at( i )==0 && !event.Taujet.at(i) )
 		{
-			if( event.Etajet.at( i )>4 and event.Etajet.at( i )<17 )
+			if( event.Etajet.at( i )>4 && event.Etajet.at( i )<17 && event.Etjet.at(i)>15. )
 			{
 				httValue+=event.Etjet.at( i );
 			} //in proper eta range
@@ -143,7 +143,7 @@ double l1menu::FullSamplePrivateMembers::calculateHTM( const L1Analysis::L1Analy
 	{
 		if( event.Bxjet.at( i )==0 && !event.Taujet.at(i) )
 		{
-			if( event.Etajet.at( i )>4 and event.Etajet.at( i )<17 )
+			if( event.Etajet.at( i )>4 and event.Etajet.at( i )<17 && event.Etjet.at(i)>15. )
 			{
 
 				//  Get the phi angle  towers are 0-17 (this is probably not real mapping but OK for just magnitude of HTM
@@ -335,9 +335,9 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 			{
 				if( inputNtuple.l1upgrade_->mhtBx.at( i )==0 )
 				{
-					analysisDataFormat.HTT=calculateHTT( analysisDataFormat ); //inputNtuple.l1upgrade_->ht.at(i) ;
-					analysisDataFormat.HTM=calculateHTM( analysisDataFormat ); //inputNtuple.l1upgrade_->mht.at(i) ;
-					analysisDataFormat.PhiHTM=0.; //inputNtuple.l1upgrade_->mhtPhi.at(i) ;
+					analysisDataFormat.HTT=calculateHTT( analysisDataFormat ); // inputNtuple.l1upgrade_->ht.at(i) ; // calculateHTT( analysisDataFormat ); //
+					analysisDataFormat.HTM=calculateHTM( analysisDataFormat ); //inputNtuple.l1upgrade_->mht.at(i) ; // calculateHTM( analysisDataFormat ); //
+					analysisDataFormat.PhiHTM=inputNtuple.l1upgrade_->mhtPhi.at(i) ; //0.; //
 				}
 			}
 			analysisDataFormat.OvHTM=0; //not available in l1extra
@@ -392,6 +392,17 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 				analysisDataFormat.IsoTkel.push_back( isolated );
 				analysisDataFormat.NTkele++;
 			}
+
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkEM; i++ )
+			{
+				analysisDataFormat.BxTkem.push_back( inputNtuple.l1upgrade_->tkEMBx.at(i) );    
+				analysisDataFormat.EtTkem.push_back( inputNtuple.l1upgrade_->tkEMEt.at( i ) );
+				analysisDataFormat.PhiTkem.push_back( phiINjetCoord( inputNtuple.l1upgrade_->tkEMPhi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
+				analysisDataFormat.EtaTkem.push_back( etaINjetCoord( inputNtuple.l1upgrade_->tkEMEta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
+				analysisDataFormat.NTkem++;
+			}
+
+
                         
 
 //  NOTE: Track Taus not yet implemented PLACEHOLDER

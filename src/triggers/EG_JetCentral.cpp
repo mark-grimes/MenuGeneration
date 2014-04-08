@@ -124,7 +124,7 @@ bool l1menu::triggers::EG_JetCentral_v1::apply( const l1menu::L1TriggerDPGEvent&
 	int Nele = analysisDataFormat.Nele;
 	for (int ue=0; ue < Nele; ue++) {
 		int bx = analysisDataFormat.Bxel[ue];
-		if (bx != 0 || !analysisDataFormat.Isoel[ue]) continue;
+		if (bx != 0 ) continue;
 		float eta = analysisDataFormat.Etael[ue];
 		if (eta < leg1regionCut_ || eta > 21.-leg1regionCut_) continue;  // eta = 5 - 16
 		float rank = analysisDataFormat.Etel[ue];    // the rank of the electron
