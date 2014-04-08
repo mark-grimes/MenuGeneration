@@ -5,13 +5,140 @@
 #include <sstream>
 #include <iostream>
 #include "l1menu/ITrigger.h"
+#include "l1menu/ITriggerConstraint.h"
 #include "l1menu/tools/miscellaneous.h"
 #include "l1menu/tools/fileIO.h"
 #include "l1menu/tools/stringManipulation.h"
 #include "l1menu/tools/XMLFile.h"
 #include "l1menu/tools/XMLElement.h"
 
-l1menu::TriggerMenu::TriggerMenu() : triggerTable_( l1menu::TriggerTable::instance() )
+//
+// Use the unnamed namespace for things specific to this file
+//
+namespace
+{
+	/** @brief Implementation of the ITriggerConstraint interface.
+	 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
+	 * @date 08/Apr/2014
+	 */
+	class TriggerConstraintImplementation : public l1menu::ITriggerConstraint
+	{
+
+	};
+}
+//
+// Need to use the l1menu namespace for the pimple because that's how it was declared
+//
+namespace l1menu
+{
+	/** @brief Pimple class to hide the private members of TriggerMenu from the header file.
+	 *
+	 * Note that there are non-trivial copy constructor, move constructor and assignment operators
+	 * so if you add any members you almost certainly need to edit those.
+	 */
+	class TriggerMenuPrivateMembers
+	{
+	public:
+		TriggerMenuPrivateMembers();
+		TriggerMenuPrivateMembers( const TriggerMenuPrivateMembers& otherPimple );
+		TriggerMenuPrivateMembers( TriggerMenuPrivateMembers&& otherPimple );
+		l1menu::TriggerMenuPrivateMembers& operator=( const l1menu::TriggerMenuPrivateMembers& otherPimple );
+		l1menu::TriggerMenuPrivateMembers& operator=( l1menu::TriggerMenuPrivateMembers&& otherPimple ) noexcept;
+
+		TriggerTable& triggerTable_;
+		std::vector< std::unique_ptr<l1menu::ITrigger> > triggers_;
+		std::vector< ::TriggerConstraintImplementation > triggerConstraints_; ///< always kept the same size as triggers_
+		std::vector<bool> triggerResults_; ///< @brief Stores the result of each trigger for the last call of "apply"
+	};
+}
+
+
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+//
+//     Definitions for TriggerMenuPrivateMembers. All of these are just because of the
+//     non-trivial copy/move/assignment constructors/operators.
+//
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+
+l1menu::TriggerMenuPrivateMembers::TriggerMenuPrivateMembers()
+	: triggerTable_( l1menu::TriggerTable::instance() )
+{
+	// No operation besides the initialiser list
+}
+
+l1menu::TriggerMenuPrivateMembers::TriggerMenuPrivateMembers( const TriggerMenuPrivateMembers& otherPimple )
+	: triggerTable_(otherPimple.triggerTable_)
+{
+	//
+	// Take a copy of all the other triggers
+	//
+	for( std::vector< std::unique_ptr<l1menu::ITrigger> >::const_iterator iTrigger=otherPimple.triggers_.begin(); iTrigger!=otherPimple.triggers_.end(); ++iTrigger )
+	{
+		l1menu::ITrigger& sourceTrigger=**iTrigger;
+
+		triggers_.push_back( std::move(triggerTable_.copyTrigger(sourceTrigger)) );
+	}
+
+	// Copy the constraints. I'm working with a concrete implementations so this is straightforward
+	triggerConstraints_=otherPimple.triggerConstraints_;
+	// Make sure triggerResults_ is always the same size as triggers_
+	triggerResults_.resize( triggers_.size() );
+}
+
+l1menu::TriggerMenuPrivateMembers::TriggerMenuPrivateMembers( TriggerMenuPrivateMembers&& otherPimple )
+	: triggerTable_(otherPimple.triggerTable_),
+	  triggers_( std::move(otherPimple.triggers_) ),
+	  triggerConstraints_( std::move(otherPimple.triggerConstraints_) ),
+	  triggerResults_( std::move(otherPimple.triggerResults_) )
+{
+	// No operation besides the initialiser list
+}
+l1menu::TriggerMenuPrivateMembers& l1menu::TriggerMenuPrivateMembers::operator=( const l1menu::TriggerMenuPrivateMembers& otherPimple )
+{
+	//
+	// First clean up whatever triggers I had before
+	//
+	triggers_.clear();
+
+	//
+	// Now copy the triggers from the other menu
+	//
+	for( std::vector< std::unique_ptr<l1menu::ITrigger> >::const_iterator iTrigger=otherPimple.triggers_.begin(); iTrigger!=otherPimple.triggers_.end(); ++iTrigger )
+	{
+		l1menu::ITrigger& sourceTrigger=**iTrigger;
+
+		triggers_.push_back( std::move(triggerTable_.copyTrigger(sourceTrigger)) );
+	}
+
+	// Copy the constraints. I'm working with a concrete implementations so this is straightforward
+	triggerConstraints_=otherPimple.triggerConstraints_;
+	// Make sure triggerResults_ is always the same size as triggers_
+	triggerResults_.resize( triggers_.size() );
+
+	return *this;
+}
+
+l1menu::TriggerMenuPrivateMembers& l1menu::TriggerMenuPrivateMembers::operator=( l1menu::TriggerMenuPrivateMembers&& otherPimple ) noexcept
+{
+	// Can't change the triggerTable_ reference, but it should be correct anyway
+	triggers_=std::move( otherPimple.triggers_ );
+	triggerConstraints_=std::move( otherPimple.triggerConstraints_ );
+	triggerResults_=std::move(otherPimple.triggerResults_);
+
+	return *this;
+}
+
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+//
+//     Definitions for TriggerMenu.
+//
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+
+l1menu::TriggerMenu::TriggerMenu() : pImple_( new l1menu::TriggerMenuPrivateMembers )
 {
 	// No operation besides the initialiser list
 }
@@ -22,131 +149,117 @@ l1menu::TriggerMenu::~TriggerMenu()
 }
 
 l1menu::TriggerMenu::TriggerMenu( const TriggerMenu& otherTriggerMenu )
-	: triggerTable_(otherTriggerMenu.triggerTable_)
+	: pImple_( new l1menu::TriggerMenuPrivateMembers(*otherTriggerMenu.pImple_) )
 {
-	for( std::vector< std::unique_ptr<l1menu::ITrigger> >::const_iterator iTrigger=otherTriggerMenu.triggers_.begin(); iTrigger!=otherTriggerMenu.triggers_.end(); ++iTrigger )
-	{
-		l1menu::ITrigger& sourceTrigger=**iTrigger;
-
-		triggers_.push_back( std::move(triggerTable_.copyTrigger(sourceTrigger)) );
-	}
-
-	// Make sure triggerResults_ is always the same size as triggers_
-	triggerResults_.resize( triggers_.size() );
+	// No operation besides the initialiser list. Let the TriggerMenuPrivateMembers copy
+	// constructor deal with the details.
 }
 
 l1menu::TriggerMenu::TriggerMenu( TriggerMenu&& otherTriggerMenu ) noexcept
-	: triggerTable_(otherTriggerMenu.triggerTable_), triggers_( std::move(otherTriggerMenu.triggers_) ),
-	  triggerResults_( std::move(otherTriggerMenu.triggerResults_) )
+	: pImple_( std::move(otherTriggerMenu.pImple_) )
 {
-	// No operation besides the initialiser list
+	// No operation besides the initialiser list. Let the TriggerMenuPrivateMembers move
+	// constructor deal with the details.
 }
 
 l1menu::TriggerMenu& l1menu::TriggerMenu::operator=( const l1menu::TriggerMenu& otherTriggerMenu )
 {
-	//
-	// First clean up whatever triggers I had before
-	//
-	triggers_.clear();
-
-	//
-	// Now copy the triggers from the other menu
-	//
-	for( std::vector< std::unique_ptr<l1menu::ITrigger> >::const_iterator iTrigger=otherTriggerMenu.triggers_.begin(); iTrigger!=otherTriggerMenu.triggers_.end(); ++iTrigger )
-	{
-		l1menu::ITrigger& sourceTrigger=**iTrigger;
-
-		triggers_.push_back( std::move(triggerTable_.copyTrigger(sourceTrigger)) );
-	}
-
-	// Make sure triggerResults_ is always the same size as triggers_
-	triggerResults_.resize( triggers_.size() );
-
+	// Let the TriggerMenuPrivateMembers assignment operator deal with it
+	*pImple_=*otherTriggerMenu.pImple_;
 	return *this;
 }
 
 l1menu::TriggerMenu& l1menu::TriggerMenu::operator=( l1menu::TriggerMenu&& otherTriggerMenu ) noexcept
 {
-	triggers_=std::move( otherTriggerMenu.triggers_ );
-	triggerResults_=std::move(otherTriggerMenu.triggerResults_);
-
+	// Let the TriggerMenuPrivateMembers move assignment operator deal with it
+	pImple_=std::move(otherTriggerMenu.pImple_);
 	return *this;
 }
 
 l1menu::ITrigger& l1menu::TriggerMenu::addTrigger( const std::string& triggerName )
 {
-	std::unique_ptr<l1menu::ITrigger> pNewTrigger=triggerTable_.getTrigger( triggerName );
+	std::unique_ptr<l1menu::ITrigger> pNewTrigger=pImple_->triggerTable_.getTrigger( triggerName );
 	if( pNewTrigger.get()==NULL ) throw std::range_error( "Trigger requested that does not exist" );
 
-	triggers_.push_back( std::move(pNewTrigger) );
+	pImple_->triggers_.push_back( std::move(pNewTrigger) );
 
 	// Make sure triggerResults_ is always the same size as triggers_
-	triggerResults_.resize( triggers_.size() );
-	return *triggers_.back();
+	pImple_->triggerResults_.resize( pImple_->triggers_.size() );
+	return *pImple_->triggers_.back();
 }
 
 l1menu::ITrigger& l1menu::TriggerMenu::addTrigger( const std::string& triggerName, unsigned int version )
 {
-	std::unique_ptr<l1menu::ITrigger> pNewTrigger=triggerTable_.getTrigger( triggerName, version );
+	std::unique_ptr<l1menu::ITrigger> pNewTrigger=pImple_->triggerTable_.getTrigger( triggerName, version );
 	if( pNewTrigger.get()==NULL ) throw std::range_error( "Trigger requested that does not exist" );
 
-	triggers_.push_back( std::move(pNewTrigger) );
+	pImple_->triggers_.push_back( std::move(pNewTrigger) );
 
 	// Make sure triggerResults_ is always the same size as triggers_
-	triggerResults_.resize( triggers_.size() );
-	return *triggers_.back();
+	pImple_->triggerResults_.resize( pImple_->triggers_.size() );
+	return *pImple_->triggers_.back();
 }
 
 l1menu::ITrigger& l1menu::TriggerMenu::addTrigger( const l1menu::ITrigger& triggerToCopy )
 {
-	std::unique_ptr<l1menu::ITrigger> pNewTrigger=triggerTable_.copyTrigger( triggerToCopy );
+	std::unique_ptr<l1menu::ITrigger> pNewTrigger=pImple_->triggerTable_.copyTrigger( triggerToCopy );
 	if( pNewTrigger.get()==NULL ) throw std::range_error( "Trigger requested that does not exist" );
 
-	triggers_.push_back( std::move(pNewTrigger) );
+	pImple_->triggers_.push_back( std::move(pNewTrigger) );
 
 	// Make sure triggerResults_ is always the same size as triggers_
-	triggerResults_.resize( triggers_.size() );
-	return *triggers_.back();
+	pImple_->triggerResults_.resize( pImple_->triggers_.size() );
+	return *pImple_->triggers_.back();
 }
 
 size_t l1menu::TriggerMenu::numberOfTriggers() const
 {
-	return triggers_.size();
+	return pImple_->triggers_.size();
 }
 
 l1menu::ITrigger& l1menu::TriggerMenu::getTrigger( size_t position )
 {
-	if( position>triggers_.size() ) throw std::range_error( "Trigger requested that does not exist in the menu" );
+	if( position>pImple_->triggers_.size() ) throw std::range_error( "Trigger requested that does not exist in the menu" );
 
-	return *triggers_[position];
+	return *pImple_->triggers_[position];
 }
 
 const l1menu::ITrigger& l1menu::TriggerMenu::getTrigger( size_t position ) const
 {
-	if( position>triggers_.size() ) throw std::range_error( "Trigger requested that does not exist in the menu" );
+	if( position>pImple_->triggers_.size() ) throw std::range_error( "Trigger requested that does not exist in the menu" );
 
-	return *triggers_[position];
+	return *pImple_->triggers_[position];
 }
 
 std::unique_ptr<l1menu::ITrigger> l1menu::TriggerMenu::getTriggerCopy( size_t position ) const
 {
-	if( position>triggers_.size() ) throw std::range_error( "Trigger requested that does not exist in the menu" );
+	if( position>pImple_->triggers_.size() ) throw std::range_error( "Trigger requested that does not exist in the menu" );
 
-	return triggerTable_.copyTrigger(*triggers_[position]);
+	return pImple_->triggerTable_.copyTrigger(*pImple_->triggers_[position]);
 }
 
 bool l1menu::TriggerMenu::apply( const l1menu::L1TriggerDPGEvent& event ) const
 {
 	bool atLeastOneTriggerHasFired=false;
 
-	for( size_t triggerNumber=0; triggerNumber<triggers_.size(); ++triggerNumber )
+	for( size_t triggerNumber=0; triggerNumber<pImple_->triggers_.size(); ++triggerNumber )
 	{
-		bool result=triggers_[triggerNumber]->apply(event);
-//		triggerResults_[triggerNumber]=result;
+		bool result=pImple_->triggers_[triggerNumber]->apply(event);
+//		pImple_->triggerResults_[triggerNumber]=result;
 		if( result ) atLeastOneTriggerHasFired=true;
 	}
 
 	return atLeastOneTriggerHasFired;
+}
+
+l1menu::ITriggerConstraint& l1menu::TriggerMenu::getTriggerConstraint( size_t position )
+{
+	throw std::runtime_error( "Not implemented yet" );
+}
+
+const l1menu::ITriggerConstraint& l1menu::TriggerMenu::getTriggerConstraint( size_t position ) const
+{
+	throw std::runtime_error( "Not implemented yet" );
 }
 
 void l1menu::TriggerMenu::loadMenuFromFile( const std::string& filename )
@@ -194,7 +307,7 @@ void l1menu::TriggerMenu::saveToXML( l1menu::tools::XMLElement& parentElement ) 
 {
 	l1menu::tools::XMLElement thisElement=parentElement.createChild( "TriggerMenu" );
 
-	for( const auto& pTrigger : triggers_ )
+	for( const auto& pTrigger : pImple_->triggers_ )
 	{
 		l1menu::tools::convertToXML( *pTrigger, thisElement );
 	}
@@ -227,7 +340,7 @@ void l1menu::TriggerMenu::restoreFromXML( const l1menu::tools::XMLElement& paren
 		if( parameterElements.size()!=1 ) throw std::runtime_error( "Trigger doesn't have one and only one subelement called 'version'" );
 		size_t version=parameterElements.front().getIntValue();
 
-		std::unique_ptr<l1menu::ITrigger> pNewTrigger=triggerTable_.getTrigger( triggerName, version );
+		std::unique_ptr<l1menu::ITrigger> pNewTrigger=pImple_->triggerTable_.getTrigger( triggerName, version );
 		if( pNewTrigger==nullptr ) throw std::runtime_error( "l1menu::TriggerMenu::restoreFromXML - the file lists trigger \""+triggerName+"\" with version "+triggerElement.getAttribute("version")+" that is not registered in the TriggerTable." );
 
 		// Now loop over all of the parameters and set them
@@ -243,7 +356,7 @@ void l1menu::TriggerMenu::restoreFromXML( const l1menu::tools::XMLElement& paren
 
 	// If we get to this point and no exceptions have been thrown, then everything
 	// worked and I can write over the previous information.
-	triggers_=std::move( newTriggers );
+	pImple_->triggers_=std::move( newTriggers );
 }
 
 void l1menu::TriggerMenu::loadMenuInOldFormat( std::ifstream& file )
