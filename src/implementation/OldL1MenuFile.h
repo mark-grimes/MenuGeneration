@@ -24,8 +24,8 @@ namespace l1menu
 			virtual ~OldL1MenuFile();
 			virtual void add( const l1menu::TriggerMenu& menu );
 			virtual void add( const l1menu::IMenuRate& menuRate );
-			virtual std::vector< std::unique_ptr<l1menu::TriggerMenu> > getMenus();
-			virtual std::vector< std::unique_ptr<l1menu::IMenuRate> > getRates();
+			virtual std::vector< std::unique_ptr<l1menu::TriggerMenu> > getMenus() const;
+			virtual std::vector< std::unique_ptr<l1menu::IMenuRate> > getRates() const;
 		protected:
 			std::ostream* pOutputStream_;
 			std::fstream file_;

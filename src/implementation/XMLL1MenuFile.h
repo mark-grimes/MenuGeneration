@@ -34,8 +34,8 @@ namespace l1menu
 			virtual ~XMLL1MenuFile();
 			virtual void add( const l1menu::TriggerMenu& menu );
 			virtual void add( const l1menu::IMenuRate& menuRate );
-			virtual std::vector< std::unique_ptr<l1menu::TriggerMenu> > getMenus();
-			virtual std::vector< std::unique_ptr<l1menu::IMenuRate> > getRates();
+			virtual std::vector< std::unique_ptr<l1menu::TriggerMenu> > getMenus() const;
+			virtual std::vector< std::unique_ptr<l1menu::IMenuRate> > getRates() const;
 		protected:
 			l1menu::tools::XMLElement convertToXML( const l1menu::TriggerMenu& object, l1menu::tools::XMLElement& parent );
 			l1menu::tools::XMLElement convertToXML( const l1menu::IMenuRate& object, l1menu::tools::XMLElement& parent );

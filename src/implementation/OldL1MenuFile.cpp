@@ -159,12 +159,12 @@ void l1menu::implementation::OldL1MenuFile::add( const l1menu::IMenuRate& menuRa
 
 }
 
-std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::OldL1MenuFile::getMenus()
+std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::OldL1MenuFile::getMenus() const
 {
 	return std::vector< std::unique_ptr<l1menu::TriggerMenu> >();
 }
 
-std::vector< std::unique_ptr<l1menu::IMenuRate> > l1menu::implementation::OldL1MenuFile::getRates()
+std::vector< std::unique_ptr<l1menu::IMenuRate> > l1menu::implementation::OldL1MenuFile::getRates() const
 {
 	return std::vector< std::unique_ptr<l1menu::IMenuRate> >();
 }

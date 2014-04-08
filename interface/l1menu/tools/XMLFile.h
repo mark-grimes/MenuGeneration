@@ -41,6 +41,7 @@ namespace l1menu
 			void parseFromFile( const std::string& filename );
 
 			l1menu::tools::XMLElement rootElement();
+			const l1menu::tools::XMLElement rootElement() const;
 
 			void outputToStream( std::ostream& outputStream );
 		private:
