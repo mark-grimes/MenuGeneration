@@ -29,6 +29,7 @@ namespace l1menu
 		protected:
 			std::ostream* pOutputStream_;
 			std::fstream file_;
+			std::string filename_;
 			const char delimeter_;
 		};
 
