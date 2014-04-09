@@ -8,6 +8,7 @@
 #include "l1menu/ITrigger.h"
 #include "l1menu/ITriggerDescription.h"
 #include "l1menu/ITriggerDescriptionWithErrors.h"
+#include "l1menu/TriggerConstraint.h"
 #include "l1menu/tools/miscellaneous.h"
 #include "l1menu/tools/stringManipulation.h"
 #include "./MenuRateImplementation.h"
@@ -179,6 +180,14 @@ std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::OldL
 	std::ifstream inputFile( filename_ );
 	if( !inputFile.is_open() ) throw std::runtime_error( "OldL1MenuFile::getMenus() - unable to open file \""+filename_+"\"" );
 
+	// This vector stores all of the trigger constraints for each trigger. I need to keep a note of this because the
+	// old file format stores what the bandwidth for each trigger should be, but I want the fraction of the total
+	// bandwidth. Since I don't know that until I add up the bandwidth for each trigger I'll store this and calculate
+	// the fraction at the end.
+	// First is whether the thresholds are locked, second is the requested rate.
+	std::vector< std::pair<bool,float> > triggerConstraints;
+	double totalBandwidth=0; // The running total
+
 	while( inputFile.good() )
 	{
 		try
@@ -201,6 +210,14 @@ std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::OldL
 				{
 					//std::cout << "Added trigger \"" << tableColumns[0] << "\"" << std::endl;
 					l1menu::ITrigger& newTrigger=pNewMenu->addTrigger( triggerName ); // Try and create a trigger with the name supplied
+
+					//
+					// Check what the constraints are and store them.
+					//
+					bool lockThresholds=l1menu::tools::convertStringToFloat( tableColumns[11] );
+					float requestedRate=l1menu::tools::convertStringToFloat( tableColumns[9] );
+					totalBandwidth+=requestedRate;
+					triggerConstraints.push_back( std::make_pair(lockThresholds,requestedRate) );
 
 					// Different triggers will have different numbers of thresholds, and even different names. E.g. Single triggers
 					// will have "threshold1" whereas a cross trigger will have "leg1threshold1", "leg2threshold1" etcetera. This
@@ -286,6 +303,22 @@ std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::OldL
 		{
 			std::cerr << "Some error occured while processing the line \"" << buffer << "\":" << exception.what() << std::endl;
 		}
+	}
+
+	//
+	// Now that I know what the total bandwidth is I can calculate what
+	// the fraction of the total is and set the trigger constraints.
+	//
+	if( triggerConstraints.size()!=pNewMenu->numberOfTriggers() )
+	{
+		throw std::runtime_error("OldL1MenuFile::getMenus() - Something went wrong creating the menus. Constraints are not the same size as the triggers.");
+	}
+
+	for( size_t index=0; index<pNewMenu->numberOfTriggers(); ++index )
+	{
+		l1menu::TriggerConstraint& newConstraint=pNewMenu->getTriggerConstraint(index);
+		newConstraint.thresholdsLocked( triggerConstraints[index].first );
+		newConstraint.fractionOfTotalBandwidth( triggerConstraints[index].second/totalBandwidth );
 	}
 
 	returnValue.push_back( std::move( pNewMenu ) );
