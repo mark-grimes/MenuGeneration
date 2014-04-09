@@ -193,8 +193,10 @@ bool handleCommandLine( int argc, char* argv[] )
 			<< "on the command line, in the order they appear here." << std::endl;
 	for( size_t index=0; index<requiredParametersAndDefaults.size(); ++index )
 	{
-		std::cout << "  " << requiredParametersAndDefaults[index].first << "=" << TestParameters<std::string>::instance().getParameter( requiredParametersAndDefaults[index].first ) << std::endl;
+		std::cout << "  " << requiredParametersAndDefaults[index].first << "=" << TestParameters<std::string>::instance().getParameter( requiredParametersAndDefaults[index].first ) << "\n";
 	}
+	// Add another blank line to separate from the output
+	std::cout << std::endl;
 
 	return true;
 }
