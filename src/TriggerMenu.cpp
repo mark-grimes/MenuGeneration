@@ -81,6 +81,7 @@ l1menu::TriggerMenuPrivateMembers::TriggerMenuPrivateMembers( TriggerMenuPrivate
 {
 	// No operation besides the initialiser list
 }
+
 l1menu::TriggerMenuPrivateMembers& l1menu::TriggerMenuPrivateMembers::operator=( const l1menu::TriggerMenuPrivateMembers& otherPimple )
 {
 	//
@@ -169,6 +170,8 @@ l1menu::ITrigger& l1menu::TriggerMenu::addTrigger( const std::string& triggerNam
 
 	pImple_->triggers_.push_back( std::move(pNewTrigger) );
 
+	// Add an empty constraint for this trigger
+	pImple_->triggerConstraints_.push_back( l1menu::TriggerConstraint() );
 	// Make sure triggerResults_ is always the same size as triggers_
 	pImple_->triggerResults_.resize( pImple_->triggers_.size() );
 	return *pImple_->triggers_.back();
@@ -181,6 +184,8 @@ l1menu::ITrigger& l1menu::TriggerMenu::addTrigger( const std::string& triggerNam
 
 	pImple_->triggers_.push_back( std::move(pNewTrigger) );
 
+	// Add an empty constraint for this trigger
+	pImple_->triggerConstraints_.push_back( l1menu::TriggerConstraint() );
 	// Make sure triggerResults_ is always the same size as triggers_
 	pImple_->triggerResults_.resize( pImple_->triggers_.size() );
 	return *pImple_->triggers_.back();
@@ -193,6 +198,8 @@ l1menu::ITrigger& l1menu::TriggerMenu::addTrigger( const l1menu::ITrigger& trigg
 
 	pImple_->triggers_.push_back( std::move(pNewTrigger) );
 
+	// Add an empty constraint for this trigger
+	pImple_->triggerConstraints_.push_back( l1menu::TriggerConstraint() );
 	// Make sure triggerResults_ is always the same size as triggers_
 	pImple_->triggerResults_.resize( pImple_->triggers_.size() );
 	return *pImple_->triggers_.back();
@@ -240,12 +247,12 @@ bool l1menu::TriggerMenu::apply( const l1menu::L1TriggerDPGEvent& event ) const
 
 l1menu::TriggerConstraint& l1menu::TriggerMenu::getTriggerConstraint( size_t position )
 {
-	throw std::runtime_error( "Not implemented yet" );
+	return pImple_->triggerConstraints_.at( position );
 }
 
 const l1menu::TriggerConstraint& l1menu::TriggerMenu::getTriggerConstraint( size_t position ) const
 {
-	throw std::runtime_error( "Not implemented yet" );
+	return pImple_->triggerConstraints_.at( position );
 }
 
 bool l1menu::TriggerMenu::addTriggerFromOldFormat( const std::vector<std::string>& columns )

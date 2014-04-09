@@ -12,7 +12,16 @@ namespace l1menu
 	class TriggerConstraint
 	{
 	public:
+		TriggerConstraint();
 		virtual ~TriggerConstraint() {}
+
+		bool thresholdsLocked() const;
+		void thresholdsLocked( bool thresholdsLocked );
+		float fractionOfTotalBandwidth() const;
+		void fractionOfTotalBandwidth( float fractionOfTotalBandwidth );
+	protected:
+		bool thresholdsLocked_;
+		float fractionOfTotalBandwidth_;
 	};
 
 } // end of namespace l1menu
