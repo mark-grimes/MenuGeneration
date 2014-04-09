@@ -82,20 +82,10 @@ namespace l1menu
 		const l1menu::ITriggerConstraint& getTriggerConstraint( size_t position ) const;
 
 	protected:
-		//
-		// All of these methods are deprecated in favour of going through the functions
-		// in l1menu::tools. Until I fully move the functionality to there I'll protect
-		// the methods and call them from the required functions.
-		//
-		friend std::unique_ptr<l1menu::TriggerMenu> l1menu::tools::loadMenu( const std::string& filename );
-
-		virtual void loadMenuFromFile( const std::string& filename );
-		void saveMenuToFile( const std::string& filename ) const;
-		void saveToXML( l1menu::tools::XMLElement& parentElement ) const;
-		void restoreFromXML( const l1menu::tools::XMLElement& parentElement );
-	protected:
-		void loadMenuInOldFormat( std::ifstream& file );
-		/** This takes a single line from the old format file, but split into the different columns. */
+		/** This takes a single line from the old format file, but split into the different columns.
+		 * Currently required because this is how l1menu::MenuFitter loads menus, although this will
+		 * be changed soon.
+		 */
 		bool addTriggerFromOldFormat( const std::vector<std::string>& columns );
 
 	private:
