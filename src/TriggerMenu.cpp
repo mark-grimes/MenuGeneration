@@ -5,27 +5,13 @@
 #include <sstream>
 #include <iostream>
 #include "l1menu/ITrigger.h"
-#include "l1menu/ITriggerConstraint.h"
+#include "l1menu/TriggerConstraint.h"
 #include "l1menu/tools/miscellaneous.h"
 #include "l1menu/tools/fileIO.h"
 #include "l1menu/tools/stringManipulation.h"
 #include "l1menu/tools/XMLFile.h"
 #include "l1menu/tools/XMLElement.h"
 
-//
-// Use the unnamed namespace for things specific to this file
-//
-namespace
-{
-	/** @brief Implementation of the ITriggerConstraint interface.
-	 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
-	 * @date 08/Apr/2014
-	 */
-	class TriggerConstraintImplementation : public l1menu::ITriggerConstraint
-	{
-
-	};
-}
 //
 // Need to use the l1menu namespace for the pimple because that's how it was declared
 //
@@ -47,7 +33,7 @@ namespace l1menu
 
 		TriggerTable& triggerTable_;
 		std::vector< std::unique_ptr<l1menu::ITrigger> > triggers_;
-		std::vector< ::TriggerConstraintImplementation > triggerConstraints_; ///< always kept the same size as triggers_
+		std::vector<l1menu::TriggerConstraint> triggerConstraints_; ///< always kept the same size as triggers_
 		std::vector<bool> triggerResults_; ///< @brief Stores the result of each trigger for the last call of "apply"
 	};
 }
@@ -252,12 +238,12 @@ bool l1menu::TriggerMenu::apply( const l1menu::L1TriggerDPGEvent& event ) const
 	return atLeastOneTriggerHasFired;
 }
 
-l1menu::ITriggerConstraint& l1menu::TriggerMenu::getTriggerConstraint( size_t position )
+l1menu::TriggerConstraint& l1menu::TriggerMenu::getTriggerConstraint( size_t position )
 {
 	throw std::runtime_error( "Not implemented yet" );
 }
 
-const l1menu::ITriggerConstraint& l1menu::TriggerMenu::getTriggerConstraint( size_t position ) const
+const l1menu::TriggerConstraint& l1menu::TriggerMenu::getTriggerConstraint( size_t position ) const
 {
 	throw std::runtime_error( "Not implemented yet" );
 }

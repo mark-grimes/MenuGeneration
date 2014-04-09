@@ -11,7 +11,7 @@
 namespace l1menu
 {
 	class ITrigger;
-	class ITriggerConstraint;
+	class TriggerConstraint;
 	class L1TriggerDPGEvent;
 	class MenuFitter;
 	class MenuScan;
@@ -75,10 +75,10 @@ namespace l1menu
 		 * @throws               std::out_of_range exception if position is greater than or equal to
 		 *                       numberOfTriggers().
 		 */
-		l1menu::ITriggerConstraint& getTriggerConstraint( size_t position );
+		l1menu::TriggerConstraint& getTriggerConstraint( size_t position );
 
 		/** @brief const version of getTriggerConstraint. See the documentation for that. */
-		const l1menu::ITriggerConstraint& getTriggerConstraint( size_t position ) const;
+		const l1menu::TriggerConstraint& getTriggerConstraint( size_t position ) const;
 
 	protected:
 		friend class l1menu::MenuFitter;
