@@ -17,6 +17,7 @@ class TriggerMenuUnitTestSuite : public CPPUNIT_NS::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TriggerMenuUnitTestSuite);
 	CPPUNIT_TEST(testFormatsAreEqual);
+	CPPUNIT_TEST(testFormatsGiveSameTriggerConstraints);
 	CPPUNIT_TEST(testFormatsGiveSameResult);
 	CPPUNIT_TEST_SUITE_END();
 
@@ -27,6 +28,7 @@ public:
 
 protected:
 	void testFormatsAreEqual();
+	void testFormatsGiveSameTriggerConstraints();
 	void testFormatsGiveSameResult();
 
 	// These are set in the setUp() method
@@ -45,6 +47,7 @@ protected:
 #include "l1menu/IL1MenuFile.h"
 #include "l1menu/TriggerMenu.h"
 #include "l1menu/ITrigger.h"
+#include "l1menu/TriggerConstraint.h"
 #include "l1menu/ICachedTrigger.h"
 #include "l1menu/ISample.h"
 #include "l1menu/IEvent.h"
@@ -102,6 +105,31 @@ void TriggerMenuUnitTestSuite::testFormatsAreEqual()
 			CPPUNIT_ASSERT_EQUAL( xmlTrigger.parameter( xmlParameterNames[parameterIndex] ), oldTrigger.parameter( oldParameterNames[parameterIndex] ) );
 		} // end of loop over parameters
 	} // end of loop over triggers
+}
+
+void TriggerMenuUnitTestSuite::testFormatsGiveSameTriggerConstraints()
+{
+	//
+	// The number of constraints should be the same as the number of triggers
+	//
+	const size_t numberOfTriggers=pMenuFromXMLFormat_->numberOfTriggers();
+	CPPUNIT_ASSERT_EQUAL( numberOfTriggers, pMenuFromOldFormat_->numberOfTriggers() );
+
+	// Make sure I can't get too many
+	CPPUNIT_ASSERT_THROW( pMenuFromXMLFormat_->getTriggerConstraint(numberOfTriggers), std::out_of_range );
+	CPPUNIT_ASSERT_THROW( pMenuFromOldFormat_->getTriggerConstraint(numberOfTriggers), std::out_of_range );
+	// Make sure I can get just enough
+	CPPUNIT_ASSERT_NO_THROW( pMenuFromXMLFormat_->getTriggerConstraint(numberOfTriggers-1) );
+	CPPUNIT_ASSERT_NO_THROW( pMenuFromOldFormat_->getTriggerConstraint(numberOfTriggers-1) );
+
+	// Run through all of them and make sure they're equal
+	for( size_t index=0; index<numberOfTriggers; ++index )
+	{
+		const l1menu::TriggerConstraint& xmlConstraint=pMenuFromXMLFormat_->getTriggerConstraint(index);
+		const l1menu::TriggerConstraint& oldConstraint=pMenuFromOldFormat_->getTriggerConstraint(index);
+		CPPUNIT_ASSERT_EQUAL( xmlConstraint.thresholdsLocked(), oldConstraint.thresholdsLocked() );
+		CPPUNIT_ASSERT_EQUAL( xmlConstraint.fractionOfTotalBandwidth(), oldConstraint.fractionOfTotalBandwidth() );
+	}
 }
 
 void TriggerMenuUnitTestSuite::testFormatsGiveSameResult()
