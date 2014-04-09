@@ -32,7 +32,6 @@ namespace l1menu
 	 */
 	class TriggerMenu
 	{
-		friend class l1menu::MenuFitter;
 	public:
 		TriggerMenu();
 		virtual ~TriggerMenu();
@@ -82,6 +81,7 @@ namespace l1menu
 		const l1menu::ITriggerConstraint& getTriggerConstraint( size_t position ) const;
 
 	protected:
+		friend class l1menu::MenuFitter;
 		/** This takes a single line from the old format file, but split into the different columns.
 		 * Currently required because this is how l1menu::MenuFitter loads menus, although this will
 		 * be changed soon.
