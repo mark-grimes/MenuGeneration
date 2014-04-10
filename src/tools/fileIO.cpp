@@ -352,7 +352,7 @@ std::unique_ptr<l1menu::TriggerMenu> l1menu::tools::loadMenu( const std::string&
 	// This function was written before IL1MenuFile was created, but it's still
 	// useful as a shorthand.
 	//
-	std::unique_ptr<l1menu::IL1MenuFile> pFile=l1menu::IL1MenuFile::getInputFile( l1menu::IL1MenuFile::FileFormat::OLD, filename );
+	std::unique_ptr<l1menu::IL1MenuFile> pFile=l1menu::IL1MenuFile::getInputFile( filename );
 	std::vector< std::unique_ptr<l1menu::TriggerMenu> > menusFromFile=pFile->getMenus();
 	if( menusFromFile.empty() ) throw std::runtime_error( "l1menu::tools::loadMenu(\""+filename+"\") - Unable to load the menu" );
 	return std::move( menusFromFile.front() );

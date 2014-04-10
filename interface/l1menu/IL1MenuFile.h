@@ -34,7 +34,7 @@ namespace l1menu
 		 * I wanted this to take a std::istream but I'd have to change a lot of other things
 		 * to get that to work.
 		 */
-		static std::unique_ptr<l1menu::IL1MenuFile> getInputFile( FileFormat fileFormat, const std::string& inputFilename );
+		static std::unique_ptr<l1menu::IL1MenuFile> getInputFile( const std::string& inputFilename );
 
 	public:
 		virtual ~IL1MenuFile() {}

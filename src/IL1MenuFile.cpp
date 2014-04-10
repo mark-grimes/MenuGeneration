@@ -26,10 +26,21 @@ std::unique_ptr<l1menu::IL1MenuFile> l1menu::IL1MenuFile::getOutputFile( FileFor
 	else throw std::logic_error( "Unimplemented value for l1menu::IL1MenuFile::FileFormat" );
 }
 
-std::unique_ptr<l1menu::IL1MenuFile> l1menu::IL1MenuFile::getInputFile( l1menu::IL1MenuFile::FileFormat fileFormat, const std::string& inputFilenam )
+std::unique_ptr<l1menu::IL1MenuFile> l1menu::IL1MenuFile::getInputFile( const std::string& inputFilename )
 {
-	if( fileFormat==l1menu::IL1MenuFile::FileFormat::XML ) return std::unique_ptr<l1menu::IL1MenuFile>( new l1menu::implementation::XMLL1MenuFile(inputFilenam,false) );
-	if( fileFormat==l1menu::IL1MenuFile::FileFormat::CSV ) return std::unique_ptr<l1menu::IL1MenuFile>( new l1menu::implementation::OldL1MenuFile(inputFilenam,',') );
-	if( fileFormat==l1menu::IL1MenuFile::FileFormat::OLD ) return std::unique_ptr<l1menu::IL1MenuFile>( new l1menu::implementation::OldL1MenuFile(inputFilenam,' ') );
-	else throw std::logic_error( "Unimplemented value for l1menu::IL1MenuFile::FileFormat" );
+	std::unique_ptr<l1menu::IL1MenuFile> returnValue;
+	//
+	// I don't know what file format the file is in, so I'll just try
+	// to load it as an XML file. If that fails then I'll load it as
+	// a text file.
+	//
+	try
+	{
+		returnValue.reset( new l1menu::implementation::XMLL1MenuFile(inputFilename,false) );
+	}
+	catch( std::exception& error )
+	{
+		returnValue.reset( new l1menu::implementation::OldL1MenuFile(inputFilename,' ') );
+	}
+	return returnValue;
 }

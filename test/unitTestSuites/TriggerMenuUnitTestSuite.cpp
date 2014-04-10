@@ -61,8 +61,8 @@ void TriggerMenuUnitTestSuite::setUp()
 	std::string inputOLDFilename=TestParameters<std::string>::instance().getParameter( "TEST_MENU_FILENAME" );
 	std::unique_ptr<l1menu::IL1MenuFile> pXmlFile;
 	std::unique_ptr<l1menu::IL1MenuFile> pOldFile;
-	CPPUNIT_ASSERT_NO_THROW( pXmlFile=l1menu::IL1MenuFile::getInputFile( l1menu::IL1MenuFile::FileFormat::XML, inputXMLFilename ) );
-	CPPUNIT_ASSERT_NO_THROW( pOldFile=l1menu::IL1MenuFile::getInputFile( l1menu::IL1MenuFile::FileFormat::OLD, inputOLDFilename ) );
+	CPPUNIT_ASSERT_NO_THROW( pXmlFile=l1menu::IL1MenuFile::getInputFile( inputXMLFilename ) );
+	CPPUNIT_ASSERT_NO_THROW( pOldFile=l1menu::IL1MenuFile::getInputFile( inputOLDFilename ) );
 
 	std::vector< std::unique_ptr<l1menu::TriggerMenu> > menusFromXML=pXmlFile->getMenus();
 	std::vector< std::unique_ptr<l1menu::TriggerMenu> > menusFromOLD=pOldFile->getMenus();
