@@ -127,8 +127,8 @@ void TriggerMenuUnitTestSuite::testFormatsGiveSameTriggerConstraints()
 	{
 		const l1menu::TriggerConstraint& xmlConstraint=pMenuFromXMLFormat_->getTriggerConstraint(index);
 		const l1menu::TriggerConstraint& oldConstraint=pMenuFromOldFormat_->getTriggerConstraint(index);
-		CPPUNIT_ASSERT_EQUAL( xmlConstraint.thresholdsLocked(), oldConstraint.thresholdsLocked() );
-		CPPUNIT_ASSERT_EQUAL( xmlConstraint.fractionOfTotalBandwidth(), oldConstraint.fractionOfTotalBandwidth() );
+		CPPUNIT_ASSERT_EQUAL( xmlConstraint.type(), oldConstraint.type() );
+		CPPUNIT_ASSERT_DOUBLES_EQUAL( xmlConstraint.value(), oldConstraint.value(), 0.0000001 );
 	}
 }
 

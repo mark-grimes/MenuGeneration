@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "l1menu/TriggerMenu.h"
 #include "l1menu/ITrigger.h"
+#include "l1menu/TriggerConstraint.h"
 #include "./MenuRateImplementation.h"
 
 l1menu::implementation::XMLL1MenuFile::XMLL1MenuFile( std::ostream& outputStream ) : pOutputStream_(&outputStream)
@@ -69,6 +70,18 @@ std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::XMLL
 				std::string parameterName=parameterElement.getAttribute("name");
 				float parameterValue=parameterElement.getFloatValue();
 				newTrigger.parameter(parameterName)=parameterValue;
+			}
+
+			//
+			// If the menu has any information about constraints when
+			// scaling, include those as well.
+			//
+			if( triggerElement.hasAttribute("fractionOfTotalBandwidth") )
+			{
+				float fraction=triggerElement.getFloatAttribute("fractionOfTotalBandwidth");
+				l1menu::TriggerConstraint& newConstraint=pNewMenu->getTriggerConstraint(pNewMenu->numberOfTriggers()-1);
+				newConstraint.type( l1menu::TriggerConstraint::Type::FRACTION_OF_BANDWIDTH );
+				newConstraint.value( fraction );
 			}
 		}
 

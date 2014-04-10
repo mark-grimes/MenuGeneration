@@ -316,9 +316,12 @@ std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::OldL
 
 	for( size_t index=0; index<pNewMenu->numberOfTriggers(); ++index )
 	{
-		l1menu::TriggerConstraint& newConstraint=pNewMenu->getTriggerConstraint(index);
-		newConstraint.thresholdsLocked( triggerConstraints[index].first );
-		newConstraint.fractionOfTotalBandwidth( triggerConstraints[index].second/totalBandwidth );
+		if( !triggerConstraints[index].first ) // If thresholds aren't locked (default value of TriggerConstraint is fixed thresholds)
+		{
+			l1menu::TriggerConstraint& newConstraint=pNewMenu->getTriggerConstraint(index);
+			newConstraint.type( l1menu::TriggerConstraint::Type::FRACTION_OF_BANDWIDTH );
+			newConstraint.value( triggerConstraints[index].second/totalBandwidth );
+		}
 	}
 
 	returnValue.push_back( std::move( pNewMenu ) );

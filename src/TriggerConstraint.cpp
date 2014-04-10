@@ -1,30 +1,39 @@
 #include "l1menu/TriggerConstraint.h"
 
 #include <stdexcept>
+#include <iostream>
 
 l1menu::TriggerConstraint::TriggerConstraint()
-	: thresholdsLocked_(false), fractionOfTotalBandwidth_(-1)
+	: type_(Type::FIXED_THRESHOLDS), value_(-1)
 {
 	// No operation besides the initialiser list
 }
 
-bool l1menu::TriggerConstraint::thresholdsLocked() const
+l1menu::TriggerConstraint::Type l1menu::TriggerConstraint::type() const
 {
-	return thresholdsLocked_;
+	return type_;
 }
 
-void l1menu::TriggerConstraint::thresholdsLocked( bool thresholdsLocked )
+void l1menu::TriggerConstraint::type( Type newType )
 {
-	thresholdsLocked_=thresholdsLocked;
+	type_=newType;
 }
 
-float l1menu::TriggerConstraint::fractionOfTotalBandwidth() const
+float l1menu::TriggerConstraint::value() const
 {
-	return fractionOfTotalBandwidth_;
+	return value_;
 }
 
-void l1menu::TriggerConstraint::fractionOfTotalBandwidth( float fractionOfTotalBandwidth )
+void l1menu::TriggerConstraint::value( float newValue )
 {
-	if( fractionOfTotalBandwidth<0 || fractionOfTotalBandwidth>1 ) throw std::logic_error( "TriggerConstraint::fractionOfTotalBandwidth can only be set between zero and one" );
-	fractionOfTotalBandwidth_=fractionOfTotalBandwidth;
+	value_=newValue;
+}
+
+std::ostream& operator<<( std::ostream& stream, const l1menu::TriggerConstraint::Type& object )
+{
+	if( object==l1menu::TriggerConstraint::Type::FIXED_THRESHOLDS ) stream << "FIXED_THRESHOLDS";
+	else if( object==l1menu::TriggerConstraint::Type::FIXED_RATE ) stream << "FIXED_RATE";
+	else if( object==l1menu::TriggerConstraint::Type::FRACTION_OF_BANDWIDTH ) stream << "FRACTION_OF_BANDWIDTH";
+	else stream << "[stream output not updated for this value]";
+	return stream;
 }
