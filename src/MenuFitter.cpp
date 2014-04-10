@@ -14,6 +14,7 @@
 #include "l1menu/TriggerMenu.h"
 #include "l1menu/ITrigger.h"
 #include "l1menu/TriggerRatePlot.h"
+#include "l1menu/TriggerConstraint.h"
 #include "l1menu/MenuRatePlots.h"
 #include "l1menu/tools/miscellaneous.h"
 #include "l1menu/tools/fileIO.h"
@@ -49,31 +50,45 @@ namespace l1menu
 	class MenuFitterPrivateMembers
 	{
 	public:
-		MenuFitterPrivateMembers( const l1menu::ISample& newSample, const l1menu::MenuRatePlots* pRatePlots )
-			: sample(newSample)
+		MenuFitterPrivateMembers( const l1menu::ISample& newSample, const l1menu::TriggerMenu& newMenu, const l1menu::MenuRatePlots* pRatePlots )
+			: sample(newSample), menu(newMenu)
 		{
 			// If a l1menu::MenuRatePlots has been provided then I need to take a copy.
 			if( pRatePlots!=nullptr ) pMenuRatePlots.reset( new l1menu::MenuRatePlots(*pRatePlots) );
+
+			//
+			// Run over the new menu and have a look at the TriggerConstraints. If any
+			// are for fraction of total bandwidth create a ::TriggerScalingDetails object
+			// for it.
+			//
+			for( size_t index=0; index<menu.numberOfTriggers(); ++index )
+			{
+				l1menu::TriggerConstraint& constraint=menu.getTriggerConstraint( index );
+				if( constraint.type()==l1menu::TriggerConstraint::Type::FRACTION_OF_BANDWIDTH )
+				{
+					addBandwidthConstraint( index, constraint.value() );
+				}
+			}
 		}
 		const l1menu::ISample& sample;
 		std::unique_ptr<l1menu::MenuRatePlots> pMenuRatePlots;
 		l1menu::TriggerMenu menu;
 		std::vector< ::TriggerScalingDetails > scalableTriggers;
 		std::vector<std::pair<size_t,float> > bandwidthFractions;
-		void initiateOtherTriggerInfo( size_t triggerNumber, bool lockThresholds, float fractionOfTotalBandwidth );
+		void addBandwidthConstraint( size_t triggerNumber, float fractionOfTotalBandwidth );
 		std::stringstream debugLog;
 	};
 
 }
 
-l1menu::MenuFitter::MenuFitter( const l1menu::ISample& sample )
-	: pImple_( new MenuFitterPrivateMembers(sample,NULL) )
+l1menu::MenuFitter::MenuFitter( const l1menu::ISample& sample, const l1menu::TriggerMenu& menu )
+	: pImple_( new MenuFitterPrivateMembers(sample,menu,NULL) )
 {
 	// No operation
 }
 
-l1menu::MenuFitter::MenuFitter( const l1menu::ISample& sample, const l1menu::MenuRatePlots& menuRatePlots )
-	: pImple_( new MenuFitterPrivateMembers(sample,&menuRatePlots) )
+l1menu::MenuFitter::MenuFitter( const l1menu::ISample& sample, const l1menu::TriggerMenu& menu, const l1menu::MenuRatePlots& menuRatePlots )
+	: pImple_( new MenuFitterPrivateMembers(sample,menu,&menuRatePlots) )
 {
 	// No operation
 }
@@ -138,7 +153,10 @@ std::shared_ptr<const l1menu::IMenuRate> l1menu::MenuFitter::fit( float totalRat
 	}
 
 	// Then work out what the total rate is
-	std::shared_ptr<const l1menu::IMenuRate> pMenuRate=pImple_->sample.rate( pImple_->menu, menuRatePlots() );
+	std::shared_ptr<const l1menu::IMenuRate> pMenuRate;
+	if( pImple_->pMenuRatePlots!=nullptr ) pMenuRate=pImple_->sample.rate( pImple_->menu, *pImple_->pMenuRatePlots );
+	else pMenuRate=pImple_->sample.rate( pImple_->menu );
+
 	l1menu::tools::dumpTriggerRates( pImple_->debugLog, *pMenuRate );
 
 	size_t iterationNumber=0;
@@ -170,7 +188,8 @@ std::shared_ptr<const l1menu::IMenuRate> l1menu::MenuFitter::fit( float totalRat
 
 		} // end of loop over triggers I'm allowed to change thresholds for
 
-		pMenuRate=pImple_->sample.rate( pImple_->menu, menuRatePlots() );
+		if( pImple_->pMenuRatePlots!=nullptr ) pMenuRate=pImple_->sample.rate( pImple_->menu, *pImple_->pMenuRatePlots );
+		else pMenuRate=pImple_->sample.rate( pImple_->menu );
 		l1menu::tools::dumpTriggerRates( pImple_->debugLog, *pMenuRate );
 	}
 
@@ -182,155 +201,88 @@ const std::string l1menu::MenuFitter::debugLog()
 	return pImple_->debugLog.str();
 }
 
-void l1menu::MenuFitter::addTrigger( const l1menu::ITrigger& trigger, float fractionOfTotalBandwidth, bool lockThresholds )
+void l1menu::MenuFitter::addTrigger( const l1menu::ITrigger& trigger, const TriggerConstraint& constraint )
 {
-	if( !lockThresholds && (fractionOfTotalBandwidth<0 || fractionOfTotalBandwidth>1) ) throw std::runtime_error("Invalid fraction of the total bandwidth requested");
-
 	size_t triggerNumber=pImple_->menu.numberOfTriggers(); // This will be the number of the next trigger added
 	pImple_->menu.addTrigger( trigger );
-	pImple_->initiateOtherTriggerInfo( triggerNumber, lockThresholds, fractionOfTotalBandwidth );
-}
-
-void l1menu::MenuFitter::loadMenuFromFile( const std::string& filename )
-{
-	std::ifstream file( filename.c_str() );
-	if( !file.is_open() ) throw std::runtime_error( "Unable to open file "+filename );
-
-	const size_t bufferSize=200;
-	char buffer[bufferSize];
-
-	// The old file format provides the rates it wants for each trigger
-	// as an absolute value, whereas I want it as a fraction of the total.
-	// So I need to run through the whole file and add up each of these
-	// to get a total, then divide each value by the total to get the fraction.
-	// Hence I can't do that until I've loaded every trigger. I'll keep track
-	// of whether each threshold is locked and the absolute rate requested in
-	// this vector.
-	std::vector< std::pair<bool,float> > triggerAuxiliaryInfo;
-	float totalRequestedRate=0; // This is the sum of all the rates requested for each trigger
-
-	while( file.good() )
+	pImple_->menu.getTriggerConstraint( triggerNumber )=constraint;
+	if( constraint.type()==l1menu::TriggerConstraint::Type::FRACTION_OF_BANDWIDTH )
 	{
-		try
-		{
-			// Get one line at a time
-			file.getline( buffer, bufferSize );
-
-			// split the line by whitespace into columns
-			std::vector<std::string> tableColumns=l1menu::tools::splitByWhitespace( buffer );
-
-			if( tableColumns.size()==1 && tableColumns[0].empty() ) continue; // Allow blank lines without giving a warning
-			if( tableColumns.size()!=12 ) throw std::runtime_error( "The line does not have the correct number of columns" );
-
-			if( pImple_->menu.addTriggerFromOldFormat( tableColumns ) )
-			{
-				// If the trigger was created successfully, keep a note of these
-				// details so that I can later initiate the auxiliary information.
-				// I can't do that until I know the total requestedRate.
-				bool lockThresholds=l1menu::tools::convertStringToFloat( tableColumns[11] );
-				float requestedRate=l1menu::tools::convertStringToFloat( tableColumns[9] );
-				triggerAuxiliaryInfo.push_back( std::make_pair(lockThresholds,requestedRate) );
-				totalRequestedRate+=requestedRate;
-			}
-
-		} // end of try block
-		catch( std::runtime_error& exception )
-		{
-			std::cout << "Some error occured while processing the line \"" << buffer << "\":" << exception.what() << std::endl;
-		}
-	}
-
-	// I want menu rate plots if they've not already been supplied
-	if( pImple_->pMenuRatePlots==nullptr )
-	{
-		pImple_->pMenuRatePlots.reset( new MenuRatePlots(pImple_->menu) );
-		pImple_->pMenuRatePlots->addSample(pImple_->sample);
-	}
-
-	// Now I've processed all the lines I should know the total requested rate and I can
-	// initiate the auxiliary information.
-	size_t triggerNumber=pImple_->menu.numberOfTriggers()-triggerAuxiliaryInfo.size(); // There may have been triggers in there previously
-	for( const auto auxiliaryInfo : triggerAuxiliaryInfo )
-	{
-		pImple_->initiateOtherTriggerInfo( triggerNumber, auxiliaryInfo.first, auxiliaryInfo.second/totalRequestedRate );
-		++triggerNumber;
+		pImple_->addBandwidthConstraint( triggerNumber, constraint.value() );
 	}
 }
 
-void l1menu::MenuFitterPrivateMembers::initiateOtherTriggerInfo( size_t triggerNumber, bool lockThresholds, float fractionOfTotalBandwidth )
+void l1menu::MenuFitterPrivateMembers::addBandwidthConstraint( size_t triggerNumber, float fractionOfTotalBandwidth )
 {
 	const l1menu::ITrigger& newTrigger=menu.getTrigger( triggerNumber );
 
-	if( !lockThresholds )
+	const std::vector<std::string> thresholdNames=l1menu::tools::getThresholdNames(newTrigger);
+	const std::string& mainThreshold=thresholdNames.front();
+
+	// Record the scaling between the main threshold and all of the others, so that
+	// when they get increased/decreased it's all done proportionally.
+	std::vector< std::pair<std::string,float> > thresholdScalings;
+	const float mainThresholdValue=newTrigger.parameter(mainThreshold);
+	for( const auto& thresholdName : thresholdNames )
 	{
-		const std::vector<std::string> thresholdNames=l1menu::tools::getThresholdNames(newTrigger);
-		const std::string& mainThreshold=thresholdNames.front();
+		if( thresholdName==mainThreshold ) continue;
+		thresholdScalings.push_back( std::make_pair( thresholdName, newTrigger.parameter(thresholdName)/mainThresholdValue ) );
+	}
 
-		// Record the scaling between the main threshold and all of the others, so that
-		// when they get increased/decreased it's all done proportionally.
-		std::vector< std::pair<std::string,float> > thresholdScalings;
-		const float mainThresholdValue=newTrigger.parameter(mainThreshold);
-		for( const auto& thresholdName : thresholdNames )
+	//
+	// I need a rate plot for this trigger. First check to see if there is one that matches
+	// in the rate plots that might have been given in the constructor.
+	//
+	const l1menu::TriggerRatePlot* pPreviouslyCreatedRatePlot=nullptr;
+	if( pMenuRatePlots!=nullptr )
+	{
+		for( const auto& triggerRatePlot : pMenuRatePlots->triggerRatePlots() )
 		{
-			if( thresholdName==mainThreshold ) continue;
-			thresholdScalings.push_back( std::make_pair( thresholdName, newTrigger.parameter(thresholdName)/mainThresholdValue ) );
-		}
-
-		//
-		// I need a rate plot for this trigger. First check to see if there is one that matches
-		// in the rate plots that might have been given in the constructor.
-		//
-		const l1menu::TriggerRatePlot* pPreviouslyCreatedRatePlot=nullptr;
-		if( pMenuRatePlots!=nullptr )
-		{
-			for( const auto& triggerRatePlot : pMenuRatePlots->triggerRatePlots() )
+			// See if the plot was made with a trigger equivalent to this one
+			if( triggerRatePlot.triggerMatches(newTrigger) )
 			{
-				// See if the plot was made with a trigger equivalent to this one
-				if( triggerRatePlot.triggerMatches(newTrigger) )
-				{
-					pPreviouslyCreatedRatePlot=&triggerRatePlot;
-					break;
-				}
+				pPreviouslyCreatedRatePlot=&triggerRatePlot;
+				break;
 			}
 		}
+	}
 
-		if( pPreviouslyCreatedRatePlot!=nullptr )
+	if( pPreviouslyCreatedRatePlot!=nullptr )
+	{
+		//std::cout << "Found previously created plot for " << newTrigger.name() << ". Title is " << pPreviouslyCreatedRatePlot->getPlot()->GetTitle() << std::endl;
+		//
+		// Bundle all of this information in the helper structure I wrote in
+		// the unnamed namespace.
+		//
+		scalableTriggers.push_back( ::TriggerScalingDetails{triggerNumber,fractionOfTotalBandwidth,0,*pPreviouslyCreatedRatePlot,mainThreshold,std::move(thresholdScalings)} );
+	}
+	else
+	{
+		//std::cout << "Need to create plot for " << newTrigger.name() << std::endl;
+		//
+		// Either no rate plots were supplied or a suitable one wasn't found, so I need to
+		// create a rate plot for this trigger.
+		//
+		unsigned int numberOfBins=100;
+		float lowerEdge=0;
+		float upperEdge=100;
+		try
 		{
-			//std::cout << "Found previously created plot for " << newTrigger.name() << ". Title is " << pPreviouslyCreatedRatePlot->getPlot()->GetTitle() << std::endl;
-			//
-			// Bundle all of this information in the helper structure I wrote in
-			// the unnamed namespace.
-			//
-			scalableTriggers.push_back( ::TriggerScalingDetails{triggerNumber,fractionOfTotalBandwidth,0,*pPreviouslyCreatedRatePlot,mainThreshold,std::move(thresholdScalings)} );
+			l1menu::TriggerTable& triggerTable=l1menu::TriggerTable::instance();
+			numberOfBins=triggerTable.getSuggestedNumberOfBins( newTrigger.name(), mainThreshold );
+			lowerEdge=triggerTable.getSuggestedLowerEdge( newTrigger.name(), mainThreshold );
+			upperEdge=triggerTable.getSuggestedUpperEdge( newTrigger.name(), mainThreshold );
 		}
-		else
-		{
-			//std::cout << "Need to create plot for " << newTrigger.name() << std::endl;
-			//
-			// Either no rate plots were supplied or a suitable one wasn't found, so I need to
-			// create a rate plot for this trigger.
-			//
-			unsigned int numberOfBins=100;
-			float lowerEdge=0;
-			float upperEdge=100;
-			try
-			{
-				l1menu::TriggerTable& triggerTable=l1menu::TriggerTable::instance();
-				numberOfBins=triggerTable.getSuggestedNumberOfBins( newTrigger.name(), mainThreshold );
-				lowerEdge=triggerTable.getSuggestedLowerEdge( newTrigger.name(), mainThreshold );
-				upperEdge=triggerTable.getSuggestedUpperEdge( newTrigger.name(), mainThreshold );
-			}
-			catch( std::exception& error) { /* Do nothing. If no binning suggestions have been set for this trigger use the defaults I set above. */ }
+		catch( std::exception& error) { /* Do nothing. If no binning suggestions have been set for this trigger use the defaults I set above. */ }
 
-			l1menu::TriggerRatePlot ratePlot(newTrigger,newTrigger.name()+"_v_allThresholdsScaled",numberOfBins,lowerEdge,upperEdge,mainThreshold,thresholdNames);
-			ratePlot.addSample( sample );
+		l1menu::TriggerRatePlot ratePlot(newTrigger,newTrigger.name()+"_v_allThresholdsScaled",numberOfBins,lowerEdge,upperEdge,mainThreshold,thresholdNames);
+		ratePlot.addSample( sample );
 
-			//
-			// Bundle all of this information in the helper structure I wrote in
-			// the unnamed namespace.
-			//
-			scalableTriggers.push_back( ::TriggerScalingDetails{triggerNumber,fractionOfTotalBandwidth,0,std::move(ratePlot),mainThreshold,std::move(thresholdScalings)} );
-		} // end of else block where pPreviouslyCreatedRatePlot is null
-	} // end of "if( !lockThresholds )"
+		//
+		// Bundle all of this information in the helper structure I wrote in
+		// the unnamed namespace.
+		//
+		scalableTriggers.push_back( ::TriggerScalingDetails{triggerNumber,fractionOfTotalBandwidth,0,std::move(ratePlot),mainThreshold,std::move(thresholdScalings)} );
+	} // end of else block where pPreviouslyCreatedRatePlot is null
 
 }
