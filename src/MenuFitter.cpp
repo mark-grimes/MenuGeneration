@@ -55,6 +55,11 @@ namespace l1menu
 		{
 			// If a l1menu::MenuRatePlots has been provided then I need to take a copy.
 			if( pRatePlots!=nullptr ) pMenuRatePlots.reset( new l1menu::MenuRatePlots(*pRatePlots) );
+			else
+			{
+				pMenuRatePlots.reset( new MenuRatePlots(menu) );
+				pMenuRatePlots->addSample(sample);
+			}
 
 			//
 			// Run over the new menu and have a look at the TriggerConstraints. If any
@@ -154,8 +159,7 @@ std::shared_ptr<const l1menu::IMenuRate> l1menu::MenuFitter::fit( float totalRat
 
 	// Then work out what the total rate is
 	std::shared_ptr<const l1menu::IMenuRate> pMenuRate;
-	if( pImple_->pMenuRatePlots!=nullptr ) pMenuRate=pImple_->sample.rate( pImple_->menu, *pImple_->pMenuRatePlots );
-	else pMenuRate=pImple_->sample.rate( pImple_->menu );
+	pMenuRate=pImple_->sample.rate( pImple_->menu, menuRatePlots() );
 
 	l1menu::tools::dumpTriggerRates( pImple_->debugLog, *pMenuRate );
 
@@ -188,8 +192,7 @@ std::shared_ptr<const l1menu::IMenuRate> l1menu::MenuFitter::fit( float totalRat
 
 		} // end of loop over triggers I'm allowed to change thresholds for
 
-		if( pImple_->pMenuRatePlots!=nullptr ) pMenuRate=pImple_->sample.rate( pImple_->menu, *pImple_->pMenuRatePlots );
-		else pMenuRate=pImple_->sample.rate( pImple_->menu );
+		pMenuRate=pImple_->sample.rate( pImple_->menu, menuRatePlots() );
 		l1menu::tools::dumpTriggerRates( pImple_->debugLog, *pMenuRate );
 	}
 
