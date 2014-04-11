@@ -164,7 +164,7 @@ int main( int argc, char* argv[] )
 
 		for( const auto& totalRate : totalRates )
 		{
-			std::cout << "Fitting menu for a rate of " << totalRate << "kHz..."; std::cout.flush();
+			std::cout << "Fitting menu for a rate of " << totalRate << "kHz..." << std::endl; std::cout.flush();
 			try
 			{
 				std::shared_ptr<const l1menu::IMenuRate> pRates=pMenuFitter->fit( totalRate, totalRate*0.05 );
