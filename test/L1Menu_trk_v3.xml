@@ -60,6 +60,14 @@
     </Trigger>
 
     <Trigger formatVersion="0">
+      <name>L1_DoubleTkEM</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">10.</parameter>
+      <parameter name="leg2threshold1">10.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0">
       <name>L1_TkMu_Mu</name>
       <version>0</version>
       <parameter name="leg1threshold1">12.</parameter>
@@ -141,6 +149,8 @@
       <parameter name="zVtxCut">1.0</parameter>
     </Trigger>
  
+ <!--
+ 
    <Trigger formatVersion="0">
       <name>L1_TkHTT</name>
       <version>0</version>
@@ -153,7 +163,7 @@
       <parameter name="threshold1">36.</parameter>
     </Trigger>    
 
-  
+  -->
     
    <!--
        Cross Triggers
