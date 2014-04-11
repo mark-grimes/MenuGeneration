@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<l1menu>
+
+  <description>File for use with the L1Trigger/MenuGeneration CMSSW package</description>
+
+  <TriggerMenu>
+ 
+    <!--
+       Single Lepton Triggers
+    --> 
+    <Trigger formatVersion="0">
+      <name>L1_SingleEG</name>
+      <version>0</version>
+      <parameter name="threshold1">22</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0">
+      <name>L1_SingleIsoEG</name>
+      <version>0</version>
+      <parameter name="threshold1">22</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVerion="0"> 
+      <name>L1_SingleMu</name>
+      <version>0</version>
+      <parameter name="threshold1">12</parameter>
+      <parameter name="etaCut">2.1</parameter>
+      <parameter name="muonQuality">3</parameter>
+    </Trigger>     
+
+    <Trigger formatVersion="0">
+      <name>L1_SingleTau</name>
+      <version>0</version>
+      <parameter name="threshold1">22</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <!--
+       diLepton Triggers
+    --> 
+
+    <Trigger formatVersion="0">
+      <name>L1_isoEG_EG</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">12.</parameter>
+      <parameter name="leg2threshold1">7.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0">
+      <name>L1_DoubleMu</name>
+      <version>0</version>
+      <parameter name="threshold1">12.</parameter>
+      <parameter name="threshold2">3.5</parameter>
+      <parameter name="muonQuality">3</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0">
+      <name>L1_isoTau_Tau</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">20.</parameter>
+      <parameter name="leg2threshold1">20.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0">
+      <name>L1_isoEG_Mu</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">12.</parameter>
+      <parameter name="leg2threshold1">3.5</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2etaCut">2.172</parameter>
+      <parameter name="leg2muonQuality">3</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0">
+      <name>L1_isoEG_Tau</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">10.</parameter>
+      <parameter name="leg2threshold1">20.</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0">
+      <name>L1_isoMu_Tau</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">10.</parameter>
+      <parameter name="leg2threshold1">20.</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+      <parameter name="leg1etaCut">2.172</parameter>
+      <parameter name="leg1muonQuality">3</parameter>
+    </Trigger>
+
+    <!--
+       Hadronic Triggers
+    -->    
+
+   <Trigger formatVersion="0">
+      <name>L1_SingleJetC</name>
+      <version>0</version>
+      <parameter name="threshold1">128.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+   <Trigger formatVersion="0">
+      <name>L1_DoubleJet</name>
+      <version>0</version>
+      <parameter name="threshold1">56.</parameter>
+      <parameter name="threshold2">56.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+   <Trigger formatVersion="0">
+      <name>L1_QuadJetC</name>
+      <version>0</version>
+      <parameter name="threshold1">36.</parameter>
+      <parameter name="threshold2">36.</parameter>
+      <parameter name="threshold3">36.</parameter>
+      <parameter name="threshold4">36.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+   <Trigger formatVersion="0">
+      <name>L1_HTT</name>
+      <version>0</version>
+      <parameter name="threshold1">159.</parameter>
+    </Trigger>
+    
+   <Trigger formatVersion="0">
+      <name>L1_HTM</name>
+      <version>0</version>
+      <parameter name="threshold1">36.</parameter>
+    </Trigger>    
+
+   <!--
+       Cross Triggers
+    --> 
+
+    <Trigger formatVersion="0">
+      <name>L1_SingleIsoEG_CJet</name>
+      <version>1</version>
+      <parameter name="leg1threshold1">15</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2threshold1">35</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+    </Trigger>    
+
+    <Trigger formatVersion="0">
+      <name>L1_SingleIsoEG_HTM</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">15.</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2threshold1">30.</parameter>
+    </Trigger>    
+ 
+    <Trigger formatVerion="0"> 
+      <name>L1_SingleMu_CJet</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">12</parameter>
+      <parameter name="leg1etaCut">2.1</parameter>
+      <parameter name="leg2threshold1">20</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+      <parameter name="leg1muonQuality">3</parameter>
+    </Trigger>     
+ 
+    <Trigger formatVerion="0"> 
+      <name>L1_SingleMu_HTM</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">12</parameter>
+      <parameter name="leg1etaCut">2.1</parameter>
+      <parameter name="leg2threshold1">20</parameter>
+      <parameter name="leg1muonQuality">3</parameter>
+    </Trigger>     
+ 
+  </TriggerMenu>
+
+</l1menu>
