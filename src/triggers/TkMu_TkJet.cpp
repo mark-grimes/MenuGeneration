@@ -39,7 +39,7 @@ namespace l1menu
 		protected:
 			float leg1threshold1_;
 			float leg2threshold1_;
-			float etaCut_;
+			float leg1etaCut_;
 			float leg2regionCut_;
 			float zVtxCut_;
 			float muonQuality_;
@@ -110,6 +110,8 @@ bool l1menu::triggers::TkMu_TkJet_v1::apply( const l1menu::L1TriggerDPGEvent& ev
 {
 	const L1Analysis::L1AnalysisDataFormat& analysisDataFormat=event.rawEvent();
 	const bool* PhysicsBits=event.physicsBits();
+        
+	//printf("Cuts: MuPt %f  JetPt  %f  MuEta %f JetEta %f\n",leg1threshold1_,leg2threshold1_,leg1etaCut_,leg2regionCut_);
 
 	bool raw = PhysicsBits[0];   // ZeroBias
 	if (! raw) return false;
@@ -129,7 +131,7 @@ bool l1menu::triggers::TkMu_TkJet_v1::apply( const l1menu::L1TriggerDPGEvent& ev
 		int qual = analysisDataFormat.QualTkmu.at(imu);
 		if ( qual < muonQuality_) continue;
 		float eta = analysisDataFormat.EtaTkmu.at(imu);
-		if (std::fabs(eta) > etaCut_) continue;
+		if (std::fabs(eta) > leg1etaCut_) continue;
 		
 		if (pt >= leg1threshold1_){
 
@@ -190,7 +192,7 @@ bool l1menu::triggers::TkMu_TkJet_v0::apply( const l1menu::L1TriggerDPGEvent& ev
 		int qual = analysisDataFormat.QualTkmu.at(imu);
 		if ( qual < muonQuality_) continue;
 		float eta = analysisDataFormat.EtaTkmu.at(imu);
-		if (std::fabs(eta) > etaCut_) continue;
+		if (std::fabs(eta) > leg1etaCut_) continue;
 		
 		if (pt >= leg1threshold1_){
 
@@ -225,7 +227,7 @@ unsigned int l1menu::triggers::TkMu_TkJet_v0::version() const
 
 
 l1menu::triggers::TkMu_TkJet::TkMu_TkJet()
-	: leg1threshold1_(20), leg2threshold1_(20), etaCut_(2.1), leg2regionCut_(4.5), zVtxCut_(1.0), muonQuality_(4)
+	: leg1threshold1_(20), leg2threshold1_(20), leg1etaCut_(2.1), leg2regionCut_(4.5), zVtxCut_(1.0), muonQuality_(4)
 {
 	// No operation other than the initialiser list
 }
@@ -239,7 +241,7 @@ const std::vector<std::string> l1menu::triggers::TkMu_TkJet::parameterNames() co
 {
 	std::vector<std::string> returnValue;
 	returnValue.push_back("leg1threshold1");
-	returnValue.push_back("etaCut");
+	returnValue.push_back("leg1etaCut");
 	returnValue.push_back("leg2threshold1");
 	returnValue.push_back("leg2regionCut");
 	returnValue.push_back("zVtxCut");
@@ -250,7 +252,7 @@ const std::vector<std::string> l1menu::triggers::TkMu_TkJet::parameterNames() co
 float& l1menu::triggers::TkMu_TkJet::parameter( const std::string& parameterName )
 {
 	if( parameterName=="leg1threshold1" ) return leg1threshold1_;
-	else if( parameterName=="etaCut" ) return etaCut_;
+	else if( parameterName=="leg1etaCut" ) return leg1etaCut_;
 	else if( parameterName=="leg2threshold1" ) return leg2threshold1_;
 	else if( parameterName=="leg2regionCut" ) return leg2regionCut_;
 	else if( parameterName=="zVtxCut" ) return zVtxCut_;
@@ -261,7 +263,7 @@ float& l1menu::triggers::TkMu_TkJet::parameter( const std::string& parameterName
 const float& l1menu::triggers::TkMu_TkJet::parameter( const std::string& parameterName ) const
 {
 	if( parameterName=="leg1threshold1" ) return leg1threshold1_;
-	else if( parameterName=="etaCut" ) return etaCut_;
+	else if( parameterName=="leg1etaCut" ) return leg1etaCut_;
 	else if( parameterName=="leg2threshold1" ) return leg2threshold1_;
 	else if( parameterName=="leg2regionCut" ) return leg2regionCut_;
 	else if( parameterName=="zVtxCut" ) return zVtxCut_;
