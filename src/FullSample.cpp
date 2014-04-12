@@ -393,6 +393,39 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 				analysisDataFormat.NTkele++;
 			}
 
+                       
+		        // second collection of lower Pt track electrons
+			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkEG2; i++ )
+			{
+
+				analysisDataFormat.BxTkel2.push_back( inputNtuple.l1upgrade_->tkEG2Bx.at(i) );    
+				analysisDataFormat.zVtxTkel2.push_back( inputNtuple.l1upgrade_->tkEG2zVtx.at(i) ); 
+				analysisDataFormat.tIsoTkel2.push_back( inputNtuple.l1upgrade_->tkEG2TrkIso.at(i) );   //track isolation 
+				analysisDataFormat.EtTkel2.push_back( inputNtuple.l1upgrade_->tkEG2Et.at( i ) );
+				analysisDataFormat.PhiTkel2.push_back( phiINjetCoord( inputNtuple.l1upgrade_->tkEG2Phi.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with phiINjetCoord
+				analysisDataFormat.EtaTkel2.push_back( etaINjetCoord( inputNtuple.l1upgrade_->tkEG2Eta.at( i ) ) ); //PROBLEM: real value, trigger wants bin convert with etaINjetCoord
+
+				// Check whether this EG is located in the isolation list...no isolated list for this Pt cut
+				bool isolated=false;
+/*				bool fnd=false;
+				unsigned int isoTkEG=0;
+				while( !fnd && isoTkEG < inputNtuple.l1upgrade_->nTkIsoEG )
+				{
+					if( inputNtuple.l1upgrade_->tkIsoEGPhi.at( isoTkEG )==inputNtuple.l1upgrade_->tkEGPhi.at( i )
+					 && inputNtuple.l1upgrade_->tkIsoEGEta.at( isoTkEG )==inputNtuple.l1upgrade_->tkEGEta.at( i ) )
+					{
+						isolated=true;
+						fnd=true;
+					}
+					isoTkEG++;
+				}
+*/
+				analysisDataFormat.IsoTkel2.push_back( isolated );
+				analysisDataFormat.NTkele2++;
+			}
+    
+
+
 			for( unsigned int i=0; i<inputNtuple.l1upgrade_->nTkEM; i++ )
 			{
 				analysisDataFormat.BxTkem.push_back( inputNtuple.l1upgrade_->tkEMBx.at(i) );    
