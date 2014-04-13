@@ -112,7 +112,16 @@ l1menu::tools::XMLElement l1menu::implementation::XMLL1MenuFile::convertToXML( c
 
 	for( size_t index=0; index<object.numberOfTriggers(); ++index )
 	{
-		convertToXML( object.getTrigger(index), thisElement );
+		l1menu::tools::XMLElement newTriggerElement=convertToXML( object.getTrigger(index), thisElement );
+
+		// If there are constraints on the trigger for fitting to a bandwidth, output those
+		// as well. The type FIXED_THRESHOLDS is equivalent to no constraints (i.e. just use
+		// whatever thresholds are set), so don't need to add anything for that.
+		l1menu::TriggerConstraint constraint=object.getTriggerConstraint( index );
+		if( constraint.type()==l1menu::TriggerConstraint::Type::FIXED_THRESHOLDS ) continue;
+		else if( constraint.type()==l1menu::TriggerConstraint::Type::FIXED_RATE ) newTriggerElement.setAttribute( "fixedRate", constraint.value() );
+		else if( constraint.type()==l1menu::TriggerConstraint::Type::FRACTION_OF_BANDWIDTH ) newTriggerElement.setAttribute( "fractionOfTotalBandwidth", constraint.value() );
+		else throw std::runtime_error( "XMLL1MenuFile::convertToXML( const l1menu::TriggerMenu& object, ... ) - a trigger has an unknown constraint type" );
 	}
 
 	return thisElement;
