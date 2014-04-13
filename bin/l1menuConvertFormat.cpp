@@ -11,8 +11,10 @@
 
 void printUsage( const std::string& executableName, std::ostream& output=std::cout )
 {
-	output << "Usage:" << "\n"
-			<< "\t" << executableName << " <input rate filename>" << "\n"
+	output << "Converts between the different formats (currently text and XML) used for menu files and rate results" << "\n"
+			<< "\n"
+			<< "Usage:" << "\n"
+			<< "\t" << executableName << " [--format <CSV | OLD | XML>] [--output outputFilename] inputFilename" << "\n"
 			<< "\n"
 			<< "\t" << executableName << " --help" << "\n"
 			<< "\t" << "\t" << "prints this help message"
@@ -63,7 +65,7 @@ int main( int argc, char* argv[] )
 	} // end of try block
 	catch( std::exception& error )
 	{
-		std::cerr << "Error parsing the command line: " << error.what() << std::endl;
+		std::cerr << "Error parsing the command line: " << error.what() << "\n" << std::endl;
 		printUsage( commandLineParser.executableName(), std::cerr );
 		return -1;
 	}
