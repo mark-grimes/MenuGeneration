@@ -44,7 +44,6 @@ void l1menu::implementation::XMLL1MenuFile::add( const l1menu::IMenuRate& menuRa
 std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::XMLL1MenuFile::getMenus() const
 {
 	std::vector<l1menu::tools::XMLElement> childElements=outputFile_.rootElement().getChildren("TriggerMenu");
-	if( childElements.empty() ) throw std::runtime_error( "XMLL1MenuFile::getRates - file does not contain a \"TriggerMenu\" child element." );
 
 	std::vector< std::unique_ptr<l1menu::TriggerMenu> > returnValue;
 	for( const auto& menuElement : childElements )
@@ -94,7 +93,6 @@ std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::XMLL
 std::vector< std::unique_ptr<l1menu::IMenuRate> > l1menu::implementation::XMLL1MenuFile::getRates() const
 {
 	std::vector<l1menu::tools::XMLElement> childElements=outputFile_.rootElement().getChildren("MenuRate");
-	if( childElements.empty() ) throw std::runtime_error( "XMLL1MenuFile::getRates - file does not contain a \"MenuRate\" child element." );
 
 	std::vector< std::unique_ptr<l1menu::IMenuRate> > returnValue;
 	for( const auto& element : childElements )
