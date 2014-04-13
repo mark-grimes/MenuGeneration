@@ -34,7 +34,121 @@ l1menu::implementation::OldL1MenuFile::~OldL1MenuFile()
 
 void l1menu::implementation::OldL1MenuFile::add( const l1menu::TriggerMenu& object )
 {
+	if( pOutputStream_==nullptr ) throw std::runtime_error( "OldL1MenuFile add is trying to add a TriggerMenu but the output stream pointer is null" );
 
+	for( size_t index=0; index<object.numberOfTriggers(); ++index )
+	{
+		const l1menu::ITriggerDescription& trigger=object.getTrigger(index);
+		const l1menu::TriggerConstraint& triggerConstraint=object.getTriggerConstraint(index);
+
+		std::vector<float> thresholds;
+		{ // Block to limit scope of temporary variables
+			std::vector<std::string> thresholdNames=l1menu::tools::getThresholdNames( trigger );
+			for( size_t thresholdIndex=0; thresholdIndex<4; ++thresholdIndex )
+			{
+				// Output "-1" if this trigger has fewer than 4 thresholds
+				if( thresholdIndex>=thresholdNames.size() ) thresholds.push_back(-1);
+				else thresholds.push_back( trigger.parameter(thresholdNames[thresholdIndex]) );
+			}
+		}
+
+		float etaOrRegionCut;
+		//
+		// Some of the cross triggers have this set for both legs, and I need to hard code which
+		// to take (the calo region or the absolute eta). This is purely convention to match the
+		// way the menu is loaded. For the other triggers I'll just try all of the parameter names
+		// and see which call is successful.
+		//
+		if( trigger.name()=="L1_SingleMu_CJet" ) etaOrRegionCut=trigger.parameter("leg1etaCut");
+		else if( trigger.name()=="L1_TkMu_TkJet" ) etaOrRegionCut=trigger.parameter("leg1etaCut");
+		else if( trigger.name()=="L1_isoMu_EG" ) etaOrRegionCut=trigger.parameter("leg2regionCut");
+		else if( trigger.name()=="L1_isoEG_Mu" ) etaOrRegionCut=trigger.parameter("leg1regionCut");
+		else if( trigger.name()=="L1_TkEle_Mu" ) etaOrRegionCut=trigger.parameter("leg1regionCut");
+		else if( trigger.name()=="L1_TkTau_Mu" ) etaOrRegionCut=trigger.parameter("leg1regionCut");
+		else if( trigger.name()=="L1_isoMu_Tau" ) etaOrRegionCut=trigger.parameter("leg2regionCut");
+		else
+		{
+			try{ etaOrRegionCut=trigger.parameter("etaCut"); }
+			catch( std::logic_error& exception )
+			{
+				try{ etaOrRegionCut=trigger.parameter("regionCut"); }
+				catch( std::logic_error& exception )
+				{
+					try{ etaOrRegionCut=trigger.parameter("leg1etaCut"); }
+					catch( std::logic_error& exception )
+					{
+						try{ etaOrRegionCut=trigger.parameter("leg1regionCut"); }
+						catch( std::logic_error& exception )
+						{
+							try{ etaOrRegionCut=trigger.parameter("leg2etaCut"); }
+							catch( std::logic_error& exception )
+							{
+								try{ etaOrRegionCut=trigger.parameter("leg2regionCut"); }
+								catch( std::logic_error& exception ) { etaOrRegionCut=-1; }
+							}
+						}
+					}
+				}
+			}
+		}
+
+		float muonQuality;
+		try{ muonQuality=trigger.parameter("muonQuality"); }
+		catch( std::logic_error& exception )
+		{
+			try{ muonQuality=trigger.parameter("leg1muonQuality"); }
+			catch( std::logic_error& exception )
+			{
+				try{ muonQuality=trigger.parameter("leg2muonQuality"); }
+				catch( std::logic_error& exception ) { muonQuality=-1; }
+			}
+		}
+
+		float allocatedBandwidth;
+		int scaleBandwidth;
+		int fixThresholds;
+		if( triggerConstraint.type()==l1menu::TriggerConstraint::Type::FIXED_THRESHOLDS )
+		{
+			allocatedBandwidth=10; // Dummy value. It won't be used if fixThresholds is 1.
+			scaleBandwidth=0;
+			fixThresholds=1;
+		}
+		else if( triggerConstraint.type()==l1menu::TriggerConstraint::Type::FIXED_RATE )
+		{
+			allocatedBandwidth=triggerConstraint.value();
+			scaleBandwidth=0;
+			fixThresholds=0;
+		}
+		else if( triggerConstraint.type()==l1menu::TriggerConstraint::Type::FRACTION_OF_BANDWIDTH )
+		{
+			// For FRACTION_OF_BANDWIDTH, the value() is the fraction of the total bandwidth.
+			// The file format expects it in an absolute rate though. I can scale the fraction by
+			// an arbitrary amount and it will be converted back to a fraction when the menu
+			// is loaded back in. Scaling by 100 should make the table look tidier.
+			allocatedBandwidth=triggerConstraint.value()*100;
+			scaleBandwidth=1;
+			fixThresholds=0;
+		}
+
+		// Note that:
+		// - The second column is the trigger bit, which is unused in all of this code.
+		//   I'll just put in a dummy "00" for now.
+		// - The third column is the prescale, which is currently not supported. I'll
+		//   just put in "1" for everything for now.
+		(*pOutputStream_) << std::right << std::setw(23) << trigger.name()
+				<< " 00    1  "  // Second and third column are dummy values as described above
+				<< std::setw(7) << thresholds[0] << " "
+				<< std::setw(7) << thresholds[1] << " "
+				<< std::setw(7) << thresholds[2] << " "
+				<< std::setw(7) << thresholds[3] << " "
+				<< std::setw(5) << etaOrRegionCut << " "
+				<< std::setw(5) << muonQuality << " "
+				<< std::setw(5) << allocatedBandwidth << " "
+				<< std::setw(2) << scaleBandwidth << " "
+				<< std::setw(2) << fixThresholds << " "
+				<< std::endl;
+
+	} // end of loop over triggers
 }
 
 void l1menu::implementation::OldL1MenuFile::add( const l1menu::IMenuRate& menuRates )
