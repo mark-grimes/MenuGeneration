@@ -82,6 +82,13 @@ std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::XMLL
 				newConstraint.type( l1menu::TriggerConstraint::Type::FRACTION_OF_BANDWIDTH );
 				newConstraint.value( fraction );
 			}
+			else if( triggerElement.hasAttribute("fixedRate") )
+			{
+				float rate=triggerElement.getFloatAttribute("fixedRate");
+				l1menu::TriggerConstraint& newConstraint=pNewMenu->getTriggerConstraint(pNewMenu->numberOfTriggers()-1);
+				newConstraint.type( l1menu::TriggerConstraint::Type::FIXED_RATE );
+				newConstraint.value( rate );
+			}
 		}
 
 		returnValue.push_back( std::move(pNewMenu) );
