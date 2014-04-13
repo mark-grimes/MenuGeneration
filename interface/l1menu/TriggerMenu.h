@@ -80,14 +80,6 @@ namespace l1menu
 		/** @brief const version of getTriggerConstraint. See the documentation for that. */
 		const l1menu::TriggerConstraint& getTriggerConstraint( size_t position ) const;
 
-	protected:
-		friend class l1menu::MenuFitter;
-		/** This takes a single line from the old format file, but split into the different columns.
-		 * Currently required because this is how l1menu::MenuFitter loads menus, although this will
-		 * be changed soon.
-		 */
-		bool addTriggerFromOldFormat( const std::vector<std::string>& columns );
-
 	private:
 		/** @brief Hide implementation details in a pimple. */
 		std::unique_ptr<class TriggerMenuPrivateMembers> pImple_;

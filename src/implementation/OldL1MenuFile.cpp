@@ -239,12 +239,27 @@ std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::OldL
 						newTrigger.parameter("leg1etaCut")=etaOrRegionCut;
 						newTrigger.parameter("leg2regionCut")=l1menu::tools::convertEtaCutToRegionCut( etaOrRegionCut );
 					}
+					else if( triggerName=="L1_TkMu_TkJet" )
+					{
+						newTrigger.parameter("leg1etaCut")=etaOrRegionCut;
+						newTrigger.parameter("leg2regionCut")=l1menu::tools::convertEtaCutToRegionCut( etaOrRegionCut );
+					}
 					else if( triggerName=="L1_isoMu_EG" )
 					{
 						newTrigger.parameter("leg1etaCut")=l1menu::tools::convertRegionCutToEtaCut( etaOrRegionCut );
 						newTrigger.parameter("leg2regionCut")=etaOrRegionCut;
 					}
 					else if( triggerName=="L1_isoEG_Mu" )
+					{
+						newTrigger.parameter("leg1regionCut")=etaOrRegionCut;
+						newTrigger.parameter("leg2etaCut")=l1menu::tools::convertRegionCutToEtaCut( etaOrRegionCut );
+					}
+					else if( triggerName=="L1_TkEle_Mu" )
+					{
+						newTrigger.parameter("leg1regionCut")=etaOrRegionCut;
+						newTrigger.parameter("leg2etaCut")=l1menu::tools::convertRegionCutToEtaCut( etaOrRegionCut );
+					}
+					else if( triggerName=="L1_TkTau_Mu" )
 					{
 						newTrigger.parameter("leg1regionCut")=etaOrRegionCut;
 						newTrigger.parameter("leg2etaCut")=l1menu::tools::convertRegionCutToEtaCut( etaOrRegionCut );
