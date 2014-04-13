@@ -345,5 +345,5 @@ std::vector< std::unique_ptr<l1menu::TriggerMenu> > l1menu::implementation::OldL
 
 std::vector< std::unique_ptr<l1menu::IMenuRate> > l1menu::implementation::OldL1MenuFile::getRates() const
 {
-	throw std::logic_error( "OldL1MenuFile::getRates() not implemeneted yet - Loading results from the old format file is not implemented yet. Might never be." );
+	throw std::logic_error( "OldL1MenuFile::getRates() not implemented yet - Loading results from the old format file is not implemented yet. Might never be." );
 }
