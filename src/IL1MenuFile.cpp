@@ -21,8 +21,8 @@ std::unique_ptr<l1menu::IL1MenuFile> l1menu::IL1MenuFile::getOutputFile( l1menu:
 std::unique_ptr<l1menu::IL1MenuFile> l1menu::IL1MenuFile::getOutputFile( FileFormat fileFormat, const std::string& filename )
 {
 	if( fileFormat==l1menu::IL1MenuFile::FileFormat::XML ) return std::unique_ptr<l1menu::IL1MenuFile>( new l1menu::implementation::XMLL1MenuFile(filename,true) );
-	if( fileFormat==l1menu::IL1MenuFile::FileFormat::CSV ) return std::unique_ptr<l1menu::IL1MenuFile>( new l1menu::implementation::OldL1MenuFile(filename,',') );
-	if( fileFormat==l1menu::IL1MenuFile::FileFormat::OLD ) return std::unique_ptr<l1menu::IL1MenuFile>( new l1menu::implementation::OldL1MenuFile(filename,' ') );
+	if( fileFormat==l1menu::IL1MenuFile::FileFormat::CSV ) return std::unique_ptr<l1menu::IL1MenuFile>( new l1menu::implementation::OldL1MenuFile(filename,',',true) );
+	if( fileFormat==l1menu::IL1MenuFile::FileFormat::OLD ) return std::unique_ptr<l1menu::IL1MenuFile>( new l1menu::implementation::OldL1MenuFile(filename,' ',true) );
 	else throw std::logic_error( "Unimplemented value for l1menu::IL1MenuFile::FileFormat" );
 }
 
@@ -40,7 +40,7 @@ std::unique_ptr<l1menu::IL1MenuFile> l1menu::IL1MenuFile::getInputFile( const st
 	}
 	catch( std::exception& error )
 	{
-		returnValue.reset( new l1menu::implementation::OldL1MenuFile(inputFilename,' ') );
+		returnValue.reset( new l1menu::implementation::OldL1MenuFile(inputFilename,' ',false) );
 	}
 	return returnValue;
 }

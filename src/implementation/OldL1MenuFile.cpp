@@ -17,15 +17,19 @@ l1menu::implementation::OldL1MenuFile::OldL1MenuFile( std::ostream& outputStream
 {
 }
 
-l1menu::implementation::OldL1MenuFile::OldL1MenuFile( const std::string& inputFilename, const char delimeter ) : pOutputStream_(nullptr), filename_(inputFilename), delimeter_(delimeter)
+l1menu::implementation::OldL1MenuFile::OldL1MenuFile( const std::string& inputFilename, const char delimeter, bool write ) : pOutputStream_(nullptr), filename_(inputFilename), delimeter_(delimeter)
 {
-	file_.open( inputFilename );
+	// If the user wants to write to the file, it needs to be opened with write permissions
+	if( write )	file_.open( inputFilename, std::ios_base::out | std::ios_base::trunc );
+	else file_.open( inputFilename );
+
 	if( file_.is_open() ) pOutputStream_=&file_;
+	else throw std::runtime_error( "OldL1MenuFile::OldL1MenuFile( \""+inputFilename+"\", '"+delimeter+"' ) - Unable to open file" );
 }
 
 l1menu::implementation::OldL1MenuFile::~OldL1MenuFile()
 {
-
+	file_.close();
 }
 
 void l1menu::implementation::OldL1MenuFile::add( const l1menu::TriggerMenu& object )

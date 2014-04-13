@@ -20,7 +20,7 @@ namespace l1menu
 		{
 		public:
 			OldL1MenuFile( std::ostream& outputStream, const char delimeter );
-			OldL1MenuFile( const std::string& inputFilename, const char delimeter );
+			OldL1MenuFile( const std::string& inputFilename, const char delimeter, bool write );
 			virtual ~OldL1MenuFile();
 			virtual void add( const l1menu::TriggerMenu& menu );
 			virtual void add( const l1menu::IMenuRate& menuRate );
