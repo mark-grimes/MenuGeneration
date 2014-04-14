@@ -208,6 +208,11 @@ l1menu::tools::XMLElement l1menu::tools::XMLFile::rootElement()
 	return l1menu::tools::XMLElement( pImple->pDocument_->getDocumentElement(), pImple->pDocument_ );
 }
 
+const l1menu::tools::XMLElement l1menu::tools::XMLFile::rootElement() const
+{
+	return l1menu::tools::XMLElement( pImple->pDocument_->getDocumentElement(), pImple->pDocument_ );
+}
+
 void l1menu::tools::XMLFile::outputToStream( std::ostream& outputStream )
 {
 	xercesc::DOMWriter* pSerializer = pImple->pDomImplementationLS_->createDOMWriter();

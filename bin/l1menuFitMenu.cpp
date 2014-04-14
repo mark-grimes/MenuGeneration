@@ -26,7 +26,7 @@ void printUsage( const std::string& executableName, std::ostream& output=std::co
 			<< "\t" << "\t" << "Tries to fit the supplied menu using the sample provided. The optional \"rateplots\" option" << "\n"
 			<< "\t" << "\t" << "allows you to reuse a valid file created by l1menuCreateRatePlots which will significantly" << "\n"
 			<< "\t" << "\t" << "speed up execution. If the option \"outputprefix\" is supplied the results will be saved to" << "\n"
-			<< "\t" << "\t" << "a file with the supplied name. If this option isn't provided the output will be printed to"
+			<< "\t" << "\t" << "a file with the supplied name. If this option isn't provided the output will be printed to" << "\n"
 			<< "\t" << "\t" << "standard output." << "\n"
 			<< "\t" << "\t" << "The 'format' option allows you specify what format the output will be in. XML (the default)" << "\n"
 			<< "\t" << "\t" << "is required to do the scaling with l1menuScaleMenuRates." << "\n"
@@ -135,10 +135,12 @@ int main( int argc, char* argv[] )
 	{
 		std::cout << "Loading sample from the file " << sampleFilename << std::endl;
 		std::unique_ptr<l1menu::ISample> pSample=l1menu::tools::loadSample( sampleFilename );
+		std::cout << "Loading menu from file " << menuFilename << std::endl;
+		std::unique_ptr<l1menu::TriggerMenu> pMenu=l1menu::tools::loadMenu( menuFilename );
 		pSample->setEventRate( totalTriggerRatekHz );
 
 		std::unique_ptr<l1menu::MenuFitter> pMenuFitter;
-		if( ratePlotsFilename.empty() ) pMenuFitter.reset( new l1menu::MenuFitter(*pSample) );
+		if( ratePlotsFilename.empty() ) pMenuFitter.reset( new l1menu::MenuFitter(*pSample,*pMenu) );
 		else
 		{
 			// If the user has specified a rateplots file on the command line try and
@@ -147,11 +149,9 @@ int main( int argc, char* argv[] )
 			std::unique_ptr<TFile> pRatePlotsRootFile( TFile::Open( ratePlotsFilename.c_str() ) );
 			l1menu::MenuRatePlots ratePlots( pRatePlotsRootFile.get() );
 
-			pMenuFitter.reset( new l1menu::MenuFitter( *pSample, ratePlots ) );
+			pMenuFitter.reset( new l1menu::MenuFitter( *pSample, *pMenu, ratePlots ) );
 		}
 
-		std::cout << "Loading menu from file " << menuFilename << std::endl;
-		pMenuFitter->loadMenuFromFile( menuFilename );
 
 		std::unique_ptr<l1menu::IL1MenuFile> pOutputL1MenuFile;
 		if( !outputFilename.empty() ) pOutputL1MenuFile=l1menu::IL1MenuFile::getOutputFile( fileFormat, outputFilename );

@@ -16,6 +16,7 @@
 #include "l1menu/ITriggerRate.h"
 #include "l1menu/FullSample.h"
 #include "l1menu/ReducedSample.h"
+#include "l1menu/IL1MenuFile.h"
 #include "l1menu/tools/XMLFile.h"
 #include "l1menu/tools/miscellaneous.h"
 #include "l1menu/tools/XMLElement.h"
@@ -347,12 +348,14 @@ std::unique_ptr<l1menu::ISample> l1menu::tools::loadSample( const std::string& f
 
 std::unique_ptr<l1menu::TriggerMenu> l1menu::tools::loadMenu( const std::string& filename )
 {
-	std::unique_ptr<l1menu::TriggerMenu> pReturnValue( new l1menu::TriggerMenu );
-
-	// Until I move the functionality to here I'll just call the deprecated method
-	pReturnValue->loadMenuFromFile( filename );
-
-	return pReturnValue;
+	//
+	// This function was written before IL1MenuFile was created, but it's still
+	// useful as a shorthand.
+	//
+	std::unique_ptr<l1menu::IL1MenuFile> pFile=l1menu::IL1MenuFile::getInputFile( filename );
+	std::vector< std::unique_ptr<l1menu::TriggerMenu> > menusFromFile=pFile->getMenus();
+	if( menusFromFile.empty() ) throw std::runtime_error( "l1menu::tools::loadMenu(\""+filename+"\") - Unable to load the menu" );
+	return std::move( menusFromFile.front() );
 }
 
 std::unique_ptr<l1menu::IMenuRate> l1menu::tools::loadRate( const std::string& filename )

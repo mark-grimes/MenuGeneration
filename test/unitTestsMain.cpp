@@ -121,6 +121,17 @@ bool handleCommandLine( int argc, char* argv[] )
 	commandLineParser.addOption( "list", l1menu::tools::CommandLineParser::NoArgument );
 	commandLineParser.addOption( "test", l1menu::tools::CommandLineParser::RequiredArgument );
 
+	// This vector lists the information I want to get from the command line. The first entry
+	// in the pair is the name I'm going to store the value under in the TestParameters singleton.
+	// The second is the default value if it hasn't been set on the command line. The position in
+	// the vector equates to the position on the command line. The defaults are relative to
+	// $CMSSW_BASE.
+	std::vector<std::pair<std::string,std::string> > requiredParametersAndDefaults;
+	requiredParametersAndDefaults.push_back( std::make_pair("TEST_SAMPLE_FILENAME","src/L1Trigger/MenuGeneration/test/unitTestData/Fallback_NeutrinoGun_PU140-v22.proto") );
+	requiredParametersAndDefaults.push_back( std::make_pair("TEST_MENU_FILENAME","src/L1Trigger/MenuGeneration/test/unitTestData/L1Menu_v22m20_std.txt") );
+	requiredParametersAndDefaults.push_back( std::make_pair("TEST_RATEPLOT_FILENAME","src/L1Trigger/MenuGeneration/test/unitTestData/output_rates_PU140_v23_trk.root") );
+	requiredParametersAndDefaults.push_back( std::make_pair("TEST_XMLMENU_FILENAME","src/L1Trigger/MenuGeneration/test/unitTestData/L1Menu_v22m20_std.xml") );
+
 	try{ commandLineParser.parse( argc, argv ); }
 	catch( std::runtime_error& exception )
 	{
@@ -148,7 +159,7 @@ bool handleCommandLine( int argc, char* argv[] )
 	// If no tests were specified, use a default of "All Tests"
 	else MutableTestParameters< std::vector<std::string> >::setParameter( "Tests to run", std::vector<std::string>(1,"All Tests") );
 
-	if( commandLineParser.nonOptionArguments().size()>2 )
+	if( commandLineParser.nonOptionArguments().size()>requiredParametersAndDefaults.size() )
 	{
 		printUsage( commandLineParser.executableName(), std::cerr );
 		throw std::runtime_error( "Too many command line arguments" );
@@ -159,44 +170,33 @@ bool handleCommandLine( int argc, char* argv[] )
 	// first see if the user specified them on the command line, if not I'll use hard
 	// coded defaults.
 	//
-	if( commandLineParser.nonOptionArguments().size()>0 ) MutableTestParameters<std::string>::setParameter( "TEST_SAMPLE_FILENAME", commandLineParser.nonOptionArguments()[0] );
-	else
+	for( size_t index=0; index<requiredParametersAndDefaults.size(); ++index )
 	{
-		std::string filename="";
-		char* pEnvironmentVariable=std::getenv("CMSSW_BASE");
-		if( pEnvironmentVariable!=nullptr ) filename=pEnvironmentVariable+std::string("/");
-		filename+="src/L1Trigger/MenuGeneration/test/unitTestData/Fallback_NeutrinoGun_PU140-v22.proto";
-		std::cerr << "Input sample filename not specified on the command line, so using the default of:" << "\n"
-				<< "   " << filename << std::endl;
-		MutableTestParameters<std::string>::setParameter( "TEST_SAMPLE_FILENAME", filename );
+		const std::string& parameterName=requiredParametersAndDefaults[index].first;
+		const std::string& defaultValue=requiredParametersAndDefaults[index].second;
+
+		if( commandLineParser.nonOptionArguments().size()>index ) MutableTestParameters<std::string>::setParameter( parameterName, commandLineParser.nonOptionArguments()[index] );
+		else
+		{
+			std::string filenamePrefix="";
+			// If it has been set add $CMSSW_BASE to the start of the default filename
+			char* pEnvironmentVariable=std::getenv("CMSSW_BASE");
+			if( pEnvironmentVariable!=nullptr ) filenamePrefix=pEnvironmentVariable+std::string("/");
+			MutableTestParameters<std::string>::setParameter( parameterName, filenamePrefix+=defaultValue );
+		}
 	}
 
-	if( commandLineParser.nonOptionArguments().size()>1 ) MutableTestParameters<std::string>::setParameter( "TEST_MENU_FILENAME", commandLineParser.nonOptionArguments()[1] );
-	else
+	//
+	// Loop over the parameters and print to the screen what has been set
+	//
+	std::cout << "Using the following input files for the tests. These can be changed by specifying them "
+			<< "on the command line, in the order they appear here." << std::endl;
+	for( size_t index=0; index<requiredParametersAndDefaults.size(); ++index )
 	{
-		std::string filename="";
-		char* pEnvironmentVariable=std::getenv("CMSSW_BASE");
-		if( pEnvironmentVariable!=nullptr ) filename=pEnvironmentVariable+std::string("/");
-		filename+="src/L1Trigger/MenuGeneration/test/unitTestData/L1Menu_v22m20_std.txt";
-		std::cerr << "Input menu filename not specified on the command line, so using the default of:" << "\n"
-				<< "   " << filename << std::endl;
-		MutableTestParameters<std::string>::setParameter( "TEST_MENU_FILENAME", filename );
+		std::cout << "  " << requiredParametersAndDefaults[index].first << "=" << TestParameters<std::string>::instance().getParameter( requiredParametersAndDefaults[index].first ) << "\n";
 	}
-
-	if( commandLineParser.nonOptionArguments().size()>2 ) MutableTestParameters<std::string>::setParameter( "TEST_RATEPLOT_FILENAME", commandLineParser.nonOptionArguments()[2] );
-	else
-	{
-		std::string filename="";
-		char* pEnvironmentVariable=std::getenv("CMSSW_BASE");
-		if( pEnvironmentVariable!=nullptr ) filename=pEnvironmentVariable+std::string("/");
-		filename+="src/L1Trigger/MenuGeneration/test/unitTestData/output_rates_PU140_v23_trk.root";
-		std::cerr << "Input rate plot filename not specified on the command line, so using the default of:" << "\n"
-				<< "   " << filename << std::endl;
-		MutableTestParameters<std::string>::setParameter( "TEST_RATEPLOT_FILENAME", filename );
-
-		// Add a newline to separate the test results
-		std::cout << std::endl;
-	}
+	// Add another blank line to separate from the output
+	std::cout << std::endl;
 
 	return true;
 }
@@ -237,7 +237,7 @@ int main( int argc, char* argv[] )
 		try
 		{
 			runner.addTest( pMainTest->findTest( testName ) );
-			std::cout << "Added \"" << testName << "\" to the list of tests to run." << std::endl;
+			//std::cout << "Added \"" << testName << "\" to the list of tests to run." << std::endl;
 		}
 		catch( std::invalid_argument& error )
 		{

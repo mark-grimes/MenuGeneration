@@ -20,15 +20,16 @@ namespace l1menu
 		{
 		public:
 			OldL1MenuFile( std::ostream& outputStream, const char delimeter );
-			OldL1MenuFile( const std::string& inputFilename, const char delimeter );
+			OldL1MenuFile( const std::string& inputFilename, const char delimeter, bool write );
 			virtual ~OldL1MenuFile();
 			virtual void add( const l1menu::TriggerMenu& menu );
 			virtual void add( const l1menu::IMenuRate& menuRate );
-			virtual std::vector< std::unique_ptr<l1menu::TriggerMenu> > getMenus();
-			virtual std::vector< std::unique_ptr<l1menu::IMenuRate> > getRates();
+			virtual std::vector< std::unique_ptr<l1menu::TriggerMenu> > getMenus() const;
+			virtual std::vector< std::unique_ptr<l1menu::IMenuRate> > getRates() const;
 		protected:
 			std::ostream* pOutputStream_;
 			std::fstream file_;
+			std::string filename_;
 			const char delimeter_;
 		};
 

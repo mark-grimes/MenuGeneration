@@ -11,6 +11,7 @@
 namespace l1menu
 {
 	class ITrigger;
+	class TriggerConstraint;
 	class L1TriggerDPGEvent;
 	class MenuFitter;
 	class MenuScan;
@@ -31,7 +32,6 @@ namespace l1menu
 	 */
 	class TriggerMenu
 	{
-		friend class l1menu::MenuFitter;
 	public:
 		TriggerMenu();
 		virtual ~TriggerMenu();
@@ -58,26 +58,31 @@ namespace l1menu
 
 		bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
 
-	protected:
-		//
-		// All of these methods are deprecated in favour of going through the functions
-		// in l1menu::tools. Until I fully move the functionality to there I'll protect
-		// the methods and call them from the required functions.
-		//
-		friend std::unique_ptr<l1menu::TriggerMenu> l1menu::tools::loadMenu( const std::string& filename );
+		/** @brief Get any constraints placed on the particular trigger when the menu is scaled.
+		 *
+		 * This method is only used when fitting the menu to give a particular rate. It is not
+		 * necessary for most uses. It allows you to place restrictions on which thresholds can
+		 * be adjusted and what the target rate for the trigger is.
+		 *
+		 * @param[in] position   The position in the menu of the trigger that the constraint applies
+		 *                       to. This should be, in STL notation, [0,numberOfTriggers()) i.e.
+		 *                       zero or greater and less than but NOT equal to numberOfTriggers().
+		 *                       Calling getTriggerConstraint(n) gets the constraint that applies to
+		 *                       the getTrigger(n) trigger.
+		 * @return               A reference to the trigger constraint. Note that the object you get
+		 *                       back will be empty if there are no constraints on the trigger, which
+		 *                       is the default.
+		 * @throws               std::out_of_range exception if position is greater than or equal to
+		 *                       numberOfTriggers().
+		 */
+		l1menu::TriggerConstraint& getTriggerConstraint( size_t position );
 
-		virtual void loadMenuFromFile( const std::string& filename );
-		void saveMenuToFile( const std::string& filename ) const;
-		void saveToXML( l1menu::tools::XMLElement& parentElement ) const;
-		void restoreFromXML( const l1menu::tools::XMLElement& parentElement );
-	protected:
-		void loadMenuInOldFormat( std::ifstream& file );
-		/** This takes a single line from the old format file, but split into the different columns. */
-		bool addTriggerFromOldFormat( const std::vector<std::string>& columns );
+		/** @brief const version of getTriggerConstraint. See the documentation for that. */
+		const l1menu::TriggerConstraint& getTriggerConstraint( size_t position ) const;
 
-		TriggerTable& triggerTable_;
-		std::vector< std::unique_ptr<l1menu::ITrigger> > triggers_;
-		std::vector<bool> triggerResults_; ///< @brief Stores the result of each trigger for the last call of "apply"
+	private:
+		/** @brief Hide implementation details in a pimple. */
+		std::unique_ptr<class TriggerMenuPrivateMembers> pImple_;
 	};
 
 }

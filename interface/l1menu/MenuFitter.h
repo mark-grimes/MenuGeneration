@@ -12,6 +12,7 @@ namespace l1menu
 	class IMenuRate;
 	class MenuRatePlots;
 	class TriggerRatePlot;
+	class TriggerConstraint;
 }
 
 namespace l1menu
@@ -24,14 +25,13 @@ namespace l1menu
 	class MenuFitter
 	{
 	public:
-		MenuFitter( const l1menu::ISample& sample );
-		MenuFitter( const l1menu::ISample& sample, const l1menu::MenuRatePlots& menuRatePlots );
+		MenuFitter( const l1menu::ISample& sample, const l1menu::TriggerMenu& menu );
+		MenuFitter( const l1menu::ISample& sample, const l1menu::TriggerMenu& menu, const l1menu::MenuRatePlots& menuRatePlots );
 		virtual ~MenuFitter();
 		const l1menu::TriggerMenu& menu() const;
 		std::shared_ptr<const l1menu::IMenuRate> fit( float totalRate, float tolerance );
 		const std::string debugLog(); ///< @brief Returns output describing how the most recent fit proceeded.
-		void addTrigger( const l1menu::ITrigger& trigger, float fractionOfTotalBandwidth, bool lockThresholds=false );
-		void loadMenuFromFile( const std::string& filename );
+		void addTrigger( const l1menu::ITrigger& trigger, const TriggerConstraint& constraint );
 
 		// TODO need to tidy these methods. Not very consistent.
 		const l1menu::TriggerRatePlot& triggerRatePlot( size_t triggerNumber ) const;

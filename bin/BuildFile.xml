@@ -11,3 +11,4 @@
 <bin name="l1menuShowReducedSampleMenu" file="l1menuShowReducedSampleMenu.cpp"/>
 <bin name="l1menuScaleMenuRates" file="l1menuScaleMenuRates.cpp"/>
 <bin name="l1menuFormatResults" file="l1menuFormatResults.cpp"/>
+<bin name="l1menuConvertFormat" file="l1menuConvertFormat.cpp"/>

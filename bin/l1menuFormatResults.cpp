@@ -62,7 +62,7 @@ int main( int argc, char* argv[] )
 
 	try
 	{
-		std::unique_ptr<l1menu::IL1MenuFile> pInputFile=l1menu::IL1MenuFile::getInputFile( l1menu::IL1MenuFile::FileFormat::XML, inputFilename );
+		std::unique_ptr<l1menu::IL1MenuFile> pInputFile=l1menu::IL1MenuFile::getInputFile( inputFilename );
 		std::vector< std::unique_ptr<l1menu::IMenuRate> > menuRates=pInputFile->getRates();
 
 		// Sort the menu rates by the total rate. Otherwise the plot will look like

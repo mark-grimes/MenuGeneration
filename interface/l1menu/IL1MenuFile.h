@@ -34,15 +34,15 @@ namespace l1menu
 		 * I wanted this to take a std::istream but I'd have to change a lot of other things
 		 * to get that to work.
 		 */
-		static std::unique_ptr<l1menu::IL1MenuFile> getInputFile( FileFormat fileFormat, const std::string& inputFilename );
+		static std::unique_ptr<l1menu::IL1MenuFile> getInputFile( const std::string& inputFilename );
 
 	public:
 		virtual ~IL1MenuFile() {}
 
 		virtual void add( const l1menu::TriggerMenu& menu ) = 0;
 		virtual void add( const l1menu::IMenuRate& menuRate ) = 0;
-		virtual std::vector< std::unique_ptr<l1menu::TriggerMenu> > getMenus() = 0;
-		virtual std::vector< std::unique_ptr<l1menu::IMenuRate> > getRates() = 0;
+		virtual std::vector< std::unique_ptr<l1menu::TriggerMenu> > getMenus() const = 0;
+		virtual std::vector< std::unique_ptr<l1menu::IMenuRate> > getRates() const = 0;
 	};
 
 } // end of namespace l1menu

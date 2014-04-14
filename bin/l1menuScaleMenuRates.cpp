@@ -143,7 +143,7 @@ int main( int argc, char* argv[] )
 			try
 			{
 				std::cerr << "Loading menu rates from file " << menuRateFilename << std::endl;
-				std::unique_ptr<l1menu::IL1MenuFile> pInputFile=l1menu::IL1MenuFile::getInputFile( l1menu::IL1MenuFile::FileFormat::XML, menuRateFilename );
+				std::unique_ptr<l1menu::IL1MenuFile> pInputFile=l1menu::IL1MenuFile::getInputFile( menuRateFilename );
 				std::vector< std::unique_ptr<l1menu::IMenuRate> > menuRates=pInputFile->getRates();
 
 
