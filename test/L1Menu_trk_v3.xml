@@ -9,21 +9,21 @@
        Single Lepton Triggers
     -->
     
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.07">
       <name>L1_SingleTkEle</name>
       <version>0</version>
       <parameter name="threshold1">22</parameter>
       <parameter name="regionCut">4.5</parameter>
     </Trigger>
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.1">
       <name>L1_SingleIsoTkEle</name>
       <version>0</version>
       <parameter name="threshold1">22</parameter>
       <parameter name="regionCut">4.5</parameter>
     </Trigger>
 
-    <Trigger formatVerion="0"> 
+    <Trigger formatVerion="0" fractionOfTotalBandwidth="0.1"> 
       <name>L1_SingleTkMu</name>
       <version>0</version>
       <parameter name="threshold1">16</parameter>
@@ -31,14 +31,14 @@
       <parameter name="muonQuality">3</parameter>
     </Trigger>     
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.1">
       <name>L1_SingleTkTau</name>
       <version>0</version>
       <parameter name="threshold1">30</parameter>
       <parameter name="regionCut">4.5</parameter>
     </Trigger>
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.07">
       <name>L1_SingleTkEM</name>
       <version>0</version>
       <parameter name="threshold1">22</parameter>
@@ -50,7 +50,7 @@
        diLepton Triggers
      -->    
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.06">
       <name>L1_TkEle_EG</name>
       <version>0</version>
       <parameter name="leg1threshold1">12.</parameter>
@@ -59,7 +59,7 @@
       <parameter name="leg2regionCut">4.5</parameter>
     </Trigger>
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
       <name>L1_DoubleTkEM</name>
       <version>0</version>
       <parameter name="leg1threshold1">10.</parameter>
@@ -67,7 +67,7 @@
       <parameter name="regionCut">4.5</parameter>
     </Trigger>
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
       <name>L1_TkMu_Mu</name>
       <version>0</version>
       <parameter name="leg1threshold1">12.</parameter>
@@ -75,7 +75,7 @@
       <parameter name="muonQuality">3</parameter>
     </Trigger>
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
       <name>L1_TkTau_Tau</name>
       <version>0</version>
       <parameter name="leg1threshold1">20.</parameter>
@@ -84,7 +84,7 @@
       <parameter name="leg2regionCut">4.5</parameter>
     </Trigger>
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
       <name>L1_TkEle_Mu</name>
       <version>0</version>
       <parameter name="leg1threshold1">12.</parameter>
@@ -94,7 +94,7 @@
       <parameter name="leg2muonQuality">3</parameter>
     </Trigger>
  
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
       <name>L1_TkEle_Tau</name>
       <version>0</version>
       <parameter name="leg1threshold1">17.</parameter>
@@ -104,7 +104,7 @@
     </Trigger>
  
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
       <name>L1_TkTau_Mu</name>
       <version>0</version>
       <parameter name="leg1threshold1">12.</parameter>
@@ -119,14 +119,14 @@
        Hadronic Triggers
     -->   
    
-   <Trigger formatVersion="0">
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
       <name>L1_SingleTkJet</name>
       <version>0</version>
       <parameter name="threshold1">128.</parameter>
       <parameter name="regionCut">4.5</parameter>
     </Trigger>
 
-   <Trigger formatVersion="0">
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
       <name>L1_DoubleTkJetVtx</name>
       <version>0</version>
       <parameter name="threshold1">56.</parameter>
@@ -138,7 +138,7 @@
       <parameter name="zVtxCut">1.0</parameter>
     </Trigger>
 
-   <Trigger formatVersion="0">
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
       <name>L1_QuadTkJetVtx</name>
       <version>0</version>
       <parameter name="threshold1">36.</parameter>
@@ -149,27 +149,23 @@
       <parameter name="zVtxCut">1.0</parameter>
     </Trigger>
  
- <!--
- 
-   <Trigger formatVersion="0">
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
       <name>L1_TkHTT</name>
       <version>0</version>
       <parameter name="threshold1">150.</parameter>
     </Trigger>
     
-   <Trigger formatVersion="0">
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
       <name>L1_TkHTM</name>
       <version>0</version>
       <parameter name="threshold1">36.</parameter>
     </Trigger>    
-
-  -->
     
    <!--
        Cross Triggers
    -->
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.1">
       <name>L1_TkEle_TkJet</name>
       <version>1</version>
       <parameter name="leg1threshold1">15.</parameter>
@@ -179,7 +175,7 @@
       <parameter name="zVtxCut">1.0</parameter>
     </Trigger>    
 
-    <Trigger formatVersion="0">
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.1">
       <name>L1_TkEle_TkHTM</name>
       <version>0</version>
       <parameter name="leg1threshold1">15.</parameter>
@@ -187,7 +183,7 @@
       <parameter name="leg2threshold1">35.</parameter>
     </Trigger>    
   
-    <Trigger formatVerion="0"> 
+    <Trigger formatVerion="0" fractionOfTotalBandwidth="0.1"> 
       <name>L1_TkMu_TkJet</name>
       <version>1</version>
       <parameter name="leg1threshold1">12</parameter>
@@ -198,7 +194,7 @@
       <parameter name="zVtxCut">1.0</parameter>
     </Trigger>     
 
-    <Trigger formatVerion="0"> 
+    <Trigger formatVerion="0" fractionOfTotalBandwidth="0.1"> 
       <name>L1_TkMu_TkHTM</name>
       <version>0</version>
       <parameter name="leg1threshold1">12</parameter>
