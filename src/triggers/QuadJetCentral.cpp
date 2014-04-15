@@ -42,10 +42,10 @@ namespace l1menu
 			{
 				l1menu::TriggerTable& triggerTable=l1menu::TriggerTable::instance();
 				QuadJetCentral_v0 tempTriggerInstance;
-				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold1", 100, 0, 90 );
-				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold2", 100, 0, 70 );
-				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold3", 100, 0, 50 );
-				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold4", 100, 0, 40 );
+				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold1", 100, 0, 100 );
+				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold2", 70,  0, 70  );
+				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold3", 70,  0, 70  );
+				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold4", 50,  0, 50  );
 			} // End of customisation lambda function
 		) // End of REGISTER_TRIGGER_AND_CUSTOMISE macro call
 
