@@ -50,6 +50,19 @@ namespace l1menu
 			virtual bool thresholdsAreCorrelated() const;
 		}; // end of version 0 class
 
+		/** @brief Second version of the DoubleTkEle trigger.
+		 *             --> Used TkEle Collection with lower Pt cut
+		 * @author probably Brian Winer
+		 * @date sometime
+		 */
+		class DoubleTkEle_v1 : public DoubleTkEle
+		{
+		public:
+			virtual unsigned int version() const;
+			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
+			virtual bool thresholdsAreCorrelated() const;
+		}; // end of version 1 class
+
 
 		/* The REGISTER_TRIGGER macro will make sure that the given trigger is registered in the
 		 * l1menu::TriggerTable when the program starts. I also want to provide some suggested binning
@@ -58,15 +71,16 @@ namespace l1menu
 		 * at program startup. The function takes no parameters and returns void. In this case I'm
 		 * giving it a lambda function.
 		 */
-		REGISTER_TRIGGER_AND_CUSTOMISE( DoubleTkEle_v0,
+		REGISTER_TRIGGER_AND_CUSTOMISE( DoubleTkEle_v1,
 			[]() // Use a lambda function to customise rather than creating a named function that never gets used again.
 			{
 				l1menu::TriggerTable& triggerTable=l1menu::TriggerTable::instance();
-				DoubleTkEle_v0 tempTriggerInstance;
+				DoubleTkEle_v1 tempTriggerInstance;
 				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "leg1threshold1", 100, 0, 100 );
 				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "leg2threshold1", 100, 0, 100 );
 			} // End of customisation lambda function
 		) // End of REGISTER_TRIGGER_AND_CUSTOMISE macro call
+		REGISTER_TRIGGER( DoubleTkEle_v0 )
 
 
 	} // end of namespace triggers
@@ -119,6 +133,44 @@ unsigned int l1menu::triggers::DoubleTkEle_v0::version() const
 {
 	return 0;
 }
+
+bool l1menu::triggers::DoubleTkEle_v1::apply( const l1menu::L1TriggerDPGEvent& event ) const
+{
+	const L1Analysis::L1AnalysisDataFormat& analysisDataFormat=event.rawEvent();
+	const bool* PhysicsBits=event.physicsBits();
+
+	bool raw = PhysicsBits[0];   // ZeroBias
+	if (! raw) return false;
+
+	int n1=0;
+	int n2=0;
+	int Nele = analysisDataFormat.NTkele2;
+	for (int ue=0; ue < Nele; ue++) {
+		int bx = analysisDataFormat.BxTkel2[ue];
+		if (bx != 0) continue;
+		float eta = analysisDataFormat.EtaTkel2[ue];
+		if (eta < regionCut_ || eta > 21.-regionCut_) continue;  // eta = 5 - 16
+		float rank = analysisDataFormat.EtTkel2[ue];    // the rank of the electron
+		float pt = rank ;
+		if (pt >= leg1threshold1_) n1++;
+		if (pt >= leg2threshold1_) n2++;
+	}  // end loop over EM objects
+
+	bool ok = ( n1 >= 1 && n2 >= 2) ;
+	//if(ok) printf("Found doubleEG event Run %i Event %i \n",event_->run,event_->event);
+	return ok;
+}
+
+bool l1menu::triggers::DoubleTkEle_v1::thresholdsAreCorrelated() const
+{
+	return false;
+}
+
+unsigned int l1menu::triggers::DoubleTkEle_v1::version() const
+{
+	return 1;
+}
+
 
 l1menu::triggers::DoubleTkEle::DoubleTkEle()
 	: leg1threshold1_(20), leg2threshold1_(20), regionCut_(4.5)
