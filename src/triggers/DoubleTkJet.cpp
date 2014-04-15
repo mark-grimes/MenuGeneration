@@ -42,8 +42,8 @@ namespace l1menu
 			{
 				l1menu::TriggerTable& triggerTable=l1menu::TriggerTable::instance();
 				DoubleTkJet_v0 tempTriggerInstance;
-				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold1", 100, 0, 400 );
-				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold2", 100, 0, 400 );
+				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold1", 300, 0, 300 );
+				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold2", 300, 0, 300 );
 			} // End of customisation lambda function
 		) // End of REGISTER_TRIGGER_AND_CUSTOMISE macro call
 
