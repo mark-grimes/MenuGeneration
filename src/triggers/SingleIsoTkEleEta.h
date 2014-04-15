@@ -53,6 +53,7 @@ namespace l1menu
 			virtual bool thresholdsAreCorrelated() const;
 		}; // end of version 0 class
 
+
 	} // end of namespace triggers
 
 } // end of namespace l1menu
