@@ -57,6 +57,19 @@ namespace l1menu
 			virtual bool thresholdsAreCorrelated() const;
 		}; // end of version 0 class
 
+		/** @brief Second version of the TkEle_Tau trigger.
+		 *                 --> Used Second TkEle Collection with lower Pt cut
+		 * @author probably Brian Winer
+		 * @date sometime
+		 */
+		class TkEle_Tau_v1 : public TkEle_Tau
+		{
+		public:
+			virtual unsigned int version() const;
+			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
+			virtual bool thresholdsAreCorrelated() const;
+		}; // end of version 1 class
+
 
 		/* The REGISTER_TRIGGER macro will make sure that the given trigger is registered in the
 		 * l1menu::TriggerTable when the program starts. I also want to provide some suggested binning
@@ -65,15 +78,16 @@ namespace l1menu
 		 * at program startup. The function takes no parameters and returns void. In this case I'm
 		 * giving it a lambda function.
 		 */
-		REGISTER_TRIGGER_AND_CUSTOMISE( TkEle_Tau_v0,
+		REGISTER_TRIGGER_AND_CUSTOMISE( TkEle_Tau_v1,
 			[]() // Use a lambda function to customise rather than creating a named function that never gets used again.
 			{
 				l1menu::TriggerTable& triggerTable=l1menu::TriggerTable::instance();
-				TkEle_Tau_v0 tempTriggerInstance;
+				TkEle_Tau_v1 tempTriggerInstance;
 				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "leg1threshold1", 100, 0, 100 );
 				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "leg2threshold1", 100, 0, 100 );
 			} // End of customisation lambda function
 		) // End of REGISTER_TRIGGER_AND_CUSTOMISE macro call
+		REGISTER_TRIGGER( TkEle_Tau_v0 )
 
 
 
@@ -155,6 +169,74 @@ unsigned int l1menu::triggers::TkEle_Tau_v0::version() const
 {
 	return 0;
 }
+
+bool l1menu::triggers::TkEle_Tau_v1::apply( const l1menu::L1TriggerDPGEvent& event ) const
+{
+	const L1Analysis::L1AnalysisDataFormat& analysisDataFormat=event.rawEvent();
+	const bool* PhysicsBits=event.physicsBits();
+
+	bool raw=PhysicsBits[0]; // ZeroBias
+	if( !raw ) return false;
+
+	bool ok = false;
+
+	int NTkele=analysisDataFormat.NTkele2;
+	int Nj=analysisDataFormat.Njet;
+	
+	for( int ie=0; ie<NTkele; ie++ )
+	{
+		bool leg1=false;
+		bool leg2=false;
+
+		int bx=analysisDataFormat.BxTkel2.at( ie );
+		if( bx!=0 ) continue;
+		float pt = analysisDataFormat.EtTkel2.at( ie );
+		float eta = analysisDataFormat.EtaTkel2[ie];
+		if (eta < leg1regionCut_ || eta > 21.-leg1regionCut_) continue;  // eta = 5 - 16  // eta = 5 - 16
+
+		if( pt>=leg1threshold1_ ) {
+		  
+		       leg1=true;
+
+			for (int ut=0; ut < Nj; ut++) {
+				int bx = analysisDataFormat.Bxjet[ut];
+				if (bx != 0) continue;
+				bool isTauJet = analysisDataFormat.Taujet[ut];
+				if (! isTauJet) continue;
+				float pt2 = analysisDataFormat.Etjet[ut];    // the rank of the electron
+				float eta2 = analysisDataFormat.Etajet[ut];
+				if (eta2 < leg2regionCut_ || eta2 > 21.-leg2regionCut_) continue;  // eta = 5 - 16  // eta = 5 - 16
+
+                                //remove overlap with simple delta R for now.
+                                float delEta = fabs(analysisDataFormat.Etajet[ut]-analysisDataFormat.EtaTkel2[ie]);
+				float delPhi = fabs(analysisDataFormat.Phijet[ut]-analysisDataFormat.PhiTkel2[ie]);
+				if(delPhi>TMath::Pi()) delPhi = TMath::TwoPi() - delPhi;
+				float delR = sqrt(delEta*delEta + delPhi*delPhi);
+
+				if (pt2 >= leg2threshold1_ && delR>0.5) leg2 = true;
+			}
+                } 
+                ok=( leg1 & leg2 );
+		
+	}
+
+	
+	return ok;
+}
+
+
+
+bool l1menu::triggers::TkEle_Tau_v1::thresholdsAreCorrelated() const
+{
+	return true;
+}
+
+unsigned int l1menu::triggers::TkEle_Tau_v1::version() const
+{
+	return 1;
+}
+
+
 
 l1menu::triggers::TkEle_Tau::TkEle_Tau()
 	: leg1threshold1_(20), leg2threshold1_(20), leg1regionCut_(4.5), leg2regionCut_(4.5) 
