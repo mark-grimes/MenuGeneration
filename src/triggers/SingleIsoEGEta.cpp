@@ -23,7 +23,7 @@ namespace l1menu
 			{
 				l1menu::TriggerTable& triggerTable=l1menu::TriggerTable::instance();
 				SingleIsoEGEta_v0 tempTriggerInstance;
-				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold1", 100, 0, 110 );
+				triggerTable.registerSuggestedBinning( tempTriggerInstance.name(), "threshold1", 100, 0, 100 );
 			} // End of customisation lambda function
 		) // End of REGISTER_TRIGGER_AND_CUSTOMISE macro call
 
