@@ -494,7 +494,7 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 				analysisDataFormat.PtTkmu.push_back( inputNtuple.l1upgrade_->tkMuonEt.at( i ) );
 				analysisDataFormat.PhiTkmu.push_back( inputNtuple.l1upgrade_->tkMuonPhi.at( i ) );
 				analysisDataFormat.EtaTkmu.push_back( inputNtuple.l1upgrade_->tkMuonEta.at( i ) );
-				analysisDataFormat.QualTkmu.push_back( 3 );   //inputNtuple.l1upgrade_->tkMuonQuality.at(i));
+				analysisDataFormat.QualTkmu.push_back( inputNtuple.l1upgrade_->tkMuonQuality.at(i));   //;
 				analysisDataFormat.IsoTkmu.push_back( false ); //inputNtuple.l1upgrade_->tkMuonIso.at(i));  //Calo Isolation
 				analysisDataFormat.NTkmu++;
 			}
