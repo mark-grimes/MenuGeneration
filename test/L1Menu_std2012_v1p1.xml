@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<l1menu>
+
+  <description>File for use with the L1Trigger/MenuGeneration CMSSW package
+              version 1:  Initial Definitions of triggers
+	      versions 1.1:  Change Muon Quality Cut to 4 
+  </description>
+
+  <TriggerMenu>
+ 
+    <!--
+       Single Lepton Triggers
+    --> 
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.1">
+      <name>L1_SingleEG</name>
+      <!-- based on 	L1_SingleEG22  --> 
+      <version>0</version>
+      <parameter name="threshold1">22</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.1">
+      <name>L1_SingleIsoEG</name>
+      <!-- based on 	L1_SingleIsoEG18er  --> 
+      <version>0</version>
+      <parameter name="threshold1">18</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVerion="0" fractionOfTotalBandwidth="0.1"> 
+      <name>L1_SingleMu</name>
+      <!-- based on L1_SingleMu16er  --> 
+      <version>0</version>
+      <parameter name="threshold1">16</parameter>
+      <parameter name="etaCut">2.1</parameter>
+      <parameter name="muonQuality">4</parameter>
+    </Trigger>     
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.1">
+      <name>L1_SingleTau</name>
+      <!-- no comparable trigger in 2012, based on TDR   --> 
+      <version>0</version>
+      <parameter name="threshold1">50</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <!--
+       diLepton Triggers
+    --> 
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
+      <name>L1_isoEG_EG</name>
+      <!-- based on 	L1_DoubleEG_13_7 (Note no isolation)  --> 
+      <version>0</version>
+      <parameter name="leg1threshold1">13.</parameter>
+      <parameter name="leg2threshold1">7.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
+      <name>L1_DoubleMu</name>
+      <!-- based on L1_DoubleMu_10_3p5   --> 
+      <version>0</version>
+      <parameter name="threshold1">10.</parameter>
+      <parameter name="threshold2">3.5</parameter>
+      <parameter name="muonQuality">4</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
+      <name>L1_isoTau_Tau</name>
+      <!-- no comparable trigger in 2012, based on TDR --> 
+      <version>0</version>
+      <parameter name="leg1threshold1">23.</parameter>
+      <parameter name="leg2threshold1">23.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
+      <name>L1_isoEG_Mu</name>
+      <!-- based on  L1_Mu3p5_EG12 (note not isolation) --> 
+      <version>0</version>
+      <parameter name="leg1threshold1">12.</parameter>
+      <parameter name="leg2threshold1">3.5</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2etaCut">2.172</parameter>
+      <parameter name="leg2muonQuality">4</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
+      <name>L1_isoEG_Tau</name>
+      <!--  no comparable trigger in 2012, based on TDR --> 
+      <version>0</version>
+      <parameter name="leg1threshold1">12.</parameter>
+      <parameter name="leg2threshold1">24.</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+    </Trigger>
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08">
+      <name>L1_isoMu_Tau</name>
+      <!-- no comparable trigger in 2012, based on TDR  but
+           rate with current tau alg. is high, so raise tau to 
+	   threshold used for isoEG_Tau above. --> 
+      <version>0</version>
+      <parameter name="leg1threshold1">7.</parameter>
+      <parameter name="leg2threshold1">24.</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+      <parameter name="leg1etaCut">2.172</parameter>
+      <parameter name="leg1muonQuality">4</parameter>
+    </Trigger>
+
+    <!--
+       Hadronic Triggers
+    -->    
+
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
+      <name>L1_SingleJetC</name>
+      <!-- based on L1_SingleJet128 (note this includes forward jets)  --> 
+      <version>0</version>      
+      <parameter name="threshold1">128.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
+      <name>L1_DoubleJet</name>
+      <!-- based on 6	L1_DoubleJetC56  --> 
+      <version>0</version>
+      <parameter name="threshold1">56.</parameter>
+      <parameter name="threshold2">56.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
+      <name>L1_QuadJetC</name>
+      <!-- based on 	L1_QuadJetC36  --> 
+      <version>0</version>
+      <parameter name="threshold1">36.</parameter>
+      <parameter name="threshold2">36.</parameter>
+      <parameter name="threshold3">36.</parameter>
+      <parameter name="threshold4">36.</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+
+
+   <!--
+       Cross Triggers
+    --> 
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.1">
+      <name>L1_SingleIsoEG_CJet</name>
+      <!-- No comparable trigger in 2012..use TDR --> 
+      <version>1</version>
+      <parameter name="leg1threshold1">14</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2threshold1">46</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+    </Trigger>    
+
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.1">
+      <name>L1_SingleIsoEG_HTM</name>
+      <!-- based on L1_IsoEG12er_ETM36  --> 
+      <version>0</version>
+      <parameter name="leg1threshold1">12.</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2threshold1">36.</parameter>
+    </Trigger>    
+ 
+    <Trigger formatVerion="0" fractionOfTotalBandwidth="0.1"> 
+      <name>L1_SingleMu_CJet</name>
+      <!-- No comparable unprescaled trigger in 2012..use TDR  --> 
+      <version>0</version>
+      <parameter name="leg1threshold1">10</parameter>
+      <parameter name="leg1etaCut">2.1</parameter>
+      <parameter name="leg2threshold1">36</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+      <parameter name="leg1muonQuality">4</parameter>
+    </Trigger>     
+ 
+    <Trigger formatVerion="0" fractionOfTotalBandwidth="0.1"> 
+      <name>L1_SingleMu_HTM</name>
+      <!-- based on L1_Mu12er_ETM20.  --> 
+      <version>0</version>
+      <parameter name="leg1threshold1">12.</parameter>
+      <parameter name="leg1etaCut">2.1</parameter>
+      <parameter name="leg2threshold1">20</parameter>
+      <parameter name="leg1muonQuality">4</parameter>
+    </Trigger>     
+
+<!--
+       Eneergy Sum Triggers
+-->
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
+      <name>L1_HTT</name>
+      <!-- based on 	L1_HTT125  No chance move to 287 as in TDR -->
+      <version>0</version>
+      <parameter name="threshold1">287.</parameter>
+    </Trigger>
+
+<!--    
+   <Trigger formatVersion="0" fractionOfTotalBandwidth="0.05">
+      <name>L1_HTM</name>
+      <!-- based on  	L1_ETM36 (Note this is ETM..no HTM trigger in 2012...
+                       This does not seem viable...so drop  
+      <version>0</version>
+      <parameter name="threshold1">36.</parameter>
+    </Trigger>    
+-->
+
+
+ 
+  </TriggerMenu>
+
+</l1menu>
