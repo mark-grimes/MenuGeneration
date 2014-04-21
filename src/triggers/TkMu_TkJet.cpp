@@ -122,8 +122,6 @@ bool l1menu::triggers::TkMu_TkJet_v1::apply( const l1menu::L1TriggerDPGEvent& ev
 
 	int NTkmu = analysisDataFormat.NTkmu;
 	for (int imu=0; imu < NTkmu; imu++) {
-		bool jet=false;
-		bool mu = false;
 
 		int bx = analysisDataFormat.BxTkmu.at(imu);
 		if (bx != 0) continue;
@@ -135,7 +133,6 @@ bool l1menu::triggers::TkMu_TkJet_v1::apply( const l1menu::L1TriggerDPGEvent& ev
 		
 		if (pt >= leg1threshold1_){
 
-			mu = true;
                         float muZvtx = analysisDataFormat.zVtxTkmu[imu];
 			 
 			for (int uj=0; uj < Nj; uj++) {
@@ -145,11 +142,11 @@ bool l1menu::triggers::TkMu_TkJet_v1::apply( const l1menu::L1TriggerDPGEvent& ev
 				float ptj = analysisDataFormat.Etjet[uj];
 
 				if (analysisDataFormat.EtaTkjet[uj] < leg2regionCut_ || analysisDataFormat.EtaTkjet[uj] > 21.-leg2regionCut_) continue;
-				if (ptj >= leg2threshold1_  ) jet = true;
+				if (ptj >= leg2threshold1_  ) ok = true;
 			   } //end z-vtx cut
 			}
 
-			ok = mu && jet;
+
 		} // if good Mu
 	}  // end loop over Mu objects
 
@@ -183,8 +180,6 @@ bool l1menu::triggers::TkMu_TkJet_v0::apply( const l1menu::L1TriggerDPGEvent& ev
 
 	int NTkmu = analysisDataFormat.NTkmu;
 	for (int imu=0; imu < NTkmu; imu++) {
-		bool jet=false;
-		bool mu = false;
 
 		int bx = analysisDataFormat.BxTkmu.at(imu);
 		if (bx != 0) continue;
@@ -196,7 +191,7 @@ bool l1menu::triggers::TkMu_TkJet_v0::apply( const l1menu::L1TriggerDPGEvent& ev
 		
 		if (pt >= leg1threshold1_){
 
-			mu = true;                       
+                     
 			 
 			for (int uj=0; uj < Nj; uj++) {
 				int bxj = analysisDataFormat.BxTkjet[uj];
@@ -204,10 +199,9 @@ bool l1menu::triggers::TkMu_TkJet_v0::apply( const l1menu::L1TriggerDPGEvent& ev
 				float ptj = analysisDataFormat.Etjet[uj];
 
 				if (analysisDataFormat.EtaTkjet[uj] < leg2regionCut_ || analysisDataFormat.EtaTkjet[uj] > 21.-leg2regionCut_) continue;
-				if (ptj >= leg2threshold1_  ) jet = true;
+				if (ptj >= leg2threshold1_  ) ok = true;
 			}
 
-			ok = mu && jet;
 		} // if good Mu
 	}  // end loop over Mu objects
 

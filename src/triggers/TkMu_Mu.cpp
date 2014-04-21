@@ -97,8 +97,6 @@ bool l1menu::triggers::TkMu_Mu_v0::apply( const l1menu::L1TriggerDPGEvent& event
 	bool raw=PhysicsBits[0]; // ZeroBias
 	if( !raw ) return false;
 
-	bool leg1=false;
-	bool leg2=false;
 	bool ok = false;
 
 	int NTkmu=analysisDataFormat.NTkmu;
@@ -115,7 +113,6 @@ bool l1menu::triggers::TkMu_Mu_v0::apply( const l1menu::L1TriggerDPGEvent& event
 
 		if( pt>=leg1threshold1_ ) {
 		  
-		       leg1=true;
 
 			for (int uj=0; uj < Nmu; uj++) {
 				int bxj = analysisDataFormat.Bxmu[uj];
@@ -132,14 +129,13 @@ bool l1menu::triggers::TkMu_Mu_v0::apply( const l1menu::L1TriggerDPGEvent& event
 				if(delPhi>TMath::Pi()) delPhi = TMath::TwoPi() - delPhi;
 				float delR = sqrt(delEta*delEta + delPhi*delPhi);
 
-				if (pt2 >= leg2threshold1_ && delR>0.5) leg2 = true;
+				if (pt2 >= leg2threshold1_ && delR>0.5) ok = true;
 			}
                 } 
 
 		
 	}
 
-	ok=( leg1 & leg2 );
 	return ok;
 }
 

@@ -105,9 +105,6 @@ bool l1menu::triggers::TkTau_Tau_v0::apply( const l1menu::L1TriggerDPGEvent& eve
 	
 	for( int itau=0; itau<NTktau; itau++ )
 	{
-		bool leg1=false;
-		bool leg2=false;
-
 		int bx=analysisDataFormat.BxTktau.at( itau );
 		if( bx!=0 ) continue;
 		float pt=analysisDataFormat.EtTktau.at( itau );
@@ -115,8 +112,6 @@ bool l1menu::triggers::TkTau_Tau_v0::apply( const l1menu::L1TriggerDPGEvent& eve
 		if (eta < leg1regionCut_ || eta > 21.-leg1regionCut_) continue;  // eta = 5 - 16  // eta = 5 - 16
 
 		if( pt>=leg1threshold1_ ) {
-		  
-		       leg1=true;
 
 			for (int ut=0; ut < Nj; ut++) {
 				int bx = analysisDataFormat.Bxjet[ut];
@@ -133,10 +128,9 @@ bool l1menu::triggers::TkTau_Tau_v0::apply( const l1menu::L1TriggerDPGEvent& eve
 				if(delPhi>TMath::Pi()) delPhi = TMath::TwoPi() - delPhi;
 				float delR = sqrt(delEta*delEta + delPhi*delPhi);
 
-				if (pt2 >= leg2threshold1_ && delR>0.5) leg2 = true;
+				if (pt2 >= leg2threshold1_ && delR>0.5) ok = true;
 			}
                 } 
-                ok=( leg1 & leg2 );
 		
 	}
 

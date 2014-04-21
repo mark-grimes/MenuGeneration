@@ -105,8 +105,6 @@ bool l1menu::triggers::TkEle_TkTau_v0::apply( const l1menu::L1TriggerDPGEvent& e
 	
 	for( int ie=0; ie<NTkele; ie++ )
 	{
-		bool leg1=false;
-		bool leg2=false;
 
 		int bx=analysisDataFormat.BxTkel.at( ie );
 		if( bx!=0 ) continue;
@@ -116,7 +114,6 @@ bool l1menu::triggers::TkEle_TkTau_v0::apply( const l1menu::L1TriggerDPGEvent& e
 
 		if( pt>=leg1threshold1_ ) {
 		  
-		       leg1=true;
 
 			for (int ut=0; ut < NTktau; ut++) {
 				int bx = analysisDataFormat.BxTktau[ut];
@@ -131,10 +128,9 @@ bool l1menu::triggers::TkEle_TkTau_v0::apply( const l1menu::L1TriggerDPGEvent& e
 				if(delPhi>TMath::Pi()) delPhi = TMath::TwoPi() - delPhi;
 				float delR = sqrt(delEta*delEta + delPhi*delPhi);
 
-				if (pt2 >= leg2threshold1_ && delR>0.5) leg2 = true;
+				if (pt2 >= leg2threshold1_ && delR>0.5) ok = true;
 			}
                 } 
-                ok=( leg1 & leg2 );
 		
 	}
 

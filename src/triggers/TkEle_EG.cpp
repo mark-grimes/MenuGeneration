@@ -111,8 +111,6 @@ bool l1menu::triggers::TkEle_EG_v0::apply( const l1menu::L1TriggerDPGEvent& even
 	bool raw = PhysicsBits[0];   // ZeroBias
 	if (! raw) return false;
 
-	bool ele=false;
-	bool eg = false;
 	bool ok = false;
 
 	int Neg = analysisDataFormat.Nele;
@@ -127,8 +125,6 @@ bool l1menu::triggers::TkEle_EG_v0::apply( const l1menu::L1TriggerDPGEvent& even
 		float pt = rank ;
 		if (pt >= leg1threshold1_){
 
-			ele = true;
-
                         
 			for (int uj=0; uj < Neg; uj++) {
 				int bxj = analysisDataFormat.Bxel[uj];
@@ -139,10 +135,10 @@ bool l1menu::triggers::TkEle_EG_v0::apply( const l1menu::L1TriggerDPGEvent& even
 				if (analysisDataFormat.Etael[uj] < leg2regionCut_ || analysisDataFormat.Etael[uj] > 21.-leg2regionCut_) continue;
 				if (ptj >= leg2threshold1_ &&
 					!(analysisDataFormat.Etael[uj]==analysisDataFormat.EtaTkel[ue] &&
-					  analysisDataFormat.Phiel[uj]==analysisDataFormat.PhiTkel[ue]) ) eg = true;
+					  analysisDataFormat.Phiel[uj]==analysisDataFormat.PhiTkel[ue]) ) ok = true;
 			}
 
-			ok = eg && ele;
+	
 		} // if good TkEle
 	}  // end loop over TkEle objects
 
@@ -170,8 +166,6 @@ bool l1menu::triggers::TkEle_EG_v1::apply( const l1menu::L1TriggerDPGEvent& even
 	bool raw = PhysicsBits[0];   // ZeroBias
 	if (! raw) return false;
 
-	bool ele=false;
-	bool eg = false;
 	bool ok = false;
 
 	int Neg = analysisDataFormat.Nele;
@@ -186,8 +180,6 @@ bool l1menu::triggers::TkEle_EG_v1::apply( const l1menu::L1TriggerDPGEvent& even
 		float pt = rank ;
 		if (pt >= leg1threshold1_){
 
-			ele = true;
-
                         
 			for (int uj=0; uj < Neg; uj++) {
 				int bxj = analysisDataFormat.Bxel[uj];
@@ -198,10 +190,9 @@ bool l1menu::triggers::TkEle_EG_v1::apply( const l1menu::L1TriggerDPGEvent& even
 				if (analysisDataFormat.Etael[uj] < leg2regionCut_ || analysisDataFormat.Etael[uj] > 21.-leg2regionCut_) continue;
 				if (ptj >= leg2threshold1_ &&
 					!(analysisDataFormat.Etael[uj]==analysisDataFormat.EtaTkel2[ue] &&
-					  analysisDataFormat.Phiel[uj]==analysisDataFormat.PhiTkel2[ue]) ) eg = true;
+					  analysisDataFormat.Phiel[uj]==analysisDataFormat.PhiTkel2[ue]) ) ok = true;
 			}
 
-			ok = eg && ele;
 		} // if good TkEle
 	}  // end loop over TkEle objects
 

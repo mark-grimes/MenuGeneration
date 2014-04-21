@@ -97,8 +97,6 @@ bool l1menu::triggers::TkEM_EG_v0::apply( const l1menu::L1TriggerDPGEvent& event
 	bool raw = PhysicsBits[0];   // ZeroBias
 	if (! raw) return false;
 
-	bool ele=false;
-	bool eg = false;
 	bool ok = false;
 
 	int Neg = analysisDataFormat.Nele;
@@ -112,8 +110,6 @@ bool l1menu::triggers::TkEM_EG_v0::apply( const l1menu::L1TriggerDPGEvent& event
 		float pt = analysisDataFormat.EtTkem[ue];    // the rank of the electron
 		if (pt >= leg1threshold1_){
 
-			ele = true;
-
                         
 			for (int uj=0; uj < Neg; uj++) {
 				int bxj = analysisDataFormat.Bxel[uj];
@@ -124,10 +120,9 @@ bool l1menu::triggers::TkEM_EG_v0::apply( const l1menu::L1TriggerDPGEvent& event
 				if (analysisDataFormat.Etael[uj] < leg2regionCut_ || analysisDataFormat.Etael[uj] > 21.-leg2regionCut_) continue;
 				if (ptj >= leg2threshold1_ &&
 					!(analysisDataFormat.Etael[uj]==analysisDataFormat.EtaTkem[ue] &&
-					  analysisDataFormat.Phiel[uj]==analysisDataFormat.PhiTkem[ue]) ) eg = true;
+					  analysisDataFormat.Phiel[uj]==analysisDataFormat.PhiTkem[ue]) ) ok = true;
 			}
 
-			ok = eg && ele;
 		} // if good TkEle
 	}  // end loop over TkEle objects
 

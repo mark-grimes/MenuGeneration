@@ -118,8 +118,6 @@ bool l1menu::triggers::TkEle_TkJet_v1::apply( const l1menu::L1TriggerDPGEvent& e
 
 	int NTkele = analysisDataFormat.NTkele;
 	for (int ue=0; ue < NTkele; ue++) {
-		bool jet=false;
-		bool eg = false;
 
 		int bx = analysisDataFormat.BxTkel[ue];
 		if (bx != 0) continue;
@@ -128,7 +126,7 @@ bool l1menu::triggers::TkEle_TkJet_v1::apply( const l1menu::L1TriggerDPGEvent& e
 		float pt = analysisDataFormat.EtTkel[ue];    // the rank of the electron
 		if (pt >= leg1threshold1_){
 
-			eg = true;
+			
                         float eleZvtx = analysisDataFormat.zVtxTkel[ue];
 			 
 			for (int uj=0; uj < Nj; uj++) {
@@ -140,11 +138,11 @@ bool l1menu::triggers::TkEle_TkJet_v1::apply( const l1menu::L1TriggerDPGEvent& e
 				if (analysisDataFormat.EtaTkjet[uj] < leg2regionCut_ || analysisDataFormat.EtaTkjet[uj] > 21.-leg2regionCut_) continue;
 				if (ptj >= leg2threshold1_ &&
 					!(analysisDataFormat.EtaTkjet[uj]==analysisDataFormat.EtaTkel[ue] &&
-					  analysisDataFormat.PhiTkjet[uj]==analysisDataFormat.PhiTkel[ue]) ) jet = true;
+					  analysisDataFormat.PhiTkjet[uj]==analysisDataFormat.PhiTkel[ue]) ) ok = true;
 			   } //end z-vtx cut
 			}
 
-			ok = eg && jet;
+			
 		} // if good EG
 	}  // end loop over EM objects
 
@@ -172,8 +170,6 @@ bool l1menu::triggers::TkEle_TkJet_v0::apply( const l1menu::L1TriggerDPGEvent& e
 	bool raw = PhysicsBits[0];   // ZeroBias
 	if (! raw) return false;
 
-	bool jet=false;
-	bool eg = false;
 	bool ok = false;
 
 	int Nj = analysisDataFormat.NTkjet ;
@@ -187,7 +183,6 @@ bool l1menu::triggers::TkEle_TkJet_v0::apply( const l1menu::L1TriggerDPGEvent& e
 		float pt = analysisDataFormat.EtTkel[ue];    // the rank of the electron
 		if (pt >= leg1threshold1_){
 
-			eg = true;
 
 			for (int uj=0; uj < Nj; uj++) {
 				int bxj = analysisDataFormat.BxTkjet[uj];
@@ -197,10 +192,10 @@ bool l1menu::triggers::TkEle_TkJet_v0::apply( const l1menu::L1TriggerDPGEvent& e
 				if (analysisDataFormat.EtaTkjet[uj] < leg2regionCut_ || analysisDataFormat.EtaTkjet[uj] > 21.-leg2regionCut_) continue;
 				if (ptj >= leg2threshold1_ &&
 					!(analysisDataFormat.EtaTkjet[uj]==analysisDataFormat.EtaTkel[ue] &&
-					  analysisDataFormat.PhiTkjet[uj]==analysisDataFormat.PhiTkel[ue]) ) jet = true;
+					  analysisDataFormat.PhiTkjet[uj]==analysisDataFormat.PhiTkel[ue]) ) ok = true;
 			}
 
-			ok = eg && jet;
+			
 		} // if good EG
 	}  // end loop over EM objects
 
