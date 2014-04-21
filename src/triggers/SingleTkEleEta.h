@@ -23,8 +23,8 @@ namespace l1menu
 		 * and "apply" methods. That's left up to the implementations of the different
 		 * versions.
 		 *
-		 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
-		 * @date 02/Jun/2013
+		 * @author Brian Winer
+		 * @date Apr/2014
 		 */
 		class SingleTkEleEta : public l1menu::ITrigger
 		{
@@ -42,8 +42,8 @@ namespace l1menu
 
 		/** @brief First version of the SingleTkEleEta trigger.
 		 *
-		 * @author probably Brian Winer
-		 * @date sometime
+		 * @author Brian Winer
+		 * @date Apr/2014
 		 */
 		class SingleTkEleEta_v0 : public SingleTkEleEta
 		{
@@ -52,6 +52,22 @@ namespace l1menu
 			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
 			virtual bool thresholdsAreCorrelated() const;
 		}; // end of version 0 class
+
+		/** @brief Second version of the SingleTkEleEta trigger.
+		 *
+		 * The same as version 0, except that it acts on the second TkElectron
+		 * collection rather than the first.
+		 *
+		 * @author Brian Winer
+		 * @date Apr/2014
+		 */
+		class SingleTkEleEta_v1 : public SingleTkEleEta
+		{
+		public:
+			virtual unsigned int version() const;
+			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
+			virtual bool thresholdsAreCorrelated() const;
+		}; // end of version 1 class
 
 	} // end of namespace triggers
 
