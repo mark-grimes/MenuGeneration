@@ -242,22 +242,6 @@ class TriggerRateComparisonPlot(object):
 
 
 
-#triggers = ["SingleEG"]
-triggers = ["SingleEG","SingleIsoEG",
-"SingleMu","SingleIsoMu",
-"SingleTau","SingleIsoTau",
-"isoEG_EG","isoMu_Mu","isoTau_Tau","isoEG_Mu","isoMu_EG","isoEG_Tau","isoMu_Tau",
-"SingleJetC","DoubleJet","QuadJetC",#"SixJet",
-"SingleIsoEG_CJet",
-"SingleMu_CJet",
-"SingleIsoEG_HTM",
-"SingleMu_HTM",
-"HTM","HTT"
-]
-
-plots = []
-
-
 #
 # Process the command line to see which files to run over
 # 
@@ -284,17 +268,33 @@ for filenameAndTitle in filenamesAndTitles:
 		filesAndTitles.append( [thisFile,filenameAndTitle[1]] )
 
 #
-# Now have all the information required from the commande line, so
+# Now have all the information required from the command line, so
 # can begin processing.
 #
 
-for trigger in triggers:
-	plots.append( TriggerRateComparisonPlot() )
-	for fileAndTitle in filesAndTitles:
-		plots[-1].addByTriggerName( fileAndTitle[0], trigger, fileAndTitle[1] )
-	#plots[-1].ratePlot.drawLegend=False
-	plots[-1].draw()
-	# Add an extra member to say where to save, in case I choose to do so later
-	plots[-1].saveFilename=trigger+"_rateVsThreshold.pdf"
-	#plots[-1].canvas.SaveAs( plots[-1].saveFilename )
+plots={}
+for fileAndTitle in filesAndTitles:
+	listOfKeys=fileAndTitle[0].GetListOfKeys();
+	oldKeyName="" # Holds the last key name, used to make sure only the highest cycle number is used
+	for key in listOfKeys:
+		if key.GetName()==oldKeyName : continue # older cycle number, so skip it
+		oldKeyName=key.GetName()
+
+		histogram=key.ReadObj()
+		if histogram.ClassName()!="TH1F" : continue
+		try :
+			currentPlot=plots[histogram.GetName()]
+		except KeyError :
+			# If I haven't created a plot for this trigger yet, I need to do so.
+			currentPlot=TriggerRateComparisonPlot()
+			# Add an extra member to say where to save, in case I choose to do so later
+			currentPlot.saveFilename=histogram.GetName()+"_rateVsThreshold.pdf"
+			plots[histogram.GetName()]=currentPlot
+		currentPlot.add( histogram, fileAndTitle[1] )
+
+for plotName in plots :
+	plot=plots[plotName]
+	plot.draw()
+	## Optionally:
+	#plot.canvas.SaveAs( plot.saveFilename )
 
