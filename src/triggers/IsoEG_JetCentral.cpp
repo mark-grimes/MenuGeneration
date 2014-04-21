@@ -115,8 +115,6 @@ bool l1menu::triggers::IsoEG_JetCentral_v1::apply( const l1menu::L1TriggerDPGEve
 	bool raw = PhysicsBits[0];   // ZeroBias
 	if (! raw) return false;
 
-	bool jet=false;
-	bool eg = false;
 	bool ok = false;
 
 	int Nj = analysisDataFormat.Njet ;
@@ -131,7 +129,7 @@ bool l1menu::triggers::IsoEG_JetCentral_v1::apply( const l1menu::L1TriggerDPGEve
 		float pt = rank ;
 		if (pt >= leg1threshold1_){
 
-			eg = true;
+			
 
 			for (int uj=0; uj < Nj; uj++) {
 				int bxj = analysisDataFormat.Bxjet[uj];
@@ -146,10 +144,10 @@ bool l1menu::triggers::IsoEG_JetCentral_v1::apply( const l1menu::L1TriggerDPGEve
 				if (analysisDataFormat.Etajet[uj] < leg2regionCut_ || analysisDataFormat.Etajet[uj] > 21.-leg2regionCut_) continue;
 				if (ptj >= leg2threshold1_ &&
 					!(analysisDataFormat.Etajet[uj]==analysisDataFormat.Etael[ue] &&
-					  analysisDataFormat.Phijet[uj]==analysisDataFormat.Phiel[ue]) ) jet = true;
+					  analysisDataFormat.Phijet[uj]==analysisDataFormat.Phiel[ue]) ) ok = true;
 			}
 
-			ok = eg && jet;
+			
 		} // if good EG
 	}  // end loop over EM objects
 
@@ -174,8 +172,6 @@ bool l1menu::triggers::IsoEG_JetCentral_v0::apply( const l1menu::L1TriggerDPGEve
 	bool raw = PhysicsBits[0];   // ZeroBias
 	if (! raw) return false;
 
-	bool jet=false;
-	bool eg = false;
 	bool ok = false;
 
 	int Nj = analysisDataFormat.Njet ;
@@ -190,7 +186,7 @@ bool l1menu::triggers::IsoEG_JetCentral_v0::apply( const l1menu::L1TriggerDPGEve
 		float pt = rank ;
 		if (pt >= leg1threshold1_){
 
-			eg = true;
+			
 
 			for (int uj=0; uj < Nj; uj++) {
 				int bxj = analysisDataFormat.Bxjet[uj];
@@ -205,10 +201,10 @@ bool l1menu::triggers::IsoEG_JetCentral_v0::apply( const l1menu::L1TriggerDPGEve
 				if (analysisDataFormat.Etajet[uj] < leg2regionCut_ || analysisDataFormat.Etajet[uj] > 21.-leg2regionCut_) continue;
 				if (ptj >= leg2threshold1_ &&
 					(analysisDataFormat.Etajet[uj]!=analysisDataFormat.Etael[ue]) &&
-					(analysisDataFormat.Phijet[uj]!=analysisDataFormat.Phiel[ue]) ) jet = true;
+					(analysisDataFormat.Phijet[uj]!=analysisDataFormat.Phiel[ue]) ) ok = true;
 			}
 
-			ok = eg && jet;
+			
 		} // if good EG
 	}  // end loop over EM objects
 

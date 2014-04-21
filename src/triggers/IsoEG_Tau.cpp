@@ -93,8 +93,8 @@ bool l1menu::triggers::IsoEG_Tau_v0::apply( const l1menu::L1TriggerDPGEvent& eve
 	if (! raw) return false;
 
 
-	bool tau =false;
-	bool eg = false;
+	bool ok =false;
+
 
 	int Nele = analysisDataFormat.Nele;
 	for (int ue=0; ue < Nele; ue++) {
@@ -105,7 +105,7 @@ bool l1menu::triggers::IsoEG_Tau_v0::apply( const l1menu::L1TriggerDPGEvent& eve
 		float rank = analysisDataFormat.Etel[ue];    // the rank of the electron
 		float pt = rank ;
 		if (pt >= leg1threshold1_) {
-			eg = true;
+
 
 			// Now look for a tau that is not the same as this eg
 			int Nj = analysisDataFormat.Njet ;
@@ -119,13 +119,13 @@ bool l1menu::triggers::IsoEG_Tau_v0::apply( const l1menu::L1TriggerDPGEvent& eve
 				if (analysisDataFormat.Etajet[uj] == analysisDataFormat.Etael[ue] && analysisDataFormat.Phijet[uj] == analysisDataFormat.Phiel[ue] ) continue;
 				float rankt = analysisDataFormat.Etjet[uj];
 				float ptt = rankt; //CorrectedL1JetPtByGCTregions(analysisDataFormat.Etajet[uj],rank*4.,theL1JetCorrection);
-				if (ptt >= leg2threshold1_) tau = true;
+				if (ptt >= leg2threshold1_) ok = true;
 			}
 
 		}
 	}  // end loop over EM objects
 
-	bool ok = eg && tau;
+
 	return ok;
 }
 
