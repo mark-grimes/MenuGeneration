@@ -129,7 +129,7 @@ bool l1menu::triggers::DoubleTkTau_v0::apply( const l1menu::L1TriggerDPGEvent& e
 
 bool l1menu::triggers::DoubleTkTau_v0::thresholdsAreCorrelated() const
 {
-	return false;
+	return true;
 }
 
 unsigned int l1menu::triggers::DoubleTkTau_v0::version() const
@@ -159,8 +159,9 @@ bool l1menu::triggers::DoubleTkTau_v1::apply( const l1menu::L1TriggerDPGEvent& e
 		
 		      float tauZvtx = analysisDataFormat.zVtxTktau[ue];
 		      for(int ue2=0; ue2< Ntau; ue2++) {
-		          if( (ue2 != ue) &&
-			     fabs(tauZvtx - analysisDataFormat.zVtxTktau[ue2]) < zVtxCut_)  {
+		          if( (ue2 != ue) 
+			     && fabs(tauZvtx - analysisDataFormat.zVtxTktau[ue2]) < zVtxCut_ 
+			     )  {
 			      if (analysisDataFormat.BxTktau[ue2]!= 0) continue;
 			      float eta2 = analysisDataFormat.EtaTktau[ue2];
 			      if (eta2 < regionCut_ || eta2 > 21.-regionCut_) continue;  // eta = 5 - 16
@@ -178,7 +179,7 @@ bool l1menu::triggers::DoubleTkTau_v1::apply( const l1menu::L1TriggerDPGEvent& e
 
 bool l1menu::triggers::DoubleTkTau_v1::thresholdsAreCorrelated() const
 {
-	return false;
+	return true;
 }
 
 unsigned int l1menu::triggers::DoubleTkTau_v1::version() const

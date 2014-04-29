@@ -118,7 +118,7 @@ bool l1menu::triggers::DoubleJetCentral_v0::apply( const l1menu::L1TriggerDPGEve
 
 bool l1menu::triggers::DoubleJetCentral_v0::thresholdsAreCorrelated() const
 {
-	return false;
+	return true;
 }
 
 unsigned int l1menu::triggers::DoubleJetCentral_v0::version() const

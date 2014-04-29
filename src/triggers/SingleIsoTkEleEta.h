@@ -38,6 +38,7 @@ namespace l1menu
 		protected:
 			float threshold1_;
 			float regionCut_;
+			float trkIsolCut_;
 		}; // end of the SingleIsoTkEleEta base class
 
 		/** @brief First version of the SingleIsoTkEleEta trigger.
@@ -52,6 +53,21 @@ namespace l1menu
 			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
 			virtual bool thresholdsAreCorrelated() const;
 		}; // end of version 0 class
+
+		/** @brief Second version of the SingleIsoTkEleEta trigger.
+		 *          use track isolation instead of calo isolation
+		 *
+		 * @author probably Brian Winer
+		 * @date sometime
+		 */
+		class SingleIsoTkEleEta_v1 : public SingleIsoTkEleEta
+		{
+		public:
+			virtual unsigned int version() const;
+			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
+			virtual bool thresholdsAreCorrelated() const;
+		}; // end of version 0 class
+
 
 
 	} // end of namespace triggers

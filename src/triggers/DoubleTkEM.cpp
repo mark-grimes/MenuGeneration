@@ -111,7 +111,7 @@ bool l1menu::triggers::DoubleTkEM_v0::apply( const l1menu::L1TriggerDPGEvent& ev
 
 bool l1menu::triggers::DoubleTkEM_v0::thresholdsAreCorrelated() const
 {
-	return false;
+	return true;
 }
 
 unsigned int l1menu::triggers::DoubleTkEM_v0::version() const
