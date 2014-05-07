@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "l1menu/ITrigger.h"
+#include <cmath>
 
 //
 // Forward declarations
@@ -40,6 +41,7 @@ namespace l1menu
 			float threshold1_;
 			float threshold2_;
 			float muonQuality_;
+			float zVtxCut_;
 		}; // end of the DoubleTkMu base class
 
 		/** @brief First version of the DoubleTkMu trigger.
@@ -54,6 +56,20 @@ namespace l1menu
 			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
 			virtual bool thresholdsAreCorrelated() const;
 		}; // end of version 0 class
+
+		/** @brief First version of the DoubleTkMu trigger.
+		 *              --> Add zVtxCut
+		 * @author probably Brian Winer
+		 * @date sometime
+		 */
+		class DoubleTkMu_v1 : public DoubleTkMu
+		{
+		public:
+			virtual unsigned int version() const;
+			virtual bool apply( const l1menu::L1TriggerDPGEvent& event ) const;
+			virtual bool thresholdsAreCorrelated() const;
+		}; // end of version 0 class
+
 
 	} // end of namespace triggers
 
