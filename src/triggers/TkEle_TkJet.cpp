@@ -133,7 +133,7 @@ bool l1menu::triggers::TkEle_TkJet_v1::apply( const l1menu::L1TriggerDPGEvent& e
 			   if(fabs(eleZvtx - analysisDataFormat.zVtxTkjet[uj]) < zVtxCut_)  {
 				int bxj = analysisDataFormat.BxTkjet[uj];
 				if (bxj != 0) continue;
-				float ptj = analysisDataFormat.Etjet[uj];
+				float ptj = analysisDataFormat.EtTkjet[uj];
 
 				if (analysisDataFormat.EtaTkjet[uj] < leg2regionCut_ || analysisDataFormat.EtaTkjet[uj] > 21.-leg2regionCut_) continue;
 				if (ptj >= leg2threshold1_ &&
@@ -187,7 +187,7 @@ bool l1menu::triggers::TkEle_TkJet_v0::apply( const l1menu::L1TriggerDPGEvent& e
 			for (int uj=0; uj < Nj; uj++) {
 				int bxj = analysisDataFormat.BxTkjet[uj];
 				if (bxj != 0) continue;
-				float ptj = analysisDataFormat.Etjet[uj];
+				float ptj = analysisDataFormat.EtTkjet[uj];
 
 				if (analysisDataFormat.EtaTkjet[uj] < leg2regionCut_ || analysisDataFormat.EtaTkjet[uj] > 21.-leg2regionCut_) continue;
 				if (ptj >= leg2threshold1_ &&
