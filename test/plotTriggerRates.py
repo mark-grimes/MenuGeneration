@@ -242,6 +242,7 @@ class TriggerRateComparisonPlot(object):
 
 
 
+
 #
 # Process the command line to see which files to run over
 # 
@@ -268,33 +269,33 @@ for filenameAndTitle in filenamesAndTitles:
 		filesAndTitles.append( [thisFile,filenameAndTitle[1]] )
 
 #
+# Need to find out which triggers are in the files
+#
+triggerNames=[]
+for fileAndTitle in filesAndTitles:
+	for key in fileAndTitle[0].GetListOfKeys():
+		if key.GetClassName()!="TH1F" : continue
+
+		# Chop off everything after "_v_" to get the trigger name. The histogram
+		# name will be the trigger name plus what it's plotted against. E.g.
+		# "<trigger name>_v_leg1threshold1".
+		triggerName=key.GetName()[:key.GetName().rfind("_v_")]
+		if triggerNames.count(triggerName)==0 : triggerNames.append(triggerName)
+
+#
 # Now have all the information required from the command line, so
 # can begin processing.
 #
 
-plots={}
-for fileAndTitle in filesAndTitles:
-	listOfKeys=fileAndTitle[0].GetListOfKeys();
-	oldKeyName="" # Holds the last key name, used to make sure only the highest cycle number is used
-	for key in listOfKeys:
-		if key.GetName()==oldKeyName : continue # older cycle number, so skip it
-		oldKeyName=key.GetName()
-
-		histogram=key.ReadObj()
-		if histogram.ClassName()!="TH1F" : continue
-		try :
-			currentPlot=plots[histogram.GetName()]
-		except KeyError :
-			# If I haven't created a plot for this trigger yet, I need to do so.
-			currentPlot=TriggerRateComparisonPlot()
-			# Add an extra member to say where to save, in case I choose to do so later
-			currentPlot.saveFilename=histogram.GetName()+"_rateVsThreshold.pdf"
-			plots[histogram.GetName()]=currentPlot
-		currentPlot.add( histogram, fileAndTitle[1] )
-
-for plotName in plots :
-	plot=plots[plotName]
-	plot.draw()
-	## Optionally:
-	#plot.canvas.SaveAs( plot.saveFilename )
+plots = []
+for trigger in triggerNames:
+	if trigger[0:3]=="L1_" : trigger=trigger[3:] # Chop off "L1_" from the start of the name
+	plots.append( TriggerRateComparisonPlot() )
+	for fileAndTitle in filesAndTitles:
+		plots[-1].addByTriggerName( fileAndTitle[0], trigger, fileAndTitle[1] )
+	#plots[-1].ratePlot.drawLegend=False
+	plots[-1].draw()
+	# Add an extra member to say where to save, in case I choose to do so later
+	plots[-1].saveFilename=trigger+"_rateVsThreshold.pdf"
+	#plots[-1].canvas.SaveAs( plots[-1].saveFilename )
 
