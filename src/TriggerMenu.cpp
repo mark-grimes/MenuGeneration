@@ -191,7 +191,7 @@ l1menu::ITrigger& l1menu::TriggerMenu::addTrigger( const std::string& triggerNam
 	return *pImple_->triggers_.back();
 }
 
-l1menu::ITrigger& l1menu::TriggerMenu::addTrigger( const l1menu::ITrigger& triggerToCopy )
+l1menu::ITrigger& l1menu::TriggerMenu::addTrigger( const l1menu::ITriggerDescription& triggerToCopy )
 {
 	std::unique_ptr<l1menu::ITrigger> pNewTrigger=pImple_->triggerTable_.copyTrigger( triggerToCopy );
 	if( pNewTrigger.get()==NULL ) throw std::range_error( "Trigger requested that does not exist" );

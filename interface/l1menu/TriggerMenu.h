@@ -48,7 +48,7 @@ namespace l1menu
 		 * @return                     A reference to the trigger just added. Note that since it's copied,
 		 *                             this is not the same as the reference supplied as input.
 		 */
-		ITrigger& addTrigger( const ITrigger& triggerToCopy );
+		ITrigger& addTrigger( const ITriggerDescription& triggerToCopy );
 
 		size_t numberOfTriggers() const;
 		ITrigger& getTrigger( size_t position );
