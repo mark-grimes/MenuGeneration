@@ -28,9 +28,9 @@ namespace l1menu
 	{
 	public:
 		/** @brief Load from a file in protobuf format. */
-		ReducedSample( const std::string& filename );
-		ReducedSample( const l1menu::FullSample& originalSample, const l1menu::TriggerMenu& triggerMenu );
-		ReducedSample( const l1menu::TriggerMenu& triggerMenu );
+		explicit ReducedSample( const std::string& filename );
+		explicit ReducedSample( const l1menu::FullSample& originalSample, const l1menu::TriggerMenu& triggerMenu );
+		explicit ReducedSample( const l1menu::TriggerMenu& triggerMenu );
 		virtual ~ReducedSample();
 
 		void addSample( const l1menu::FullSample& originalSample );
