@@ -233,23 +233,28 @@ void l1menu::implementation::OldL1MenuFile::add( const l1menu::IMenuRate& menuRa
 
 	// Take a copy of the results so that I can resort them.
 	auto triggerRates=menuRates.triggerRates();
-	//
-	// Use a lambda function to sort the ITriggerRates into the same
-	// order as the standard list above.
-	//
-	std::sort( triggerRates.begin(), triggerRates.end(), [&](const l1menu::ITriggerRate* pFirst,const l1menu::ITriggerRate* pSecond)->bool
-		{
-			auto iFirstPosition=std::find( triggerNames.begin(), triggerNames.end(), pFirst->trigger().name() );
-			auto iSecondPosition=std::find( triggerNames.begin(), triggerNames.end(), pSecond->trigger().name() );
-			// If both these trigger names aren't in the standard list, sort
-			// them by their name which I guess means alphabetically.
-			if( iFirstPosition==triggerNames.end() && iSecondPosition==triggerNames.end() ) return pFirst->trigger().name()<pSecond->trigger().name();
-			// If only one of them is in the list then that one needs to be first.
-			else if( iFirstPosition==triggerNames.end() ) return false;
-			else if( iSecondPosition==triggerNames.end() ) return true;
-			// If they're both in the standard list sort by their position in the list
-			else return iFirstPosition<iSecondPosition;
-		} );
+	// ----------------------------------------------------------------------------------------------
+	// --- Note: commented the next few lines out because we took the decision to sort the output ---
+	// --- by the order the triggers appear in the XML input file. If you want the output sorted  ---
+	// --- according to the list above uncomment these next few lines.                            ---
+	// ----------------------------------------------------------------------------------------------
+	////
+	//// Use a lambda function to sort the ITriggerRates into the same
+	//// order as the standard list above.
+	////
+	//std::sort( triggerRates.begin(), triggerRates.end(), [&](const l1menu::ITriggerRate* pFirst,const l1menu::ITriggerRate* pSecond)->bool
+	//	{
+	//		auto iFirstPosition=std::find( triggerNames.begin(), triggerNames.end(), pFirst->trigger().name() );
+	//		auto iSecondPosition=std::find( triggerNames.begin(), triggerNames.end(), pSecond->trigger().name() );
+	//		// If both these trigger names aren't in the standard list, sort
+	//		// them by their name which I guess means alphabetically.
+	//		if( iFirstPosition==triggerNames.end() && iSecondPosition==triggerNames.end() ) return pFirst->trigger().name()<pSecond->trigger().name();
+	//		// If only one of them is in the list then that one needs to be first.
+	//		else if( iFirstPosition==triggerNames.end() ) return false;
+	//		else if( iSecondPosition==triggerNames.end() ) return true;
+	//		// If they're both in the standard list sort by their position in the list
+	//		else return iFirstPosition<iSecondPosition;
+	//	} );
 
 
 	float totalNoOverlaps=0;
