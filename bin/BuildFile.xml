@@ -12,3 +12,6 @@
 <bin name="l1menuScaleMenuRates" file="l1menuScaleMenuRates.cpp"/>
 <bin name="l1menuFormatResults" file="l1menuFormatResults.cpp"/>
 <bin name="l1menuConvertFormat" file="l1menuConvertFormat.cpp"/>
+<bin name="l1menuRateGUI" file="l1menuRateGUI.cpp">
+	<use name="qt"/>
+</bin>
