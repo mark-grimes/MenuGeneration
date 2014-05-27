@@ -25,7 +25,7 @@ int main( int argc, char* argv[] )
 	std::string sampleFilename;
 	std::string menuFilename;
 	std::string outputFilename;
-	l1menu::tools::FileFormat fileFormat=l1menu::tools::FileFormat::XMLFORMAT;
+	l1menu::IL1MenuFile::FileFormat fileFormat=l1menu::IL1MenuFile::FileFormat::XML;
 	float totalTriggerRatekHz; // The rate if every single event passed
 
 	l1menu::tools::CommandLineParser commandLineParser;
@@ -48,9 +48,9 @@ int main( int argc, char* argv[] )
 		if( commandLineParser.optionHasBeenSet( "format" ) )
 		{
 			std::string formatString=commandLineParser.optionArguments("format").back();
-			if( formatString=="XML" ) fileFormat=l1menu::tools::FileFormat::XMLFORMAT;
-			else if( formatString=="OLD" ) fileFormat=l1menu::tools::FileFormat::OLDFORMAT;
-			else if( formatString=="CSV" ) fileFormat=l1menu::tools::FileFormat::CSVFORMAT;
+			if( formatString=="XML" ) fileFormat=l1menu::IL1MenuFile::FileFormat::XML;
+			else if( formatString=="OLD" ) fileFormat=l1menu::IL1MenuFile::FileFormat::OLD;
+			else if( formatString=="CSV" ) fileFormat=l1menu::IL1MenuFile::FileFormat::CSV;
 			else throw std::runtime_error( "format must be one of 'XML', 'OLD', or 'CSV'" );
 		}
 
@@ -113,7 +113,7 @@ int main( int argc, char* argv[] )
 		// Otherwise dump the information to standard output
 		else
 		{
-			std::cout << "outputprefix not specified so dumping results to standard output" << "\n";
+			std::cout << "\"output\" option not specified so dumping results to standard output" << "\n";
 			l1menu::tools::dumpTriggerRates( std::cout, *pRates, fileFormat );
 		}
 
