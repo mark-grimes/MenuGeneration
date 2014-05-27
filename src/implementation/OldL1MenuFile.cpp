@@ -159,59 +159,77 @@ void l1menu::implementation::OldL1MenuFile::add( const l1menu::IMenuRate& menuRa
 	// easier to compare between the old and new code. Otherwise the new code will print
 	// the results alphabetically. I need to hard code that order with this vector.
 	std::vector<std::string> triggerNames;
+	// Electron and photon triggers
 	triggerNames.push_back("L1_SingleEG");
+	triggerNames.push_back("L1_SingleTkEle");
+	triggerNames.push_back("L1_SingleTkEM");
 	triggerNames.push_back("L1_SingleIsoEG");
-	triggerNames.push_back("L1_SingleMu");
-	triggerNames.push_back("L1_SingleIsoMu");
-	triggerNames.push_back("L1_SingleTau");
-	triggerNames.push_back("L1_SingleIsoTau");
+	triggerNames.push_back("L1_SingleIsoTkEle");
 	triggerNames.push_back("L1_DoubleEG");
 	triggerNames.push_back("L1_isoEG_EG");
-	triggerNames.push_back("L1_DoubleIsoEG");
+	triggerNames.push_back("L1_TkEle_EG");
+	triggerNames.push_back("L1_DoubleTkEle");
+	triggerNames.push_back("L1_TkEM_EG");
+	triggerNames.push_back("L1_DoubleTkEM");
+	// Muon triggers
+	triggerNames.push_back("L1_SingleMu");
+	triggerNames.push_back("L1_SingleTkMu");
+	triggerNames.push_back("L1_SingleIsoMu");
+	triggerNames.push_back("L1_SingleIsoTkMu");
 	triggerNames.push_back("L1_DoubleMu");
 	triggerNames.push_back("L1_isoMu_Mu");
-	triggerNames.push_back("L1_DoubleIsoMu");
+	triggerNames.push_back("L1_TkMu_Mu");
+	triggerNames.push_back("L1_DoubleTkMu");
+	// Tau triggers
+	triggerNames.push_back("L1_SingleTau");
+	triggerNames.push_back("L1_SingleTkTau");
+	triggerNames.push_back("L1_SingleIsoTau");
+	triggerNames.push_back("L1_SingleIsoTkTau");
 	triggerNames.push_back("L1_DoubleTau");
 	triggerNames.push_back("L1_isoTau_Tau");
-	triggerNames.push_back("L1_DoubleIsoTau");
+	triggerNames.push_back("L1_TkTau_Tau");
+	triggerNames.push_back("L1_DoubleTkTau");
+	// lepton cross triggers
 	triggerNames.push_back("L1_EG_Mu");
 	triggerNames.push_back("L1_isoEG_Mu");
-	triggerNames.push_back("L1_isoEG_isoMu");
-	triggerNames.push_back("L1_Mu_EG");
-	triggerNames.push_back("L1_isoMu_EG");
-	triggerNames.push_back("L1_isoMu_isoEG");
+	triggerNames.push_back("L1_TkEle_Mu");
 	triggerNames.push_back("L1_EG_Tau");
+	triggerNames.push_back("L1_TkEle_TkTau");
 	triggerNames.push_back("L1_isoEG_Tau");
-	triggerNames.push_back("L1_isoEG_isoTau");
-	triggerNames.push_back("L1_Mu_Tau");
+	triggerNames.push_back("L1_TkEle_Tau");
+	triggerNames.push_back("L1_isoMu_EG");
 	triggerNames.push_back("L1_isoMu_Tau");
-	triggerNames.push_back("L1_isoMu_isoTau");
-	triggerNames.push_back("L1_SingleJet");
+	triggerNames.push_back("L1_Mu_TkTau");
+	triggerNames.push_back("L1_TkTau_Mu");
+	// Hadronic triggers
 	triggerNames.push_back("L1_SingleJetC");
+	triggerNames.push_back("L1_SingleTkJet");
 	triggerNames.push_back("L1_DoubleJet");
+	triggerNames.push_back("L1_DoubleTkJet");
+	triggerNames.push_back("L1_DoubleTkJetVtx");
 	triggerNames.push_back("L1_QuadJetC");
+	triggerNames.push_back("L1_QuadTkJet");
+	triggerNames.push_back("L1_QuadTkJetVtx");
 	triggerNames.push_back("L1_SixJet");
+	triggerNames.push_back("L1_MultiJet");
+	triggerNames.push_back("L1_MultiTkJet");
+	triggerNames.push_back("L1_ETM");
+	triggerNames.push_back("L1_TkETM");
+	triggerNames.push_back("L1_HTM");
+	triggerNames.push_back("L1_TkHTM");
+	triggerNames.push_back("L1_HTT");
+	triggerNames.push_back("L1_TkHTT");
+	// lepton+hadronic cross triggers
 	triggerNames.push_back("L1_SingleEG_CJet");
 	triggerNames.push_back("L1_SingleIsoEG_CJet");
+	triggerNames.push_back("L1_TkEle_TkJet");
 	triggerNames.push_back("L1_SingleMu_CJet");
-	triggerNames.push_back("L1_SingleIsoMu_CJet");
-	triggerNames.push_back("L1_SingleTau_TwoFJet");
-	triggerNames.push_back("L1_DoubleFwdJet");
-	triggerNames.push_back("L1_SingleEG_ETM");
-	triggerNames.push_back("L1_SingleIsoEG_ETM");
-	triggerNames.push_back("L1_SingleMu_ETM");
-	triggerNames.push_back("L1_SingleIsoMu_ETM");
-	triggerNames.push_back("L1_SingleTau_ETM");
-	triggerNames.push_back("L1_SingleIsoTau_ETM");
+	triggerNames.push_back("L1_TkMu_TkJet");
 	triggerNames.push_back("L1_SingleEG_HTM");
 	triggerNames.push_back("L1_SingleIsoEG_HTM");
+	triggerNames.push_back("L1_TkEle_TkHTM");
 	triggerNames.push_back("L1_SingleMu_HTM");
-	triggerNames.push_back("L1_SingleIsoMu_HTM");
-	triggerNames.push_back("L1_SingleTau_HTM");
-	triggerNames.push_back("L1_SingleIsoTau_HTM");
-	triggerNames.push_back("L1_HTM");
-	triggerNames.push_back("L1_ETM");
-	triggerNames.push_back("L1_HTT");
+	triggerNames.push_back("L1_TkMu_TkHTM");
 
 	// Take a copy of the results so that I can resort them.
 	auto triggerRates=menuRates.triggerRates();
@@ -264,7 +282,7 @@ void l1menu::implementation::OldL1MenuFile::add( const l1menu::IMenuRate& menuRa
 				(*pOutputStream_) << delimeter_ << std::setw(9) << trigger.parameterErrorLow(thresholdNames[thresholdNumber])
 						<< delimeter_ << std::setw(9) << trigger.parameterErrorHigh(thresholdNames[thresholdNumber]);
 			}
-			else (*pOutputStream_) << delimeter_ << std::setw(9) << " " << delimeter_ << std::setw(9) << " ";
+			//else (*pOutputStream_) << delimeter_ << std::setw(9) << " " << delimeter_ << std::setw(9) << " ";
 		}
 
 		totalNoOverlaps+=pRate->rate();
