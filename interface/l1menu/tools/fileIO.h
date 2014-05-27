@@ -12,22 +12,16 @@
 #include <utility>
 #include <iosfwd>
 
+// Need this for the definition of l1menu::IL1MenuFile::FileFormat
+#include "l1menu/IL1MenuFile.h"
 //
 // Forward declarations
 //
 namespace l1menu
 {
-	class ITrigger;
-	class ITriggerDescription;
 	class IMenuRate;
 	class ISample;
 	class TriggerMenu;
-	class IMenuRate;
-	class ITriggerRate;
-	namespace tools
-	{
-		class XMLElement;
-	}
 }
 
 
@@ -35,12 +29,6 @@ namespace l1menu
 {
 	namespace tools
 	{
-		/** @brief An enum to describe filetypes used to save the objects.
-		 *
-		 */
-		enum class FileFormat : char { XMLFORMAT, OLDFORMAT, CSVFORMAT };
-
-
 		/** @brief Prints out the trigger rates to the given ostream.
 		 *
 		 * @param[out] output       The stream to dump the information to.
@@ -50,26 +38,14 @@ namespace l1menu
 		 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
 		 * @date 05/Jul/2013
 		 */
-		void dumpTriggerRates( std::ostream& output, const l1menu::IMenuRate& menuRates, l1menu::tools::FileFormat format=l1menu::tools::FileFormat::OLDFORMAT );
-
-		/** @brief Prints out the trigger rates to the given ostream.
-		 *
-		 * @param[out] output             The stream to dump the information to.
-		 * @param[in]  menuRates          The object containing the information to be dumped.
-		 * @param[in]  offlineThresholds  The menu rates with the thresholds converted to offline thresholds.
-		 * @param[in]  format             The file format to dump in.
-		 *
-		 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
-		 * @date 05/Jul/2013
-		 */
-		void dumpTriggerRates( std::ostream& output, const l1menu::IMenuRate& menuRates, const l1menu::IMenuRate& offlineThresholds, l1menu::tools::FileFormat format=l1menu::tools::FileFormat::OLDFORMAT );
+		void dumpTriggerRates( std::ostream& output, const l1menu::IMenuRate& menuRates, l1menu::IL1MenuFile::FileFormat format=l1menu::IL1MenuFile::FileFormat::OLD );
 
 		/** @brief Prints out the trigger menu in the same format as the old L1Menu2015 to the given ostream
 		 *
 		 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
 		 * @date 28/Aug/2013
 		 */
-		void dumpTriggerMenu( std::ostream& output, const l1menu::TriggerMenu& menu, l1menu::tools::FileFormat format=l1menu::tools::FileFormat::OLDFORMAT  );
+		void dumpTriggerMenu( std::ostream& output, const l1menu::TriggerMenu& menu, l1menu::IL1MenuFile::FileFormat format=l1menu::IL1MenuFile::FileFormat::OLD  );
 
 		/** @brief Examines the file and creates the appropriate concrete implementation of ISample for it.
 		 *
@@ -87,34 +63,15 @@ namespace l1menu
 
 		/** @brief Loads the menu from a file on disk.
 		 *
+		 * Note that some file formats allow you to have more than one menu in the file. In this case
+		 * this function will silently just return the first one. If you want access to the others
+		 * go through l1menu::IL1MenuFile::getMenus() instead. This convenience function just delegates
+		 * to that anyway.
+		 *
 		 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
 		 * @date 15/Oct/2013
 		 */
 		std::unique_ptr<l1menu::TriggerMenu> loadMenu( const std::string& filename );
-
-		/** @brief Loads an IMenuRate from a file on disk.
-		 *
-		 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
-		 * @date 16/Oct/2013
-		 */
-		std::unique_ptr<l1menu::IMenuRate> loadRate( const std::string& filename );
-
-		/** @brief Adds a child to the element passed which describes the TriggerMenu.
-		 *
-		 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
-		 * @date 14/Oct/2013
-		 */
-		l1menu::tools::XMLElement convertToXML( const l1menu::TriggerMenu& object, l1menu::tools::XMLElement& parent );
-
-		/** @brief Adds a child to the element passed which describes the ITriggerRate.
-		 *
-		 * @author Mark Grimes (mark.grimes@bristol.ac.uk)
-		 * @date 14/Oct/2013
-		 */
-		l1menu::tools::XMLElement convertToXML( const l1menu::ITriggerRate& object, l1menu::tools::XMLElement& parent );
-
-		l1menu::tools::XMLElement convertToXML( const l1menu::ITriggerDescription& object, l1menu::tools::XMLElement& parent );
-		l1menu::tools::XMLElement convertToXML( const l1menu::IMenuRate& object, l1menu::tools::XMLElement& parent );
 
 	} // end of the tools namespace
 } // end of the l1menu namespace
