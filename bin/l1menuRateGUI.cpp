@@ -8,6 +8,7 @@
 #include "l1menu/ITriggerDescriptionWithErrors.h"
 #include "l1menu/IMenuRate.h"
 #include "l1menu/ITriggerRate.h"
+#include "l1menu/TriggerConstraint.h"
 #include "l1menu/ReducedSample.h"
 #include "l1menu/IL1MenuFile.h"
 #include "l1menu/tools/miscellaneous.h"
@@ -316,6 +317,21 @@ void menuwidgets::MainWidget::saveMenu()
 		for( const auto& pTriggerWidget : triggerWidgets_ )
 		{
 			if( pTriggerWidget->isEnabled() ) menuToSave.addTrigger( pTriggerWidget->trigger() );
+		}
+
+		// I also want to set the fraction of bandwidth constraint, which is only
+		// used if the menu is scaled for a particular bandwidth. To work out what
+		// this is I'll fit the menu again. I could read the rates from the text
+		// boxes but the user could have edited the menu since the last fit.
+		sample_.setEventRate( pCollisionRate_->value() );
+		std::shared_ptr<const l1menu::IMenuRate> pMenuRate=sample_.rate(menuToSave);
+
+		for( size_t index=0; index<menuToSave.numberOfTriggers(); ++index )
+		{
+			float fraction=pMenuRate->triggerRates()[index]->rate()/pMenuRate->totalRate();
+			l1menu::TriggerConstraint& newConstraint=menuToSave.getTriggerConstraint(index);
+			newConstraint.type( l1menu::TriggerConstraint::Type::FRACTION_OF_BANDWIDTH );
+			newConstraint.value( fraction );
 		}
 
 		pOutputL1MenuFile->add( menuToSave );
