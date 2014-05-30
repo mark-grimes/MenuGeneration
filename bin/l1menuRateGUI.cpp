@@ -102,7 +102,7 @@ int main( int argc, char **argv )
 
 menuwidgets::TriggerWidget::TriggerWidget( l1menu::ITrigger& trigger ) : enabled_(true), trigger_(trigger)
 {
-	std::unique_ptr<QLayout> pLayout( new QHBoxLayout );
+	std::unique_ptr<QHBoxLayout> pLayout( new QHBoxLayout );
 
 	std::unique_ptr<QCheckBox> pCheckBox( new QCheckBox( (trigger.name()+" v"+std::to_string(trigger.version())).c_str() ) );
 	pCheckBox->setTristate( false );
@@ -141,8 +141,12 @@ menuwidgets::TriggerWidget::TriggerWidget( l1menu::ITrigger& trigger ) : enabled
 		pLayout->addWidget( pButton.release() );
 	}
 
+	pLayout->addStretch();
+
 	pRateLabel_.reset( new QLabel("? kHz") );
 	pLayout->addWidget( pRateLabel_.get() );
+
+	pLayout->addSpacing(5);
 
 	pPureRateLabel_.reset( new QLabel("? kHz") );
 	pLayout->addWidget( pPureRateLabel_.get() );
@@ -236,6 +240,7 @@ menuwidgets::MainWidget::MainWidget( l1menu::ReducedSample& sample ) : sample_(s
 
 	std::unique_ptr<QScrollArea> pScrollArea( new QScrollArea );
 	pScrollArea->setWidget(pParentToAllTriggers.release());
+	pScrollArea->setWidgetResizable( true );
 
 	std::unique_ptr<QVBoxLayout> pMainLayout( new QVBoxLayout );
 	pMainLayout->addWidget( pScrollArea.release() );
