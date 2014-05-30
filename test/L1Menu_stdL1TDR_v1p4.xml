@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<l1menu>
+
+  <description>File for use with the L1Trigger/MenuGeneration CMSSW package</description>
+
+  <TriggerMenu>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.157727">
+      <name>L1_SingleMu</name>
+      <version>0</version>
+      <parameter name="threshold1">13.8</parameter>
+      <parameter name="muonQuality">4</parameter>
+      <parameter name="etaCut">2.1</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.08189">
+      <name>L1_DoubleMu</name>
+      <version>0</version>
+      <parameter name="threshold1">9.4</parameter>
+      <parameter name="threshold2">3.1</parameter>
+      <parameter name="muonQuality">4</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0795359">
+      <name>L1_isoEG_Mu</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">15.6</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2threshold1">2.5</parameter>
+      <parameter name="leg2muonQuality">4</parameter>
+      <parameter name="leg2etaCut">2.172</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0586851">
+      <name>L1_SingleEG</name>
+      <version>0</version>
+      <parameter name="threshold1">29.5</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0682697">
+      <name>L1_SingleIsoEG</name>
+      <version>0</version>
+      <parameter name="threshold1">24.9</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.114848">
+      <name>L1_isoEG_EG</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">13.3</parameter>
+      <parameter name="leg2threshold1">8.6</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.185976">
+      <name>L1_SingleTau</name>
+      <version>0</version>
+      <parameter name="threshold1">53.3</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.169497">
+      <name>L1_DoubleTau</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">29.2</parameter>
+      <parameter name="leg2threshold1">29.2</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0438877">
+      <name>L1_isoEG_Tau</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">17.9</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2threshold1">24.2</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.171851">
+      <name>L1_isoMu_Tau</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">7.5</parameter>
+      <parameter name="leg1muonQuality">4</parameter>
+      <parameter name="leg1etaCut">2.172</parameter>
+      <parameter name="leg2threshold1">18.3</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0410291">
+      <name>L1_SingleJetC</name>
+      <version>0</version>
+      <parameter name="threshold1">133.3</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0410291">
+      <name>L1_DoubleJet</name>
+      <version>0</version>
+      <parameter name="threshold1">91.2</parameter>
+      <parameter name="threshold2">91.2</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.165798">
+      <name>L1_QuadJetC</name>
+      <version>0</version>
+      <parameter name="threshold1">31.4</parameter>
+      <parameter name="threshold2">31.4</parameter>
+      <parameter name="threshold3">31.4</parameter>
+      <parameter name="threshold4">31.4</parameter>
+      <parameter name="regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0721372">
+      <name>L1_SingleIsoEG_CJet</name>
+      <version>1</version>
+      <parameter name="leg1threshold1">20.2</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2threshold1">36.1</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0891206">
+      <name>L1_SingleMu_CJet</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">10</parameter>
+      <parameter name="leg1muonQuality">4</parameter>
+      <parameter name="leg1etaCut">2.1</parameter>
+      <parameter name="leg2threshold1">36.1</parameter>
+      <parameter name="leg2regionCut">4.5</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0349756">
+      <name>L1_SingleIsoEG_HTM</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">20.2</parameter>
+      <parameter name="leg1regionCut">4.5</parameter>
+      <parameter name="leg2threshold1">63.2</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.0489322">
+      <name>L1_SingleMu_HTM</name>
+      <version>0</version>
+      <parameter name="leg1threshold1">10</parameter>
+      <parameter name="leg1muonQuality">4</parameter>
+      <parameter name="leg1etaCut">2.1</parameter>
+      <parameter name="leg2threshold1">63.2</parameter>
+    </Trigger>
+    <Trigger formatVersion="0" fractionOfTotalBandwidth="0.12645">
+      <name>L1_HTT</name>
+      <version>0</version>
+      <parameter name="threshold1">301.5</parameter>
+    </Trigger>
+  </TriggerMenu>
+
+</l1menu>
