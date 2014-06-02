@@ -344,9 +344,10 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 			analysisDataFormat.OvHTT=0; //not available in l1extra
 
 			// Get the muon information  from reEmul GMT
-			for( int i=0; i<inputNtuple.gmtEmu_->N; i++ )
+			for( int i=0; i<inputNtuple.gmt_->N; i++ )
+//			for( int i=0; i<inputNtuple.gmtEmu_->N; i++ )
 			{
-
+/*
 				analysisDataFormat.Bxmu.push_back( inputNtuple.gmtEmu_->CandBx[i] );
 				analysisDataFormat.Ptmu.push_back( inputNtuple.gmtEmu_->Pt[i] );
 				analysisDataFormat.Phimu.push_back( inputNtuple.gmtEmu_->Phi[i] );
@@ -354,6 +355,16 @@ void l1menu::FullSamplePrivateMembers::fillDataStructure( int selectDataInput )
 				analysisDataFormat.Qualmu.push_back( inputNtuple.gmtEmu_->Qual[i] );
 				analysisDataFormat.Isomu.push_back( false );
 				analysisDataFormat.Nmu++;
+*/
+				analysisDataFormat.Bxmu.push_back( inputNtuple.gmt_->CandBx[i] );
+				analysisDataFormat.Ptmu.push_back( inputNtuple.gmt_->Pt[i] );
+				analysisDataFormat.Phimu.push_back( inputNtuple.gmt_->Phi[i] );
+				analysisDataFormat.Etamu.push_back( inputNtuple.gmt_->Eta[i] );
+				analysisDataFormat.Qualmu.push_back( inputNtuple.gmt_->Qual[i] );
+				analysisDataFormat.Isomu.push_back( false );
+				analysisDataFormat.Nmu++;
+
+
 			}
 
 /*
