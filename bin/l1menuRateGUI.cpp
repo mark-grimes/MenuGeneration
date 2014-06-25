@@ -3,7 +3,6 @@
 
 #include <QtGui>
 #include "l1menu/ReducedSample.h"
-#include "guiclasses/MainWidget.h"
 #include "guiclasses/AnalyseReducedSampleWidget.h"
 
 
@@ -18,10 +17,6 @@ int main( int argc, char **argv )
 	QApplication app( argc, argv );
 
 	l1menu::ReducedSample sample( argv[1] );
-
-	l1menu::guiclasses::MainWidget myMainWidget( sample );
-	myMainWidget.show();
-
 
 	l1menu::guiclasses::AnalyseReducedSampleWidget testWidget( sample );
 	testWidget.show();
